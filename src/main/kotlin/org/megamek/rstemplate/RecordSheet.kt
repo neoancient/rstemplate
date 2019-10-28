@@ -23,14 +23,15 @@ import kotlin.math.min
  */
 
 const val SVGNS = SVGDOMImplementation.SVG_NAMESPACE_URI
-const val LEFT_MARGIN = 72
-const val RIGHT_MARGIN = 72
+const val LEFT_MARGIN = 36
+const val RIGHT_MARGIN = 36
 const val TOP_MARGIN = 36
 const val BOTTOM_MARGIN = 36
 const val TYPEFACE = "Eurostile"
 const val FILL_BLACK = "#000000"
 const val FILL_LIGHT_GREY = "#c8c7c7"
 const val FILL_DARK_GREY = "#231f20"
+const val FONT_SIZE_VLARGE = 11.59f
 const val FONT_SIZE_LARGE = 7.2f
 const val FONT_SIZE_MEDIUM = 6.76f
 const val FONT_SIZE_SMALL = 6.2f
@@ -39,12 +40,13 @@ const val FONT_SIZE_VSMALL = 5.8f
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 
-data class RecordSheet(val size: PaperSize) {
+open class RecordSheet(val size: PaperSize) {
 
     val document = generate()
     val svgGenerator = SVGGraphics2D(document)
     val font= Font.decode(TYPEFACE) ?: Font.decode(Font.SANS_SERIF) ?: Font.decode(null)
     val logoHeight = addLogo()
+    val titleHeight = addTitle()
     val footerHeight = addCopyrightFooter()
 
     /**
@@ -113,7 +115,7 @@ data class RecordSheet(val size: PaperSize) {
         }
         document.documentElement.appendChild(gElement)
 
-        return Pair(dim.x * scale, dim.y * scale)
+        return Pair(dim.width * scale, dim.height * scale)
     }
 
     protected fun addTextElement(parent: Element, x: Double, y: Double, text: String,
@@ -166,7 +168,28 @@ data class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(0.0, 0.0, width() * 0.5, null, "btlogo.svg").second
+    fun addLogo() = embedImage(0.0, 0.0, width() * 0.67, null, "btlogo.svg").second
+
+    /**
+     * Places a generic title under the BT logo
+     *
+     * @return The height of the title text
+     */
+    fun addTitle(): Double {
+        val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
+        val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
+        textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${LEFT_MARGIN + width() / 3.0} ${TOP_MARGIN + logoHeight + height})")
+        textElem.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "title")
+        textElem.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
+        textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VLARGE}px")
+        textElem.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, SVGConstants.SVG_BOLD_VALUE)
+        textElem.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, SVGConstants.SVG_MIDDLE_VALUE)
+        textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_BLACK)
+        textElem.textContent = "RECORD SHEET"
+        document.documentElement.appendChild(textElem)
+        return height
+    }
 
     /**
      * Adds the copyright footer.
@@ -174,7 +197,7 @@ data class RecordSheet(val size: PaperSize) {
      * @return The height of the copyright footer's text element.
      */
     fun addCopyrightFooter(): Double {
-        val bundle = ResourceBundle.getBundle(this::class.java.name)
+        val bundle = ResourceBundle.getBundle(RecordSheet::class.java.name)
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")
         val line2 = bundle.getString("copyright.line2.text")
@@ -190,8 +213,8 @@ data class RecordSheet(val size: PaperSize) {
 
         var tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
         tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0.0")
-        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "-${height * 2.0}")
-        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, width().toString())
+        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "-$height")
+        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.95).toString())
         tspan.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
         tspan.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "tspanCopyright")
         tspan.textContent = line1
@@ -199,10 +222,8 @@ data class RecordSheet(val size: PaperSize) {
 
         tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
         tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0.0")
-        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "-$height")
-        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
-            (width() * calcTextLength(line2, FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE)
-                    / calcTextLength(line1, FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE)).toString())
+        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "0.0")
+        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.9).toString())
         tspan.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
         tspan.textContent = line2
         textElem.appendChild(tspan)

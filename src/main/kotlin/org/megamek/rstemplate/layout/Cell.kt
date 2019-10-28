@@ -1,12 +1,20 @@
 package org.megamek.rstemplate.layout
 
 /**
- *
+ * Convenience class for tracking and manipulating a rectangular section of a record sheet.
  */
-interface Cell {
-    fun row(): Int
-    fun column(): Int
-    fun width(): Int
-    fun height(): Int
+data class Cell(
+    val x: Double,
+    val y: Double,
+    val width: Double,
+    val height: Double
+) {
+    fun translate(dx: Double, dy: Double) = Cell(x + dx, y + dy, width, height)
+
+    fun scale(sx: Double, sy: Double) = Cell(x, y, width * sx, height * sy);
+
+    fun rightX() = x + width
+
+    fun bottomY() = y + height
 }
 
