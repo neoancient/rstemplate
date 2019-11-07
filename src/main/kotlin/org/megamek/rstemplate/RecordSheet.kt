@@ -258,4 +258,37 @@ open class RecordSheet(val size: PaperSize) {
         document.documentElement.appendChild(g)
     }
 
+    fun addTextElement(x: Double, y: Double, text: String, fontSize: Double,
+                       fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
+                       fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
+                       id: String? = null,
+                       maxWidth: Double? = null) {
+        val element = createTextElement(x, y, text, fontSize, fontWeight, fill, anchor,
+            id, maxWidth)
+        document.documentElement.appendChild(element)
+    }
+
+    fun createTextElement(x: Double, y: Double, text: String, fontSize: Double,
+                       fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
+                       fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
+                       id: String? = null,
+                        maxWidth: Double? = null): Element {
+        val t = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
+        t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
+        t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
+        t.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, TYPEFACE)
+        t.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.toString())
+        t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, fontWeight)
+        t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
+        t.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
+        t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
+        t.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
+            maxWidth?.toString() ?: calcTextLength(text, fontSize.toFloat(), fontWeight).toString())
+        if (id != null) {
+            t.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        }
+        t.textContent = text
+
+        return t
+    }
 }

@@ -47,14 +47,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
             l -$rectWidth,0 Z""".trimIndent())
         g.appendChild(background)
 
-        val t = sheet.document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, TYPEFACE)
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.toString())
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, SVGConstants.SVG_BOLD_VALUE)
-        t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, (taperWidth + textWidth * 0.05).toString())
-        t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, (textHeight * 1.5).toString())
-        t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fgColor)
-        t.textContent = text
+        val t = sheet.createTextElement(taperWidth + textWidth * 0.05,
+            textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fgColor)
         g.appendChild(t)
 
         return g
