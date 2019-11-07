@@ -3,6 +3,8 @@ package org.megamek.rstemplate
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.megamek.rstemplate.layout.PaperSize
+import java.io.File
+import java.io.FileOutputStream
 
 /**
  *
@@ -12,6 +14,8 @@ internal class MechRecordSheetTest {
     fun testMechRecordSheet() {
         val sheet = MechRecordSheet(PaperSize.LETTER)
 
-        sheet.export()
+        val ostr = FileOutputStream(File("record_sheet_test.svg"))
+        sheet.export(ostr)
+        ostr.close()
     }
 }

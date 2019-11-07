@@ -9,7 +9,10 @@ import org.apache.batik.bridge.UserAgentAdapter
 import org.apache.batik.svggen.SVGGraphics2D
 import org.apache.batik.util.SVGConstants
 import org.apache.batik.util.XMLResourceDescriptor
+import org.megamek.rstemplate.layout.CellBorder
 import org.megamek.rstemplate.layout.PaperSize
+import org.megamek.rstemplate.layout.RSLabel
+import org.megamek.rstemplate.layout.tabBevelX
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.awt.Font
@@ -31,6 +34,9 @@ const val TYPEFACE = "Eurostile"
 const val FILL_BLACK = "#000000"
 const val FILL_LIGHT_GREY = "#c8c7c7"
 const val FILL_DARK_GREY = "#231f20"
+const val FILL_WHITE = "#ffffff"
+const val FONT_SIZE_TAB_LABEL = 10.6
+const val FONT_SIZE_FREE_LABEL = 8.6
 const val FONT_SIZE_VLARGE = 11.59f
 const val FONT_SIZE_LARGE = 7.2f
 const val FONT_SIZE_MEDIUM = 6.76f
@@ -231,4 +237,25 @@ open class RecordSheet(val size: PaperSize) {
         document.documentElement.appendChild(textElem)
         return height * 2.0
     }
+
+    fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
+                  bottomTab: Boolean = false,
+                  bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
+                  bevelBottomLeft: Boolean = true) {
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
+
+        val label = RSLabel(this,2.5, 3.0, title, FONT_SIZE_TAB_LABEL)
+        val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
+            label.rectWidth + 4, FILL_LIGHT_GREY, 3.0, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+        val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
+            label.rectWidth + 4, FILL_DARK_GREY, 1.932, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+        g.appendChild(shadow.draw(document))
+        g.appendChild(border.draw(document))
+        g.appendChild(label.draw())
+
+        document.documentElement.appendChild(g)
+    }
+
 }
