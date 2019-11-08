@@ -1,11 +1,7 @@
 package org.megamek.rstemplate
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.layout.Cell
-import org.megamek.rstemplate.layout.CellBorder
-import org.megamek.rstemplate.layout.PaperSize
-import org.megamek.rstemplate.layout.RSLabel
-import java.awt.print.Paper
+import org.megamek.rstemplate.layout.*
 
 /**
  * Base class for Mech record sheets
@@ -15,10 +11,10 @@ const val padding = 3.0
 
 abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight + padding,
-        width() / 3.0, height() / 2.0 - logoHeight - titleHeight - padding)
-    val crewCell = eqTableCell.translate(eqTableCell.width, 0.0).scale(1.0, 0.5)
-    val fluffImageCell = crewCell.translate(0.0, crewCell.height)
+        width() * 0.4, height() / 2.0 - logoHeight - titleHeight - padding)
     val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0, height() / 2.0)
+    val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height / 2.0)
+    val fluffImageCell = crewCell.translate(0.0, crewCell.height)
     val critTableCell = Cell(LEFT_MARGIN.toDouble(), size.height / 2.0, width() * 0.667, height() / 2.0 - footerHeight)
     val heatScaleCell = Cell(armorCell.rightX() - 20, armorCell.bottomY(), 20.0, armorCell.height - footerHeight)
     val structureCell = Cell(armorCell.x, armorCell.bottomY(), armorCell.width - heatScaleCell.width, heatScaleCell.height * 0.5)
@@ -51,7 +47,26 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addTextElement(rect.x + rect.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true)
     }
 
-    abstract fun addUnitDataFields(x: Double, y: Double, width: Double): Double
+    /**
+     * Adds the fields and labels at the top of the unit data panel
+     */
+    open fun addUnitDataFields(x: Double, y: Double, width: Double): Double {
+        val fontSize = 7.7f
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        addTextElement(x, y, "Movement Points:", fontSize, SVGConstants.SVG_BOLD_VALUE)
+        addFieldSet(listOf(
+            LabeledField("Walking:", "mpWalk", "0"),
+            LabeledField("Running:", "mpRun", "0"),
+            LabeledField("Jumping:", "mpJump", "0")
+        ), x, y + lineHeight, fontSize, SVGConstants.SVG_BOLD_VALUE)
+        addFieldSet(listOf(
+            LabeledField("Tonnage:", "tonnage", "0"),
+            LabeledField("Tech Base:", "techBase","Inner Sphere"),
+            LabeledField("Rules Level:", "rulesLevel","Standard"),
+            LabeledField("Role:", "role", labelId = "labelRole")
+        ), x + width * 0.5, y, fontSize, SVGConstants.SVG_BOLD_VALUE)
+        return lineHeight * 4
+    }
 
     fun addCrewPanel(rect: Cell) {
         addBorder(rect.x, rect.y, rect.width - padding, rect.height - padding,
@@ -88,21 +103,4 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 }
 
 class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
-    override fun addUnitDataFields(x: Double, y: Double, width: Double): Double {
-        val fontSize = 7.7f
-        val lineHeight = calcFontHeight(fontSize).toDouble()
-        addTextElement(x, y, "Movement Points:", fontSize, SVGConstants.SVG_BOLD_VALUE)
-        addFieldSet(listOf(
-            Pair("Walking:", "mpWalk"),
-            Pair("Running:", "mpRun"),
-            Pair("Jumping:", "mpJump")
-        ), x, y + lineHeight, fontSize, SVGConstants.SVG_BOLD_VALUE)
-        addFieldSet(listOf(
-            Pair("Tonnage:", "tonnage"),
-            Pair("Tech Base:", "techBase"),
-            Pair("Rules Level:", "rulesLevel"),
-            Pair("Role:", "role")
-        ), x + width * 0.5, y, fontSize, SVGConstants.SVG_BOLD_VALUE)
-        return lineHeight * 4
-    }
 }

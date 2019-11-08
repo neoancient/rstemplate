@@ -271,7 +271,7 @@ open class RecordSheet(val size: PaperSize) {
 
     fun addTextElement(x: Double, y: Double, text: String, fontSize: Float,
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
-                       fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
+                       fill: String = FILL_DARK_GREY, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null,
                        fixedWidth: Boolean = false,
                        width: Double? = null) {
@@ -307,34 +307,31 @@ open class RecordSheet(val size: PaperSize) {
     }
 
     fun addField(label: String, id: String, x: Double, y: Double,
-                 fontSize: Float, fontWeight: String = SVGConstants.SVG_BOLD_VALUE) {
-        addFieldSet(listOf(Pair(label, id)), x, y, fontSize, fontWeight)
+                 fontSize: Float, fill: String = FILL_DARK_GREY, defaultText: String = "Lorem Ipsum") {
+        addFieldSet(listOf(LabeledField(label, id, defaultText)), x, y, fontSize, fill)
     }
 
-    fun addFieldSet(fields: List<Pair<String, String>>, x: Double, y: Double,
-                    fontSize: Float, fontWeight: String = SVGConstants.SVG_BOLD_VALUE) {
-        val labelWidth = fields.map{calcTextLength("${it.first}_", fontSize, fontWeight)}.max() ?: 0.0
+    fun addFieldSet(fields: List<LabeledField>, x: Double, y: Double,
+                    fontSize: Float, fill: String = FILL_DARK_GREY) {
+        val labelWidth = fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
-        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
         for (field in fields.withIndex()) {
-            g.appendChild(createTextElement(0.0, lineHeight * field.index,
-                field.value.first, fontSize, fontWeight, fixedWidth = true))
-            g.appendChild(createTextElement(labelWidth, lineHeight * field.index,
-                "[${field.value.second}]", fontSize, fontWeight, id = field.value.second, fixedWidth = false))
+            field.value.draw(this, x, y + lineHeight * field.index, fontSize, fill,
+                x + labelWidth)
         }
-        document.documentElement.appendChild(g)
     }
 
     fun addHorizontalLine(x: Double, y: Double, width: Double, strokeWidth: Double = STROKE_WIDTH,
-                          stroke: String = FILL_BLACK) {
+                          stroke: String = FILL_BLACK, id: String? = null) {
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
             "M $x,$y L ${x + width},$y")
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, stroke)
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        if (id != null) {
+            path.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        }
         document.documentElement.appendChild(path)
     }
 }
