@@ -17,10 +17,11 @@ const val bevelX = 6.845
 const val bevelY = 10.952
 const val tabBevelX = 5.475
 const val tabBevelY = 8.214
+const val STROKE_WIDTH = 1.932
 
 class CellBorder(val x: Double, val y: Double, val width: Double, val height: Double,
                  val textWidth: Double, val stroke: String = FILL_DARK_GREY,
-                 val strokeWidth: Double = 1.932,
+                 val strokeWidth: Double = STROKE_WIDTH,
                  val bottomTab: Boolean = false,
                  val bevelTopRight: Boolean = true, val bevelBottomRight: Boolean = true,
                  val bevelBottomLeft: Boolean = true) {

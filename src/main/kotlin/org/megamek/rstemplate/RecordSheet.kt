@@ -9,10 +9,7 @@ import org.apache.batik.bridge.UserAgentAdapter
 import org.apache.batik.svggen.SVGGraphics2D
 import org.apache.batik.util.SVGConstants
 import org.apache.batik.util.XMLResourceDescriptor
-import org.megamek.rstemplate.layout.CellBorder
-import org.megamek.rstemplate.layout.PaperSize
-import org.megamek.rstemplate.layout.RSLabel
-import org.megamek.rstemplate.layout.tabBevelX
+import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.awt.Font
@@ -35,8 +32,8 @@ const val FILL_BLACK = "#000000"
 const val FILL_LIGHT_GREY = "#c8c7c7"
 const val FILL_DARK_GREY = "#231f20"
 const val FILL_WHITE = "#ffffff"
-const val FONT_SIZE_TAB_LABEL = 10.6
-const val FONT_SIZE_FREE_LABEL = 8.6
+const val FONT_SIZE_TAB_LABEL = 10.6f
+const val FONT_SIZE_FREE_LABEL = 8.6f
 const val FONT_SIZE_VLARGE = 11.59f
 const val FONT_SIZE_LARGE = 7.2f
 const val FONT_SIZE_MEDIUM = 6.76f
@@ -151,7 +148,7 @@ open class RecordSheet(val size: PaperSize) {
     fun calcFontHeight(fontSize: Float): Float {
         val f = font.deriveFont(fontSize)
         val fm = svgGenerator.getFontMetrics(f)
-        return fm.getHeight().toFloat()
+        return fm.height.toFloat()
     }
 
     fun calcTextLength(text: String, fontSize: Float, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE): Double {
@@ -238,10 +235,24 @@ open class RecordSheet(val size: PaperSize) {
         return height * 2.0
     }
 
+    /**
+     * Draws a titled border around an area.
+     *
+     * @param x The x coordinate of the upper left
+     * @param y The y coordinate of the upper left
+     * @param width The width of the region
+     * @param height The height of the region
+     * @param title The title text
+     * @param bottomTab Whether to add a tab on the bottom right like the one at the top
+     * @param bevelTopRight Whether to bevel the top right corner
+     * @param bevelBottomLeft Whether to bevel the bottom left corner
+     * @param bevelBottomRight Whether to bevel the bottom right corner; ignored if {@code bottomTab} is true
+     * @return The y coordinate of the bottom of the title label
+     */
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
                   bottomTab: Boolean = false,
                   bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
-                  bevelBottomLeft: Boolean = true) {
+                  bevelBottomLeft: Boolean = true): Double {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
@@ -254,25 +265,26 @@ open class RecordSheet(val size: PaperSize) {
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
-
         document.documentElement.appendChild(g)
+        return 3.0 + label.textHeight * 2
     }
 
-    fun addTextElement(x: Double, y: Double, text: String, fontSize: Double,
+    fun addTextElement(x: Double, y: Double, text: String, fontSize: Float,
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
                        fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null,
-                       maxWidth: Double? = null) {
+                       fixedWidth: Boolean = false,
+                       width: Double? = null) {
         val element = createTextElement(x, y, text, fontSize, fontWeight, fill, anchor,
-            id, maxWidth)
+            id, fixedWidth, width)
         document.documentElement.appendChild(element)
     }
 
-    fun createTextElement(x: Double, y: Double, text: String, fontSize: Double,
+    fun createTextElement(x: Double, y: Double, text: String, fontSize: Float,
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
                        fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null,
-                        maxWidth: Double? = null): Element {
+                       fixedWidth: Boolean = false, width: Double? = null): Element {
         val t = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
         t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
@@ -281,14 +293,48 @@ open class RecordSheet(val size: PaperSize) {
         t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, fontWeight)
         t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         t.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
-        t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
-        t.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
-            maxWidth?.toString() ?: calcTextLength(text, fontSize.toFloat(), fontWeight).toString())
+        if (fixedWidth) {
+            t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
+            t.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
+                (width ?: calcTextLength(text, fontSize, fontWeight)).toString())
+        }
         if (id != null) {
             t.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
         t.textContent = text
 
         return t
+    }
+
+    fun addField(label: String, id: String, x: Double, y: Double,
+                 fontSize: Float, fontWeight: String = SVGConstants.SVG_BOLD_VALUE) {
+        addFieldSet(listOf(Pair(label, id)), x, y, fontSize, fontWeight)
+    }
+
+    fun addFieldSet(fields: List<Pair<String, String>>, x: Double, y: Double,
+                    fontSize: Float, fontWeight: String = SVGConstants.SVG_BOLD_VALUE) {
+        val labelWidth = fields.map{calcTextLength("${it.first}_", fontSize, fontWeight)}.max() ?: 0.0
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
+        for (field in fields.withIndex()) {
+            g.appendChild(createTextElement(0.0, lineHeight * field.index,
+                field.value.first, fontSize, fontWeight, fixedWidth = true))
+            g.appendChild(createTextElement(labelWidth, lineHeight * field.index,
+                "[${field.value.second}]", fontSize, fontWeight, id = field.value.second, fixedWidth = false))
+        }
+        document.documentElement.appendChild(g)
+    }
+
+    fun addHorizontalLine(x: Double, y: Double, width: Double, strokeWidth: Double = STROKE_WIDTH,
+                          stroke: String = FILL_BLACK) {
+        val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M $x,$y L ${x + width},$y")
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, stroke)
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        document.documentElement.appendChild(path)
     }
 }

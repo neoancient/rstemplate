@@ -17,7 +17,7 @@ import org.w3c.dom.Element
  * @param center   If true, the center of the label will be at the x position
  */
 class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: String,
-               val fontSize: Double, val bgColor: String = FILL_BLACK,
+               val fontSize: Float, val bgColor: String = FILL_BLACK,
                val fgColor: String = FILL_WHITE, val center: Boolean = false){
 
     val textHeight = sheet.calcFontHeight(fontSize.toFloat()) * 0.625

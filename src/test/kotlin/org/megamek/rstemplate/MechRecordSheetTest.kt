@@ -12,7 +12,7 @@ import java.io.FileOutputStream
 internal class MechRecordSheetTest {
     @Test
     fun testMechRecordSheet() {
-        val sheet = MechRecordSheet(PaperSize.LETTER)
+        val sheet = BipedMechRecordSheet(PaperSize.LETTER)
 
         val ostr = FileOutputStream(File("record_sheet_test.svg"))
         sheet.export(ostr)

@@ -5,6 +5,7 @@ import org.megamek.rstemplate.layout.Cell
 import org.megamek.rstemplate.layout.CellBorder
 import org.megamek.rstemplate.layout.PaperSize
 import org.megamek.rstemplate.layout.RSLabel
+import java.awt.print.Paper
 
 /**
  * Base class for Mech record sheets
@@ -12,7 +13,7 @@ import org.megamek.rstemplate.layout.RSLabel
 
 const val padding = 3.0
 
-open class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
+abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight + padding,
         width() / 3.0, height() / 2.0 - logoHeight - titleHeight - padding)
     val crewCell = eqTableCell.translate(eqTableCell.width, 0.0).scale(1.0, 0.5)
@@ -34,21 +35,23 @@ open class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addHeatScale(heatScaleCell)
     }
 
-    fun addRect(cell: Cell) {
-        val rect = document.createElementNS(svgNS, SVGConstants.SVG_RECT_TAG)
-        rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, cell.x.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, cell.y.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, cell.width.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, cell.height.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, "none")
-        rect.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, "#000000")
-        document.documentElement.appendChild(rect)
+    fun addEquipmentTable(rect: Cell) {
+        var ypos = rect.y + addBorder(rect.x, rect.y, rect.width - padding, rect.height - padding,
+            "'MECH DATA", true, false)
+        val fontSize = 9.67f
+        val lineHeight = calcFontHeight(fontSize)
+        ypos += lineHeight
+        addField("Type:", "type", rect.x + padding, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE)
+        ypos += lineHeight
+        ypos += addUnitDataFields(rect.x + padding * 2, ypos, rect.width - padding * 3)
+        addHorizontalLine(rect.x + padding, ypos - lineHeight * 0.5, rect.width - padding * 5)
+        ypos += lineHeight * 0.5
+        addTextElement(rect.x + padding, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
+            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = rect.width * 0.6)
+        addTextElement(rect.x + rect.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true)
     }
 
-    fun addEquipmentTable(rect: Cell) {
-        addBorder(rect.x, rect.y, rect.width - padding, rect.height - padding,
-            "'MECH DATA", true, false)
-    }
+    abstract fun addUnitDataFields(x: Double, y: Double, width: Double): Double
 
     fun addCrewPanel(rect: Cell) {
         addBorder(rect.x, rect.y, rect.width - padding, rect.height - padding,
@@ -82,5 +85,24 @@ open class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     fun addHeatScale(rect: Cell) {
 
     }
+}
 
+class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+    override fun addUnitDataFields(x: Double, y: Double, width: Double): Double {
+        val fontSize = 7.7f
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        addTextElement(x, y, "Movement Points:", fontSize, SVGConstants.SVG_BOLD_VALUE)
+        addFieldSet(listOf(
+            Pair("Walking:", "mpWalk"),
+            Pair("Running:", "mpRun"),
+            Pair("Jumping:", "mpJump")
+        ), x, y + lineHeight, fontSize, SVGConstants.SVG_BOLD_VALUE)
+        addFieldSet(listOf(
+            Pair("Tonnage:", "tonnage"),
+            Pair("Tech Base:", "techBase"),
+            Pair("Rules Level:", "rulesLevel"),
+            Pair("Role:", "role")
+        ), x + width * 0.5, y, fontSize, SVGConstants.SVG_BOLD_VALUE)
+        return lineHeight * 4
+    }
 }
