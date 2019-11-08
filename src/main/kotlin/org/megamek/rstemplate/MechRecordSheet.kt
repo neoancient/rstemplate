@@ -37,19 +37,20 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
-        var ypos = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
+        val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
             "'MECH DATA", true, false, parent = g)
+        var ypos = internal.y
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField("Type:", "type", padding, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
+        addField("Type:", "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
         ypos += lineHeight
-        ypos += addUnitDataFields(padding * 2, ypos, rect.width - padding * 3, parent = g)
-        addHorizontalLine(padding, ypos - lineHeight * 0.5, rect.width - padding * 5, parent = g)
+        ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
+        addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
         ypos += lineHeight * 0.5
-        addTextElement(padding, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
-            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = rect.width * 0.6, parent = g)
-        addTextElement(rect.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+        addTextElement(internal.x, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
+            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
+        addTextElement(internal.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
         document.documentElement.appendChild(g)
     }
 

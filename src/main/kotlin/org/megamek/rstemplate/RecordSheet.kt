@@ -250,13 +250,13 @@ open class RecordSheet(val size: PaperSize) {
      * @param bevelTopRight Whether to bevel the top right corner
      * @param bevelBottomLeft Whether to bevel the bottom left corner
      * @param bevelBottomRight Whether to bevel the bottom right corner; ignored if {@code bottomTab} is true
-     * @return The y coordinate of the bottom of the title label
+     * @return The area inside the border
      */
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
                   bottomTab: Boolean = false,
                   bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true,
-                  parent: Element = document.documentElement): Double {
+                  parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
@@ -270,7 +270,7 @@ open class RecordSheet(val size: PaperSize) {
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
         parent.appendChild(g)
-        return 3.0 + label.textHeight * 2
+        return Cell(x, y, width, height).inset(3.0, 5.0,3.0 + label.textHeight * 2, 5.0)
     }
 
     fun addTextElement(x: Double, y: Double, text: String, fontSize: Float,

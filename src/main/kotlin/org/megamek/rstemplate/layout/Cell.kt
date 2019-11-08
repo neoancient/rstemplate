@@ -13,6 +13,9 @@ data class Cell(
 
     fun scale(sx: Double, sy: Double) = Cell(x, y, width * sx, height * sy);
 
+    fun inset(left: Double, right: Double, top: Double, bottom: Double) =
+        Cell(x + left, y + top, width - left - right, height - top - bottom)
+
     fun rightX() = x + width
 
     fun bottomY() = y + height
