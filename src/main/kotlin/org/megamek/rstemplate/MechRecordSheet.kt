@@ -2,6 +2,7 @@ package org.megamek.rstemplate
 
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
+import org.w3c.dom.Element
 
 /**
  * Base class for Mech record sheets
@@ -32,39 +33,45 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addEquipmentTable(rect: Cell) {
-        var ypos = rect.y + addBorder(rect.x, rect.y, rect.width - padding, rect.height - padding,
-            "'MECH DATA", true, false)
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
+        var ypos = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
+            "'MECH DATA", true, false, parent = g)
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField("Type:", "type", rect.x + padding, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE)
+        addField("Type:", "type", padding, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
         ypos += lineHeight
-        ypos += addUnitDataFields(rect.x + padding * 2, ypos, rect.width - padding * 3)
-        addHorizontalLine(rect.x + padding, ypos - lineHeight * 0.5, rect.width - padding * 5)
+        ypos += addUnitDataFields(padding * 2, ypos, rect.width - padding * 3, parent = g)
+        addHorizontalLine(padding, ypos - lineHeight * 0.5, rect.width - padding * 5, parent = g)
         ypos += lineHeight * 0.5
-        addTextElement(rect.x + padding, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
-            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = rect.width * 0.6)
-        addTextElement(rect.x + rect.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true)
+        addTextElement(padding, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
+            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = rect.width * 0.6, parent = g)
+        addTextElement(rect.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+        document.documentElement.appendChild(g)
     }
 
     /**
      * Adds the fields and labels at the top of the unit data panel
      */
-    open fun addUnitDataFields(x: Double, y: Double, width: Double): Double {
+    open fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        addTextElement(x, y, "Movement Points:", fontSize, SVGConstants.SVG_BOLD_VALUE)
+        addTextElement(x, y, "Movement Points:", fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
         addFieldSet(listOf(
             LabeledField("Walking:", "mpWalk", "0"),
             LabeledField("Running:", "mpRun", "0"),
             LabeledField("Jumping:", "mpJump", "0")
-        ), x, y + lineHeight, fontSize, SVGConstants.SVG_BOLD_VALUE)
+        ), x, y + lineHeight, fontSize, FILL_DARK_GREY, parent)
         addFieldSet(listOf(
             LabeledField("Tonnage:", "tonnage", "0"),
             LabeledField("Tech Base:", "techBase","Inner Sphere"),
             LabeledField("Rules Level:", "rulesLevel","Standard"),
             LabeledField("Role:", "role", labelId = "labelRole")
-        ), x + width * 0.5, y, fontSize, SVGConstants.SVG_BOLD_VALUE)
+        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent)
         return lineHeight * 4
     }
 

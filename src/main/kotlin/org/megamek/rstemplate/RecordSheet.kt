@@ -68,7 +68,7 @@ open class RecordSheet(val size: PaperSize) {
     fun generate(): Document {
         val domImpl = SVGDOMImplementation.getDOMImplementation()
         val doc = domImpl.createDocument(SVGNS, SVGConstants.SVG_SVG_TAG, null)
-        val svgRoot = doc.getDocumentElement()
+        val svgRoot = doc.documentElement
         svgRoot.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, size.width.toString())
         svgRoot.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, size.height.toString())
 
@@ -87,8 +87,11 @@ open class RecordSheet(val size: PaperSize) {
      * @param h         The maximum height of the image in the parent document. If y is {@code null}, any scaling will not take
      *                  height into account.
      * @param name      The name of the resource file relative to the current class.
+     * @param parent    The parent element for the image
+     * @return          The final width and height of the embedded image
      */
-    fun embedImage(x: Double = 0.0, y: Double = 0.0, w: Double? = null, h: Double? = null, name: String): Pair<Double, Double> {
+    fun embedImage(x: Double = 0.0, y: Double = 0.0, w: Double? = null, h: Double? = null, name: String,
+                   parent: Element = document.documentElement): Pair<Double, Double> {
         val istr = this::class.java.getResourceAsStream(name)
         if (istr == null) {
             return Pair(0.0, 0.0)
@@ -110,13 +113,13 @@ open class RecordSheet(val size: PaperSize) {
 
         val gElement = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         gElement.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale ${x + LEFT_MARGIN} ${y + TOP_MARGIN})");
+            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale ${x + LEFT_MARGIN} ${y + TOP_MARGIN})")
 
         for (i in 0 until imageDoc.documentElement.childNodes.length) {
             val node = imageDoc.documentElement.childNodes.item(i)
             gElement.appendChild(document.importNode(node, true))
         }
-        document.documentElement.appendChild(gElement)
+        parent.appendChild(gElement)
 
         return Pair(dim.width * scale, dim.height * scale)
     }
@@ -178,7 +181,7 @@ open class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the title text
      */
-    fun addTitle(): Double {
+    fun addTitle(parent: Element = document.documentElement): Double {
         val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -190,7 +193,7 @@ open class RecordSheet(val size: PaperSize) {
         textElem.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, SVGConstants.SVG_MIDDLE_VALUE)
         textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_BLACK)
         textElem.textContent = "RECORD SHEET"
-        document.documentElement.appendChild(textElem)
+        parent.appendChild(textElem)
         return height
     }
 
@@ -199,7 +202,7 @@ open class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the copyright footer's text element.
      */
-    fun addCopyrightFooter(): Double {
+    fun addCopyrightFooter(parent: Element = document.documentElement): Double {
         val bundle = ResourceBundle.getBundle(RecordSheet::class.java.name)
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")
@@ -231,7 +234,7 @@ open class RecordSheet(val size: PaperSize) {
         tspan.textContent = line2
         textElem.appendChild(tspan)
 
-        document.documentElement.appendChild(textElem)
+        parent.appendChild(textElem)
         return height * 2.0
     }
 
@@ -252,7 +255,8 @@ open class RecordSheet(val size: PaperSize) {
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
                   bottomTab: Boolean = false,
                   bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
-                  bevelBottomLeft: Boolean = true): Double {
+                  bevelBottomLeft: Boolean = true,
+                  parent: Element = document.documentElement): Double {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
@@ -265,7 +269,7 @@ open class RecordSheet(val size: PaperSize) {
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
-        document.documentElement.appendChild(g)
+        parent.appendChild(g)
         return 3.0 + label.textHeight * 2
     }
 
@@ -274,10 +278,10 @@ open class RecordSheet(val size: PaperSize) {
                        fill: String = FILL_DARK_GREY, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null,
                        fixedWidth: Boolean = false,
-                       width: Double? = null) {
+                       width: Double? = null,parent: Element = document.documentElement) {
         val element = createTextElement(x, y, text, fontSize, fontWeight, fill, anchor,
             id, fixedWidth, width)
-        document.documentElement.appendChild(element)
+        parent.appendChild(element)
     }
 
     fun createTextElement(x: Double, y: Double, text: String, fontSize: Float,
@@ -307,22 +311,25 @@ open class RecordSheet(val size: PaperSize) {
     }
 
     fun addField(label: String, id: String, x: Double, y: Double,
-                 fontSize: Float, fill: String = FILL_DARK_GREY, defaultText: String = "Lorem Ipsum") {
-        addFieldSet(listOf(LabeledField(label, id, defaultText)), x, y, fontSize, fill)
+                 fontSize: Float, fill: String = FILL_DARK_GREY, defaultText: String = "Lorem Ipsum",
+                 parent: Element = document.documentElement) {
+        addFieldSet(listOf(LabeledField(label, id, defaultText)), x, y, fontSize, fill, parent)
     }
 
     fun addFieldSet(fields: List<LabeledField>, x: Double, y: Double,
-                    fontSize: Float, fill: String = FILL_DARK_GREY) {
+                    fontSize: Float, fill: String = FILL_DARK_GREY,
+                    parent: Element = document.documentElement) {
         val labelWidth = fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (field in fields.withIndex()) {
             field.value.draw(this, x, y + lineHeight * field.index, fontSize, fill,
-                x + labelWidth)
+                x + labelWidth, parent = parent)
         }
     }
 
     fun addHorizontalLine(x: Double, y: Double, width: Double, strokeWidth: Double = STROKE_WIDTH,
-                          stroke: String = FILL_BLACK, id: String? = null) {
+                          stroke: String = FILL_BLACK, id: String? = null,
+                          parent: Element = document.documentElement) {
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
             "M $x,$y L ${x + width},$y")
@@ -332,6 +339,6 @@ open class RecordSheet(val size: PaperSize) {
         if (id != null) {
             path.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
-        document.documentElement.appendChild(path)
+        parent.appendChild(path)
     }
 }
