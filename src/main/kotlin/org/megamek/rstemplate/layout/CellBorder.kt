@@ -52,10 +52,10 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
         }
         if (bottomTab) {
             sj.add(absLineTo(width, height))
-            sj.add(relLineTo(-bevelX, bevelY))
+            sj.add(relLineTo(-tabBevelX, tabBevelY))
 
-            sj.add(absLineTo(width * 0.6, height + bevelY))
-            sj.add(relLineTo(-bevelX, -bevelY))
+            sj.add(absLineTo(width * 0.5, height + tabBevelY))
+            sj.add(relLineTo(-tabBevelX, -tabBevelY))
         } else if (bevelBottomRight) {
             sj.add(absLineTo(width, height - bevelY))
             sj.add(relLineTo(-bevelX, bevelY))

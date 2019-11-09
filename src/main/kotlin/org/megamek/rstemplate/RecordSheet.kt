@@ -312,18 +312,22 @@ open class RecordSheet(val size: PaperSize) {
 
     fun addField(label: String, id: String, x: Double, y: Double,
                  fontSize: Float, fill: String = FILL_DARK_GREY, defaultText: String = "Lorem Ipsum",
+                 fieldOffset: Double? = null,
+                 fieldAnchor: String = SVGConstants.SVG_START_VALUE,
                  parent: Element = document.documentElement) {
-        addFieldSet(listOf(LabeledField(label, id, defaultText)), x, y, fontSize, fill, parent)
+        addFieldSet(listOf(LabeledField(label, id, defaultText)), x, y, fontSize, fill, fieldOffset, fieldAnchor, parent)
     }
 
     fun addFieldSet(fields: List<LabeledField>, x: Double, y: Double,
                     fontSize: Float, fill: String = FILL_DARK_GREY,
+                    fieldOffset: Double? = null,
+                    fieldAnchor: String = SVGConstants.SVG_START_VALUE,
                     parent: Element = document.documentElement) {
-        val labelWidth = fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
+        val labelWidth = fieldOffset ?: fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (field in fields.withIndex()) {
             field.value.draw(this, x, y + lineHeight * field.index, fontSize, fill,
-                x + labelWidth, parent = parent)
+                x + labelWidth, fieldAnchor = fieldAnchor, parent = parent)
         }
     }
 
@@ -340,5 +344,17 @@ open class RecordSheet(val size: PaperSize) {
             path.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
         parent.appendChild(path)
+    }
+
+    fun addRect(x: Double, y: Double, width: Double, height: Double,
+                fill: String = SVGConstants.SVG_NONE_VALUE,
+                id: String? = null, parent: Element = document.documentElement) {
+        val rect = document.createElementNS(svgNS, SVGConstants.SVG_RECT_TAG)
+        rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
+        rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
+        rect.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.toString())
+        rect.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.toString())
+        rect.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
+        parent.appendChild(rect)
     }
 }

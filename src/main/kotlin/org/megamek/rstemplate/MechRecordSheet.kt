@@ -51,6 +51,16 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addTextElement(internal.x, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
             SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
         addTextElement(internal.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+
+        addRect(internal.x, ypos + padding, internal.width - padding, internal.bottomY() - ypos - padding - lineHeight * 2.0,
+            SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
+
+        addHorizontalLine(internal.x, internal.bottomY() - padding - lineHeight * 1.5, internal.width - padding, parent = g)
+        addField("BV:", "bv", internal.x + padding + bevelX, internal.bottomY() - padding * 2,
+            fontSize, defaultText = "0", parent = g)
+        addRect(rect.width * 0.5 + (rect.width * 0.5 - tabBevelX - padding) * 0.5 - 10,
+            internal.bottomY() - padding * 0.5 - lineHeight * 0.75 + tabBevelY * 0.5 - 10.0,
+            20.0, 20.0, id = "eraIcon", parent = g)
         document.documentElement.appendChild(g)
     }
 
@@ -66,13 +76,14 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             LabeledField("Walking:", "mpWalk", "0"),
             LabeledField("Running:", "mpRun", "0"),
             LabeledField("Jumping:", "mpJump", "0")
-        ), x, y + lineHeight, fontSize, FILL_DARK_GREY, parent)
+        ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 50.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
         addFieldSet(listOf(
             LabeledField("Tonnage:", "tonnage", "0"),
             LabeledField("Tech Base:", "techBase","Inner Sphere"),
             LabeledField("Rules Level:", "rulesLevel","Standard"),
             LabeledField("Role:", "role", labelId = "labelRole")
-        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent)
+        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
         return lineHeight * 4
     }
 

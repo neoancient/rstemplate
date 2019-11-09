@@ -25,24 +25,29 @@ class LabeledField(val labelText: String, val id: String,
     /**
      * Adds the label, field, and blank line (if any) elements to the document.
      *
-     * @param sheet The record sheet instance
-     * @param x     The x coordinate of the start of the label
-     * @param y     The y coordinate of the elements
-     * @param fontSize The size of font used for the text
-     * @param fontWeight The weight of the font to use
-     * @param fill       The color of the text and blank line
-     * @param fieldX     The x coordinate of the start of the field element. If null, it will be placed
-     *                   after the label with an underscore-width space between them.
-     * @param lineWidth  The width of the blank line. If null, no blank line is drawn.
-     * @param parent     The parent for the label and field elements
+     * @param sheet       The record sheet instance
+     * @param x           The x coordinate of the start of the label
+     * @param y           The y coordinate of the elements
+     * @param fontSize    The size of font used for the text
+     * @param fontWeight  The weight of the font to use
+     * @param fill        The color of the text and blank line
+     * @param fieldX      The x coordinate of the start of the field element. If null, it will be placed
+     *                    after the label with an underscore-width space between them.
+     * @param lineWidth   The width of the blank line. If null, no blank line is drawn.
+     * @param fieldAnchor Sets justification of the field element. If this is middle or end, the fieldX
+     *                    parameter should be provided a value that will ensure enough space that the
+     *                    field text does not overlap the label.
+     * @param parent      The parent for the label and field elements
      */
     fun draw(sheet: RecordSheet, x: Double, y: Double, fontSize: Float,
              fill: String = FILL_DARK_GREY, fieldX: Double? = null, lineWidth: Double? = null,
+             fieldAnchor: String = SVGConstants.SVG_START_VALUE,
              parent: Element) {
         sheet.addTextElement(x, y, labelText, fontSize, SVGConstants.SVG_BOLD_VALUE, fill,
             SVGConstants.SVG_START_VALUE, id = labelId, fixedWidth = true, parent = parent)
         val xpos = fieldX ?: x + sheet.calcTextLength("${labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
-        sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE, fill, id = id, parent = parent)
+        sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE, fill,
+            fieldAnchor, id, parent = parent)
         if (lineWidth != null) {
             sheet.addHorizontalLine(xpos, y, lineWidth, 0.72, fill, id = blankId ?: "blank$id", parent = parent)
         }
