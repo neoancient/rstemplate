@@ -3,6 +3,7 @@ package org.megamek.rstemplate
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Element
+import java.util.*
 
 /**
  * Base class for Mech record sheets
@@ -21,6 +22,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val structureCell = Cell(armorCell.x, armorCell.bottomY(), armorCell.width - heatScaleCell.width, heatScaleCell.height * 0.5)
     val heatCell = structureCell.translate(0.0, structureCell.height)
 
+    val bundle = ResourceBundle.getBundle(MechRecordSheet::class.java.name)
+
     init {
         addEquipmentTable(eqTableCell)
         addCrewPanel(crewCell)
@@ -38,25 +41,25 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
-            "'MECH DATA", true, false, parent = g)
+            bundle.getString("dataPanel.title"), true, false, parent = g)
         var ypos = internal.y
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField("Type:", "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
+        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
         ypos += lineHeight
         ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
         addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
         ypos += lineHeight * 0.5
-        addTextElement(internal.x, ypos, "Weapons & Equipment Inventory:", FONT_SIZE_FREE_LABEL,
+        addTextElement(internal.x, ypos, bundle.getString("weaponsAndEquipment"), FONT_SIZE_FREE_LABEL,
             SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
-        addTextElement(internal.width * 0.75, ypos, "(hexes)", FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+        addTextElement(internal.width * 0.75, ypos, bundle.getString("hexes"), FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
 
         addRect(internal.x, ypos + padding, internal.width - padding, internal.bottomY() - ypos - padding - lineHeight * 2.0,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
 
         addHorizontalLine(internal.x, internal.bottomY() - padding - lineHeight * 1.5, internal.width - padding, parent = g)
-        addField("BV:", "bv", internal.x + padding + bevelX, internal.bottomY() - padding * 2,
+        addField(bundle.getString("bv"), "bv", internal.x + padding + bevelX, internal.bottomY() - padding * 2,
             fontSize, defaultText = "0", parent = g)
         addRect(rect.width * 0.5 + (rect.width * 0.5 - tabBevelX - padding) * 0.5 - 10,
             internal.bottomY() - padding * 0.5 - lineHeight * 0.75 + tabBevelY * 0.5 - 10.0,
@@ -70,19 +73,19 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        addTextElement(x, y, "Movement Points:", fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addTextElement(x, y, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
             FILL_DARK_GREY, parent = parent)
         addFieldSet(listOf(
-            LabeledField("Walking:", "mpWalk", "0"),
-            LabeledField("Running:", "mpRun", "0"),
-            LabeledField("Jumping:", "mpJump", "0")
+            LabeledField(bundle.getString("walking"), "mpWalk", "0"),
+            LabeledField(bundle.getString("running"), "mpRun", "0"),
+            LabeledField(bundle.getString("jumping"), "mpJump", "0")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 50.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent)
         addFieldSet(listOf(
-            LabeledField("Tonnage:", "tonnage", "0"),
-            LabeledField("Tech Base:", "techBase","Inner Sphere"),
-            LabeledField("Rules Level:", "rulesLevel","Standard"),
-            LabeledField("Role:", "role", labelId = "labelRole")
+            LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
+            LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
+            LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
+            LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
         ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
         return lineHeight * 4
     }
@@ -95,25 +98,25 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         //addRect(rect)
     }
     fun addArmorDiagram(rect: Cell) {
-        val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, "ARMOR DIAGRAM",
+        val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         document.documentElement.appendChild(label.draw())
     }
 
     fun addCritTable(rect: Cell) {
         addBorder(rect.x, rect.y, rect.width - padding, rect.height,
-            "CRITICAL TABLE")
+            bundle.getString("critTablePanel.title"))
     }
 
     fun addStructureDiagram(rect: Cell) {
-        val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, "INTERNAL STRUCTURE DIAGRAM",
+        val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("isPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         document.documentElement.appendChild(label.draw())
     }
 
     fun addHeatPanel(rect: Cell) {
         addBorder(rect.x, rect.y, rect.width - padding, rect.height,
-            "HEAT")
+            bundle.getString("heatPanel.title"))
     }
 
     fun addHeatScale(rect: Cell) {
