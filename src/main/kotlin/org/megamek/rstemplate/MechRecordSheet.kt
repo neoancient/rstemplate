@@ -125,4 +125,21 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 }
 
 class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+    override val fileName = "mech_biped_default.svg"
+}
+
+class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+    override val fileName = "mech_quad_default.svg"
+}
+
+class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+    override val fileName = "mech_tripod_default.svg"
+}
+
+class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+    override val fileName = "mech_biped_lam.svg"
+}
+
+class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+    override val fileName = "mech_quadvee.svg"
 }

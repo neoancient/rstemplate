@@ -43,7 +43,8 @@ const val FONT_SIZE_VSMALL = 5.8f
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 
-open class RecordSheet(val size: PaperSize) {
+abstract class RecordSheet(val size: PaperSize) {
+    abstract val fileName: String
 
     val document = generate()
     val svgGenerator = SVGGraphics2D(document)
@@ -355,6 +356,9 @@ open class RecordSheet(val size: PaperSize) {
         rect.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.toString())
         rect.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.toString())
         rect.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
+        if (id != null) {
+            rect.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        }
         parent.appendChild(rect)
     }
 }
