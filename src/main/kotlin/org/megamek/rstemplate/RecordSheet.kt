@@ -195,7 +195,7 @@ abstract class RecordSheet(val size: PaperSize) {
         textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_BLACK)
         textElem.textContent = "RECORD SHEET"
         parent.appendChild(textElem)
-        return height
+        return height * 1.5
     }
 
     /**

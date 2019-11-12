@@ -12,8 +12,8 @@ import java.util.*
 const val padding = 3.0
 
 abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
-    val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight + padding,
-        width() * 0.4, height() / 2.0 - logoHeight - titleHeight - padding)
+    val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
+        width() * 0.4, height() / 2.0 - logoHeight - titleHeight)
     val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0, height() / 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height / 2.0)
     val fluffImageCell = crewCell.translate(0.0, crewCell.height)
@@ -55,7 +55,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
         addTextElement(internal.width * 0.75, ypos, bundle.getString("hexes"), FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
 
-        addRect(internal.x, ypos + padding, internal.width - padding, internal.bottomY() - ypos - padding - lineHeight * 2.0,
+        addRect(internal.x, ypos, internal.width - padding, internal.bottomY() - ypos - lineHeight * 2.0,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
 
         addHorizontalLine(internal.x, internal.bottomY() - padding - lineHeight * 1.5, internal.width - padding, parent = g)
@@ -138,8 +138,81 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_lam.svg"
+
+    override fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
+        val fontSize = 7.7f
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        addField(bundle.getString("tonnage"), "tonnage", x, y, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
+            LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
+            LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
+        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
+
+        addTextElement(x, y + lineHeight, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
+        addTextElement(x, y + lineHeight * 2, bundle.getString("battlemech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("walking"), "mpWalk", "0"),
+            LabeledField(bundle.getString("running"), "mpRun", "0"),
+            LabeledField(bundle.getString("jumping"), "mpJump", "0")
+        ), x, y + lineHeight * 3, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
+
+        addTextElement(x + width * 0.48, y + lineHeight * 3, bundle.getString("airmech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("walking"), "mpAirMechWalk", "0"),
+            LabeledField(bundle.getString("running"), "mpAirMechRun", "0")
+        ), x + width * 0.24, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("cruising"), "mpAirMechCruise", "0"),
+            LabeledField(bundle.getString("flanking"), "mpAirMechFlank", "0")
+        ), x + width * 0.48, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
+
+        addTextElement(x + width * 0.72, y + lineHeight * 3, bundle.getString("fighter"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("safeThrust"), "mpSafeThrust", "0"),
+            LabeledField(bundle.getString("maxThrust"), "mpMaxThrust", "0")
+        ), x + width * 0.72, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 47.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
+
+        return lineHeight * 6
+    }
 }
 
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quadvee.svg"
+
+    override fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
+        val fontSize = 7.7f
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        addTextElement(x, y, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("walking"), "mpWalk", "0"),
+            LabeledField(bundle.getString("running"), "mpRun", "0"),
+            LabeledField(bundle.getString("jumping"), "mpJump", "0")
+        ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
+        addTextElement(x + width * 0.25, y + lineHeight, bundle.getString("vehicle"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("cruising"), "mpCruise", "0"),
+            LabeledField(bundle.getString("flanking"), "mpFlank", "0")
+        ), x + width * 0.25, y + lineHeight * 2, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
+            LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
+            LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
+            LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
+        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
+        return lineHeight * 4
+    }
 }
