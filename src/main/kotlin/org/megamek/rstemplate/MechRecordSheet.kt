@@ -15,8 +15,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
         width() * 0.4, height() / 2.0 - logoHeight - titleHeight)
     val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0, height() / 2.0)
-    val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height / 2.0)
-    val fluffImageCell = crewCell.translate(0.0, crewCell.height)
+    val crewFluffCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height)
     val critTableCell = Cell(LEFT_MARGIN.toDouble(), size.height / 2.0, width() * 0.667, height() / 2.0 - footerHeight)
     val heatScaleCell = Cell(armorCell.rightX() - 20, armorCell.bottomY(), 20.0, armorCell.height - footerHeight)
     val structureCell = Cell(armorCell.x, armorCell.bottomY(), armorCell.width - heatScaleCell.width, heatScaleCell.height * 0.5)
@@ -26,8 +25,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 
     init {
         addEquipmentTable(eqTableCell)
-        addCrewPanel(crewCell)
-        addFluffImageArea(fluffImageCell)
+        addCrewAndFluffPanels(crewFluffCell)
         addArmorDiagram(armorCell)
         addCritTable(critTableCell)
         addStructureDiagram(structureCell)
@@ -80,7 +78,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             LabeledField(bundle.getString("running"), "mpRun", "0"),
             LabeledField(bundle.getString("jumping"), "mpJump", "0")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 50.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
@@ -90,13 +88,90 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         return lineHeight * 4
     }
 
-    fun addCrewPanel(rect: Cell) {
-        addBorder(rect.x, rect.y, rect.width - padding, rect.height - padding,
-            "WARRIOR DATA", bevelTopRight = false, bevelBottomLeft = false)
+    fun addCrewAndFluffPanels(rect: Cell) {
+        document.documentElement.appendChild(createPilotPanel(rect, 1, "warriorDataSingle"))
     }
-    fun addFluffImageArea(rect: Cell) {
-        //addRect(rect)
+
+    fun createPilotPanel(rect: Cell, crewSize: Int, id: String): Element {
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
+        val inside = addBorder(0.0, 0.0, rect.width - padding, 36.0 + crewSize * 51.0,
+            bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
+            parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val fontWeight = SVGConstants.SVG_BOLD_VALUE
+        val lineHeight = calcFontHeight(fontSize)
+        var ypos = inside.y + lineHeight * 1.5
+        for (i in 0 until crewSize) {
+            addField(bundle.getString("name"), "pilotName$i", inside.x + padding, ypos, fontSize,
+                blankId = "blankCrewName$i",
+                blankWidth = inside.width - padding * 2
+                        - calcTextLength("${bundle.getString("name")}_", fontSize, fontWeight),
+                parent = g)
+            ypos += lineHeight * 1.5
+            addField(bundle.getString("gunnerySkill"), "gunnerySkill$i", inside.x + padding,
+                ypos, fontSize, defaultText = "0",
+                fieldOffset = inside.width * 0.35,
+                blankId = "blankGunnerySkill$i",
+                blankWidth = inside.width * 0.1,
+                parent = g)
+            addField(bundle.getString("pilotingSkill"), "pilotingSkill$i", inside.x + inside.width * 0.5,
+                ypos, fontSize, defaultText = "0",
+                fieldOffset = inside.width * 0.35,
+                blankId = "blankPilotingSkill$i",
+                blankWidth = inside.width - padding - inside.width * 0.85,
+                parent = g)
+            ypos += lineHeight
+
+            val chartBounds = Cell(inside.width * 0.35, ypos,
+                inside.width * 0.65 - 1.5,20.0)
+            val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+            path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+                "M ${chartBounds.x},${chartBounds.y + 1.015} c 0,-0.56 0.454,-1.015 1.015,-1.015 l ${chartBounds.width - 2.03},0"
+                        + " c 0.561,0 1.016,0.455 1.016,1.015 l 0,${chartBounds.height - 2.03}"
+                        + " c 0,0.56 -0.455,1.015 -1.016,1.015 l -${chartBounds.width - 2.03},0"
+                        + " c -0.561,0 -1.016,0.455 -1.016,-1.015 l 0,-${chartBounds.height - 2.03} Z")
+            path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+            path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+            path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "1.0")
+            path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+            path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+            g.appendChild(path)
+            val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+            grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+                "M ${chartBounds.x},${chartBounds.y + chartBounds.height / 2.0} l ${chartBounds.width},0"
+                    + (1..5).map {
+                    " M ${chartBounds.x + it * chartBounds.width / 6.0},${chartBounds.y} l 0,${chartBounds.height}"
+                }.joinToString(" "))
+            grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+            grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+            grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
+            grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+            grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+            g.appendChild(grid)
+            val startx = chartBounds.x - chartBounds.width / 12.0
+            val starty = chartBounds.y + lineHeight
+            val cons = listOf("3", "5", "7", "10", "11", bundle.getString("dead"))
+            for (i in 1..6) {
+                addTextElement(g, startx + i * chartBounds.width / 6.0, starty,
+                    i.toString(), 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
+                    FILL_DARK_GREY)
+                addTextElement(g, startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
+                    cons[i - 1], 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
+                    FILL_DARK_GREY)
+            }
+            addTextElement(g, chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
+                5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
+                FILL_DARK_GREY)
+            addTextElement(g, chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
+                5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
+                FILL_DARK_GREY)
+        }
+        return g
     }
+
     fun addArmorDiagram(rect: Cell) {
         val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
@@ -159,7 +234,7 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             LabeledField(bundle.getString("running"), "mpRun", "0"),
             LabeledField(bundle.getString("jumping"), "mpJump", "0")
         ), x, y + lineHeight * 3, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
 
         addTextElement(x + width * 0.48, y + lineHeight * 3, bundle.getString("airmech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
             FILL_DARK_GREY, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
@@ -167,12 +242,12 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             LabeledField(bundle.getString("walking"), "mpAirMechWalk", "0"),
             LabeledField(bundle.getString("running"), "mpAirMechRun", "0")
         ), x + width * 0.24, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("cruising"), "mpAirMechCruise", "0"),
             LabeledField(bundle.getString("flanking"), "mpAirMechFlank", "0")
         ), x + width * 0.48, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
 
         addTextElement(x + width * 0.72, y + lineHeight * 3, bundle.getString("fighter"), fontSize, SVGConstants.SVG_BOLD_VALUE,
             FILL_DARK_GREY, parent = parent)
@@ -180,7 +255,7 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             LabeledField(bundle.getString("safeThrust"), "mpSafeThrust", "0"),
             LabeledField(bundle.getString("maxThrust"), "mpMaxThrust", "0")
         ), x + width * 0.72, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 47.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
 
         return lineHeight * 6
     }
@@ -199,14 +274,14 @@ class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             LabeledField(bundle.getString("running"), "mpRun", "0"),
             LabeledField(bundle.getString("jumping"), "mpJump", "0")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addTextElement(x + width * 0.25, y + lineHeight, bundle.getString("vehicle"), fontSize, SVGConstants.SVG_BOLD_VALUE,
             FILL_DARK_GREY, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("cruising"), "mpCruise", "0"),
             LabeledField(bundle.getString("flanking"), "mpFlank", "0")
         ), x + width * 0.25, y + lineHeight * 2, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent)
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),

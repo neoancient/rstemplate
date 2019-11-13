@@ -315,20 +315,24 @@ abstract class RecordSheet(val size: PaperSize) {
                  fontSize: Float, fill: String = FILL_DARK_GREY, defaultText: String = "Lorem Ipsum",
                  fieldOffset: Double? = null,
                  fieldAnchor: String = SVGConstants.SVG_START_VALUE,
+                 labelId: String? = null, blankId: String? = null,
+                 blankWidth: Double? = null,
                  parent: Element = document.documentElement) {
-        addFieldSet(listOf(LabeledField(label, id, defaultText)), x, y, fontSize, fill, fieldOffset, fieldAnchor, parent)
+        addFieldSet(listOf(LabeledField(label, id, defaultText, labelId, blankId)), x, y, fontSize, fill,
+            fieldOffset, fieldAnchor, blankWidth, parent)
     }
 
     fun addFieldSet(fields: List<LabeledField>, x: Double, y: Double,
                     fontSize: Float, fill: String = FILL_DARK_GREY,
                     fieldOffset: Double? = null,
                     fieldAnchor: String = SVGConstants.SVG_START_VALUE,
+                    blankWidth: Double? = null,
                     parent: Element = document.documentElement) {
         val labelWidth = fieldOffset ?: fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (field in fields.withIndex()) {
             field.value.draw(this, x, y + lineHeight * field.index, fontSize, fill,
-                x + labelWidth, fieldAnchor = fieldAnchor, parent = parent)
+                x + labelWidth, blankWidth, fieldAnchor = fieldAnchor, parent = parent)
         }
     }
 

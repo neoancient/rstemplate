@@ -49,7 +49,7 @@ class LabeledField(val labelText: String, val id: String,
         sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE, fill,
             fieldAnchor, id, parent = parent)
         if (lineWidth != null) {
-            sheet.addHorizontalLine(xpos, y, lineWidth, 0.72, fill, id = blankId ?: "blank$id", parent = parent)
+            sheet.addHorizontalLine(xpos, y + 1.0, lineWidth, 0.72, fill, id = blankId ?: "blank$id", parent = parent)
         }
     }
 }
