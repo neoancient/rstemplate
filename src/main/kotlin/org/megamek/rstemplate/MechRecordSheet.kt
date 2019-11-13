@@ -51,7 +51,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         ypos += lineHeight * 0.5
         addTextElement(internal.x, ypos, bundle.getString("weaponsAndEquipment"), FONT_SIZE_FREE_LABEL,
             SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
-        addTextElement(internal.width * 0.75, ypos, bundle.getString("hexes"), FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+        addTextElement(internal.width * 0.78, ypos, bundle.getString("hexes"), FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
 
         addRect(internal.x, ypos, internal.width - padding, internal.bottomY() - ypos - lineHeight * 2.0,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
@@ -89,14 +89,18 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addCrewAndFluffPanels(rect: Cell) {
-        document.documentElement.appendChild(createPilotPanel(rect, 1, "warriorDataSingle"))
+        document.documentElement.appendChild(createPilotPanel(rect, 1,"Single", false))
+        document.documentElement.appendChild(createPilotPanel(rect, 2,"Dual", true))
     }
 
-    fun createPilotPanel(rect: Cell, crewSize: Int, id: String): Element {
+    fun createPilotPanel(rect: Cell, crewSize: Int, id: String, hide: Boolean): Element {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
-        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "warriorData$id")
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
+        if (hide) {
+            g.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        }
         val inside = addBorder(0.0, 0.0, rect.width - padding, 36.0 + crewSize * 51.0,
             bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
             parent = g)
@@ -113,15 +117,15 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             ypos += lineHeight * 1.5
             addField(bundle.getString("gunnerySkill"), "gunnerySkill$i", inside.x + padding,
                 ypos, fontSize, defaultText = "0",
-                fieldOffset = inside.width * 0.35,
+                fieldOffset = inside.width * 0.32,
                 blankId = "blankGunnerySkill$i",
-                blankWidth = inside.width * 0.1,
+                blankWidth = inside.width * 0.13,
                 parent = g)
             addField(bundle.getString("pilotingSkill"), "pilotingSkill$i", inside.x + inside.width * 0.5,
                 ypos, fontSize, defaultText = "0",
-                fieldOffset = inside.width * 0.35,
+                fieldOffset = inside.width * 0.32,
                 blankId = "blankPilotingSkill$i",
-                blankWidth = inside.width - padding - inside.width * 0.85,
+                blankWidth = inside.width - padding - inside.width * 0.82,
                 parent = g)
             ypos += lineHeight
 
@@ -160,7 +164,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
                     FILL_DARK_GREY)
                 addTextElement(g, startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
                     cons[i - 1], 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                    FILL_DARK_GREY)
+                    FILL_DARK_GREY, maxWidth = chartBounds.width / 6.0 - 4.0)
             }
             addTextElement(g, chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
                 5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
@@ -168,7 +172,12 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             addTextElement(g, chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
                 5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
                 FILL_DARK_GREY)
+            ypos += chartBounds.height + lineHeight * 1.5;
         }
+        ypos += padding * 2
+        addRect(0.0, ypos, rect.width - padding * 2, rect.height - ypos,
+//            fill = FILL_LIGHT_GREY,
+            id = "fluff${id}Pilot", parent = g)
         return g
     }
 

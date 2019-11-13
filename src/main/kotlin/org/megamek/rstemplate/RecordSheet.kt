@@ -128,7 +128,7 @@ abstract class RecordSheet(val size: PaperSize) {
     protected fun addTextElement(parent: Element, x: Double, y: Double, text: String,
                                  fontSize: Float, anchor: String = SVGConstants.SVG_START_VALUE,
                                  weight: String = SVGConstants.SVG_NORMAL_VALUE,
-                                 fill: String = "#000000"): Double {
+                                 fill: String = "#000000", maxWidth: Double? = null): Double {
         val newText = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         newText.setTextContent(text)
         newText.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
@@ -138,6 +138,11 @@ abstract class RecordSheet(val size: PaperSize) {
         newText.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, weight)
         newText.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
         newText.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
+        if (maxWidth != null && calcTextLength(text, fontSize, weight) > maxWidth) {
+            newText.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE,
+                SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
+            newText.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, maxWidth.toString())
+        }
         parent.appendChild(newText)
 
         return calcTextLength(text, fontSize, weight)
