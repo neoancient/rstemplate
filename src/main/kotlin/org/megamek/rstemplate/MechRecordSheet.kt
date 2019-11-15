@@ -104,7 +104,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "warriorData${crewSizeId[i]}")
             ypos += addCrewDamageTrack(0.0, ypos, tempBorder.width,
                 id = "crewDamage$i", hidden = hideCrewIndex(i), parent = contentGroup)
-            addBorder(0.0, 0.0, rect.width, tempBorder.y - rect.y + ypos + padding * 2 + bevelY,
+            addRect(0.0, ypos, tempBorder.width, 13.5, id = "spas$i", parent = contentGroup)
+            addBorder(0.0, 0.0, rect.width, tempBorder.y - rect.y + ypos + padding * 6,
                 bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
                 parent = g)
             addRect(0.0, tempBorder.y - rect.y + ypos + padding * 6, rect.width - padding * 2,
