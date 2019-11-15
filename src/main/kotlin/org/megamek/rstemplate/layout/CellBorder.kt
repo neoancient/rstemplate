@@ -13,8 +13,8 @@ import java.util.*
  *
  */
 
-const val bevelX = 6.845
-const val bevelY = 10.952
+const val bevelX = 7.845
+const val bevelY = 7.6
 const val tabBevelX = 5.475
 const val tabBevelY = 8.214
 const val STROKE_WIDTH = 1.932
