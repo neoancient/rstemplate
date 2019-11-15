@@ -42,6 +42,7 @@ const val FONT_SIZE_VSMALL = 5.8f
 
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
+val crewSizeId = listOf("Single", "Dual", "Triple")
 
 abstract class RecordSheet(val size: PaperSize) {
     abstract val fileName: String
@@ -282,19 +283,18 @@ abstract class RecordSheet(val size: PaperSize) {
     fun addTextElement(x: Double, y: Double, text: String, fontSize: Float,
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
                        fill: String = FILL_DARK_GREY, anchor: String = SVGConstants.SVG_START_VALUE,
-                       id: String? = null,
-                       fixedWidth: Boolean = false,
+                       id: String? = null, fixedWidth: Boolean = false, hidden: Boolean = false,
                        width: Double? = null,parent: Element = document.documentElement) {
         val element = createTextElement(x, y, text, fontSize, fontWeight, fill, anchor,
-            id, fixedWidth, width)
+            id, fixedWidth, width, hidden)
         parent.appendChild(element)
     }
 
     fun createTextElement(x: Double, y: Double, text: String, fontSize: Float,
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
                        fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
-                       id: String? = null,
-                       fixedWidth: Boolean = false, width: Double? = null): Element {
+                       id: String? = null, fixedWidth: Boolean = false, width: Double? = null,
+                       hidden: Boolean = false): Element {
         val t = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
         t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
@@ -311,6 +311,9 @@ abstract class RecordSheet(val size: PaperSize) {
         if (id != null) {
             t.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
+        if (hidden) {
+            t.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        }
         t.textContent = text
 
         return t
@@ -321,28 +324,29 @@ abstract class RecordSheet(val size: PaperSize) {
                  fieldOffset: Double? = null,
                  fieldAnchor: String = SVGConstants.SVG_START_VALUE,
                  labelId: String? = null, blankId: String? = null,
-                 blankWidth: Double? = null,
+                 blankWidth: Double? = null, labelFixedWidth: Boolean = true, hidden: Boolean = false,
                  parent: Element = document.documentElement) {
         addFieldSet(listOf(LabeledField(label, id, defaultText, labelId, blankId)), x, y, fontSize, fill,
-            fieldOffset, fieldAnchor, blankWidth, parent)
+            fieldOffset, fieldAnchor, blankWidth, labelFixedWidth, hidden, parent)
     }
 
     fun addFieldSet(fields: List<LabeledField>, x: Double, y: Double,
                     fontSize: Float, fill: String = FILL_DARK_GREY,
                     fieldOffset: Double? = null,
                     fieldAnchor: String = SVGConstants.SVG_START_VALUE,
-                    blankWidth: Double? = null,
+                    blankWidth: Double? = null, labelFixedWidth: Boolean = true, hidden: Boolean = false,
                     parent: Element = document.documentElement) {
         val labelWidth = fieldOffset ?: fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (field in fields.withIndex()) {
             field.value.draw(this, x, y + lineHeight * field.index, fontSize, fill,
-                x + labelWidth, blankWidth, fieldAnchor = fieldAnchor, parent = parent)
+                x + labelWidth, blankWidth, fieldAnchor = fieldAnchor, labelFixedWidth = labelFixedWidth,
+                hidden = hidden, parent = parent)
         }
     }
 
     fun addHorizontalLine(x: Double, y: Double, width: Double, strokeWidth: Double = STROKE_WIDTH,
-                          stroke: String = FILL_BLACK, id: String? = null,
+                          stroke: String = FILL_BLACK, id: String? = null, hidden: Boolean = false,
                           parent: Element = document.documentElement) {
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
@@ -352,6 +356,9 @@ abstract class RecordSheet(val size: PaperSize) {
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
         if (id != null) {
             path.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        }
+        if (hidden) {
+            path.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
         }
         parent.appendChild(path)
     }

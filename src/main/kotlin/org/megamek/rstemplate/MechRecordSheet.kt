@@ -89,97 +89,119 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addCrewAndFluffPanels(rect: Cell) {
-        document.documentElement.appendChild(createPilotPanel(rect, 1,"Single", false))
-        document.documentElement.appendChild(createPilotPanel(rect, 2,"Dual", true))
+        val tempG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        val tempBorder = addBorder(rect.x, rect.y, rect.width, rect.height,
+            bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false, parent = tempG)
+        val contentGroup = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        contentGroup.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${tempBorder.x},${tempBorder.y})")
+        var ypos = 0.0
+        for (i in 0 until maxCrew()) {
+            ypos = addCrewData(i, ypos, tempBorder.width, contentGroup)
+            val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+            g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+                "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
+            g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "warriorData${crewSizeId[i]}")
+            ypos += addCrewDamageTrack(0.0, ypos, tempBorder.width,
+                id = "crewDamage$i", hidden = hideCrewIndex(i), parent = contentGroup)
+            addBorder(0.0, 0.0, rect.width, tempBorder.y - rect.y + ypos + padding * 2 + bevelY,
+                bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
+                parent = g)
+            addRect(0.0, tempBorder.y - rect.y + ypos + padding * 6, rect.width - padding * 2,
+                rect.height - tempBorder.y + rect.y - ypos - padding * 6,
+                id = "fluff${crewSizeId[i]}Pilot", parent = g)
+            if (hideCrewIndex(i)) {
+                g.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+            }
+            document.documentElement.appendChild(g)
+        }
+        document.documentElement.appendChild(contentGroup)
     }
 
-    fun createPilotPanel(rect: Cell, crewSize: Int, id: String, hide: Boolean): Element {
+    fun addCrewDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
+                           id: String? = null, hidden: Boolean = false, parent: Element): Double {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
-        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "warriorData$id")
-        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
-        if (hide) {
-            g.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        if (id != null) {
+            g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
-        val inside = addBorder(0.0, 0.0, rect.width - padding, 36.0 + crewSize * 51.0,
-            bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
-            parent = g)
+        val chartBounds = Cell(width * 0.35, y,
+            width * 0.65 - padding,20.0)
+        val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${chartBounds.x},${chartBounds.y + 1.015} c 0,-0.56 0.454,-1.015 1.015,-1.015 l ${chartBounds.width - 2.03},0"
+                    + " c 0.561,0 1.016,0.455 1.016,1.015 l 0,${chartBounds.height - 2.03}"
+                    + " c 0,0.56 -0.455,1.015 -1.016,1.015 l -${chartBounds.width - 2.03},0"
+                    + " c -0.561,0 -1.016,0.455 -1.016,-1.015 l 0,-${chartBounds.height - 2.03} Z")
+        path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "1.0")
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        g.appendChild(path)
+        val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${chartBounds.x},${chartBounds.y + chartBounds.height / 2.0} l ${chartBounds.width},0"
+                    + (1..5).map {
+                " M ${chartBounds.x + it * chartBounds.width / 6.0},${chartBounds.y} l 0,${chartBounds.height}"
+            }.joinToString(" "))
+        grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        g.appendChild(grid)
+        val startx = chartBounds.x - chartBounds.width / 12.0
+        val starty = chartBounds.y + calcFontHeight(5.8f)
+        val cons = listOf("3", "5", "7", "10", "11", bundle.getString("dead"))
+        for (i in 1..6) {
+            addTextElement(g, startx + i * chartBounds.width / 6.0, starty,
+                i.toString(), 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
+                FILL_DARK_GREY)
+            addTextElement(g, startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
+                cons[i - 1], 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
+                FILL_DARK_GREY, maxWidth = chartBounds.width / 6.0 - 4.0)
+        }
+        addTextElement(g, chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
+            5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY)
+        addTextElement(g, chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
+            5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY)
+        parent.appendChild(g)
+        return height
+    }
+
+    fun addCrewData(crewIndex: Int, y: Double, width: Double, parent: Element): Double {
         val fontSize = FONT_SIZE_MEDIUM
         val fontWeight = SVGConstants.SVG_BOLD_VALUE
         val lineHeight = calcFontHeight(fontSize)
-        var ypos = inside.y + lineHeight * 1.5
-        for (i in 0 until crewSize) {
-            addField(bundle.getString("name"), "pilotName$i", inside.x + padding, ypos, fontSize,
-                blankId = "blankCrewName$i",
-                blankWidth = inside.width - padding * 2
-                        - calcTextLength("${bundle.getString("name")}_", fontSize, fontWeight),
-                parent = g)
-            ypos += lineHeight * 1.5
-            addField(bundle.getString("gunnerySkill"), "gunnerySkill$i", inside.x + padding,
-                ypos, fontSize, defaultText = "0",
-                fieldOffset = inside.width * 0.32,
-                blankId = "blankGunnerySkill$i",
-                blankWidth = inside.width * 0.13,
-                parent = g)
-            addField(bundle.getString("pilotingSkill"), "pilotingSkill$i", inside.x + inside.width * 0.5,
-                ypos, fontSize, defaultText = "0",
-                fieldOffset = inside.width * 0.32,
-                blankId = "blankPilotingSkill$i",
-                blankWidth = inside.width - padding - inside.width * 0.82,
-                parent = g)
-            ypos += lineHeight
-
-            val chartBounds = Cell(inside.width * 0.35, ypos,
-                inside.width * 0.65 - 1.5,20.0)
-            val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
-            path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-                "M ${chartBounds.x},${chartBounds.y + 1.015} c 0,-0.56 0.454,-1.015 1.015,-1.015 l ${chartBounds.width - 2.03},0"
-                        + " c 0.561,0 1.016,0.455 1.016,1.015 l 0,${chartBounds.height - 2.03}"
-                        + " c 0,0.56 -0.455,1.015 -1.016,1.015 l -${chartBounds.width - 2.03},0"
-                        + " c -0.561,0 -1.016,0.455 -1.016,-1.015 l 0,-${chartBounds.height - 2.03} Z")
-            path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
-            path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
-            path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "1.0")
-            path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
-            path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
-            g.appendChild(path)
-            val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
-            grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-                "M ${chartBounds.x},${chartBounds.y + chartBounds.height / 2.0} l ${chartBounds.width},0"
-                    + (1..5).map {
-                    " M ${chartBounds.x + it * chartBounds.width / 6.0},${chartBounds.y} l 0,${chartBounds.height}"
-                }.joinToString(" "))
-            grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
-            grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
-            grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
-            grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
-            grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
-            g.appendChild(grid)
-            val startx = chartBounds.x - chartBounds.width / 12.0
-            val starty = chartBounds.y + lineHeight
-            val cons = listOf("3", "5", "7", "10", "11", bundle.getString("dead"))
-            for (i in 1..6) {
-                addTextElement(g, startx + i * chartBounds.width / 6.0, starty,
-                    i.toString(), 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                    FILL_DARK_GREY)
-                addTextElement(g, startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
-                    cons[i - 1], 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                    FILL_DARK_GREY, maxWidth = chartBounds.width / 6.0 - 4.0)
-            }
-            addTextElement(g, chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
-                5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY)
-            addTextElement(g, chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
-                5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY)
-            ypos += chartBounds.height + lineHeight * 1.5;
-        }
-        ypos += padding * 2
-        addRect(0.0, ypos, rect.width - padding * 2, rect.height - ypos,
-//            fill = FILL_LIGHT_GREY,
-            id = "fluff${id}Pilot", parent = g)
-        return g
+        var ypos = y + lineHeight * 1.5
+        addField(bundle.getString("name"), "pilotName$crewIndex", padding, ypos, fontSize,
+            blankId = "blankCrewName$crewIndex",
+            blankWidth = width - padding * 2
+                    - calcTextLength("${bundle.getString("name")}_", fontSize, fontWeight),
+            labelId = "crewName$crewIndex", labelFixedWidth = false, hidden = hideCrewIndex(crewIndex),
+            parent = parent)
+        ypos += lineHeight * 1.5
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill$crewIndex", padding,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = width * 0.32,
+            blankId = "blankGunnerySkill$crewIndex", labelId = "gunnerySkillText$crewIndex",
+            blankWidth = width * 0.13, hidden = hideCrewIndex(crewIndex),
+            parent = parent)
+        addField(bundle.getString("pilotingSkill"), "pilotingSkill$crewIndex", width * 0.5,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = width * 0.32,
+            blankId = "blankPilotingSkill$crewIndex", labelId = "pilotingSkillText$crewIndex",
+            blankWidth = width * 0.18 - padding, hidden = hideCrewIndex(crewIndex),
+            parent = parent)
+        ypos += lineHeight
+        return ypos
     }
+
+    open fun maxCrew() = 2
+
+    open fun hideCrewIndex(i: Int) = i > 0
 
     fun addArmorDiagram(rect: Cell) {
         val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("armorPanel.title"),
@@ -218,6 +240,10 @@ class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_tripod_default.svg"
+
+    override fun maxCrew() = 3
+
+    override fun hideCrewIndex(i: Int) = i > 1
 }
 
 class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
@@ -268,6 +294,10 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
         return lineHeight * 6
     }
+
+    override fun maxCrew() = 1
+
+    override fun hideCrewIndex(i: Int) = false
 }
 
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
@@ -299,4 +329,8 @@ class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
         return lineHeight * 4
     }
+
+    override fun maxCrew() = 2
+
+    override fun hideCrewIndex(i: Int) = false
 }
