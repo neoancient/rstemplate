@@ -21,7 +21,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val structureCell = Cell(armorCell.x, armorCell.bottomY(), armorCell.width - heatScaleCell.width, heatScaleCell.height * 0.5)
     val heatCell = structureCell.translate(0.0, structureCell.height)
 
-    val bundle = ResourceBundle.getBundle(MechRecordSheet::class.java.name)
+    protected val bundle = ResourceBundle.getBundle(MechRecordSheet::class.java.name)
 
     init {
         addEquipmentTable(eqTableCell)
@@ -88,7 +88,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         return lineHeight * 4
     }
 
-    fun addCrewAndFluffPanels(rect: Cell) {
+    open fun addCrewAndFluffPanels(rect: Cell) {
         val tempG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         val tempBorder = addBorder(rect.x, rect.y, rect.width, rect.height,
             bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false, parent = tempG)
@@ -172,7 +172,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         return height
     }
 
-    fun addCrewData(crewIndex: Int, y: Double, width: Double, parent: Element): Double {
+    open fun addCrewData(crewIndex: Int, y: Double, width: Double, parent: Element): Double {
         val fontSize = FONT_SIZE_MEDIUM
         val fontWeight = SVGConstants.SVG_BOLD_VALUE
         val lineHeight = calcFontHeight(fontSize)
@@ -299,6 +299,54 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override fun maxCrew() = 1
 
     override fun hideCrewIndex(i: Int) = false
+
+    override fun addCrewAndFluffPanels(rect: Cell) {
+        super.addCrewAndFluffPanels(Cell(rect.x, rect.y, rect.width, rect.height - 70.0 - padding))
+        addAeroMovementCompass(Cell(rect.x, rect.y + rect.height - 70.0, rect.width - padding * 2.0, 70.0))
+    }
+
+    override fun addCrewData(crewIndex: Int, y: Double, width: Double, parent: Element): Double {
+        val fontSize = FONT_SIZE_MEDIUM
+        val fontWeight = SVGConstants.SVG_BOLD_VALUE
+        val lineHeight = calcFontHeight(fontSize)
+        var ypos = y + lineHeight * 1.5
+        addField(bundle.getString("name"), "pilotName$crewIndex", padding, ypos, fontSize,
+            blankId = "blankCrewName$crewIndex",
+            blankWidth = width - padding * 2
+                    - calcTextLength("${bundle.getString("name")}_", fontSize, fontWeight),
+            labelId = "crewName$crewIndex", labelFixedWidth = false, hidden = hideCrewIndex(crewIndex),
+            parent = parent)
+        ypos += lineHeight * 1.5
+        addTextElement(parent, padding, ypos, bundle.getString("battlemech"), fontSize, weight = fontWeight)
+        ypos += lineHeight
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill$crewIndex", padding,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = width * 0.32,
+            blankId = "blankGunnerySkill$crewIndex", labelId = "gunnerySkillText$crewIndex",
+            blankWidth = width * 0.13, hidden = hideCrewIndex(crewIndex),
+            parent = parent)
+        addField(bundle.getString("pilotingSkill"), "pilotingSkill$crewIndex", width * 0.5,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = width * 0.32,
+            blankId = "blankPilotingSkill$crewIndex", labelId = "pilotingSkillText$crewIndex",
+            blankWidth = width * 0.18 - padding, hidden = hideCrewIndex(crewIndex),
+            parent = parent)
+        ypos += lineHeight
+        addTextElement(parent, padding, ypos, bundle.getString("aerospace"), fontSize, weight = fontWeight)
+        ypos += lineHeight
+        addField(bundle.getString("gunnerySkill"), "asfGunnerySkill", padding,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = width * 0.32,
+            blankId = "asfBlankGunnerySkill", labelId = "asfGunnerySkillText",
+            blankWidth = width * 0.13, parent = parent)
+        addField(bundle.getString("pilotingSkill"), "asfPilotingSkill", width * 0.5,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = width * 0.32,
+            blankId = "asfBlankPilotingSkill", labelId = "asfPilotingSkillText",
+            blankWidth = width * 0.18 - padding, parent = parent)
+        ypos += lineHeight
+        return ypos
+    }
 }
 
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {

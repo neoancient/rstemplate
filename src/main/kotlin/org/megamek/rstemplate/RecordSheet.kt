@@ -17,6 +17,7 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.util.*
 import kotlin.math.min
+import kotlin.math.sqrt
 
 /**
  *
@@ -53,6 +54,8 @@ abstract class RecordSheet(val size: PaperSize) {
     val logoHeight = addLogo()
     val titleHeight = addTitle()
     val footerHeight = addCopyrightFooter()
+
+    private val bundle = ResourceBundle.getBundle(RecordSheet::class.java.name)
 
     /**
      * @return width of printable area
@@ -376,5 +379,52 @@ abstract class RecordSheet(val size: PaperSize) {
             rect.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
         parent.appendChild(rect)
+    }
+
+    fun createTranslatedGroup(x: Double, y: Double): Element {
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
+        return g
+    }
+
+    fun addAeroMovementCompass(rect: Cell, parent: Element = document.documentElement) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val fontSize = 9.35f
+        val lineHeight = calcFontHeight(fontSize)
+        val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "2.9")
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.CSS_BEVEL_VALUE)
+        val hexRadius = (rect.height - lineHeight * 2.0) / sqrt(3.0) // distance from center to each vertex
+        val hexDY = (rect.height - lineHeight * 2.0) * 0.5 // the delta y between the center and the top and bottom
+        path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${-hexRadius * 0.5},${-hexDY} L ${-hexRadius},0.0"
+                + " L ${-hexRadius * 0.5},$hexDY L ${hexRadius * 0.5},$hexDY"
+                + " L $hexRadius,0.0 L ${hexRadius * 0.5},${-hexDY} Z")
+        val pathTransform = createTranslatedGroup(rect.width * 0.75, rect.height * 0.5)
+        pathTransform.appendChild(path)
+        g.appendChild(pathTransform)
+        addTextElement(rect.width * 0.75, rect.height * 0.5 - hexDY - 3.0, "A",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "B",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "C",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(rect.width * 0.75, rect.height * 0.5 + hexDY + lineHeight - 1.0, "D",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "E",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "F",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+
+        val words = bundle.getString("advancedMovementCompass").split(" ")
+        val firstLineY = (rect.height + lineHeight) * 0.5 - (lineHeight * words.size - 1) * 0.5
+        for (word in words.withIndex()) {
+            addTextElement(rect.width * 0.25, firstLineY + lineHeight * word.index , word.value,
+                fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        }
+        parent.appendChild(g)
     }
 }
