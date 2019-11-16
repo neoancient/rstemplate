@@ -33,6 +33,9 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addHeatScale(heatScaleCell)
     }
 
+    open fun isQuad() = false
+    open fun isTripod() = false
+
     fun addEquipmentTable(rect: Cell) {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -211,8 +214,51 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addCritTable(rect: Cell) {
-        addBorder(rect.x, rect.y, rect.width - padding, rect.height,
-            bundle.getString("critTablePanel.title"))
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("critTablePanel.title"), parent = g)
+        val colWidth = internal.width / 3.0 - padding * 4.0
+        val fontSize = 9.65f
+        var ypos = internal.y + internal.height * 0.05
+        if (isQuad()) {
+            addSingleCritLocation(internal.x + padding, ypos + internal.height * 0.087, colWidth, internal.height * 0.145,"crits_FLL", fontSize, g)
+            addSingleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos + internal.height * 0.087, colWidth, internal.height * 0.145,"crits_FRL", fontSize, g)
+        } else {
+            addDoubleCritLocation(internal.x + padding, ypos, colWidth, internal.height * 0.3,"crits_LA", fontSize, g)
+            addDoubleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos, colWidth, internal.height * 0.3,"crits_RA", fontSize, g)
+        }
+        ypos += internal.height * 0.387
+        addDoubleCritLocation(internal.x + padding, ypos, colWidth, internal.height * 0.3,"crits_LT", fontSize, g)
+        addDoubleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos, colWidth, internal.height * 0.3, "crits_RT", fontSize, g)
+        ypos += internal.height * 0.387
+        addSingleCritLocation(internal.x + padding, ypos, colWidth, internal.height * 0.145,
+            if (isQuad()) "crits_RLL" else "crits_LL", fontSize, g)
+        addSingleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos, colWidth, internal.height * 0.145,
+            if (isQuad()) "crits_RRL" else "crits_RL", fontSize, g)
+        if (isTripod()) {
+            addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145,
+                "crits_CL", fontSize, g)
+        }
+        ypos = internal.y + internal.height * 0.02
+        addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145, "crits_HD", fontSize, g)
+        ypos += internal.height * 0.215
+        addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
+        document.documentElement.appendChild(g)
+    }
+
+    fun addDoubleCritLocation(x: Double, y: Double, width: Double, height: Double, id: String,
+                              fontSize: Float, parent: Element) {
+        val lineHeight = calcFontHeight(fontSize)
+        addTextElement(x, y + (height - 5) * 0.25 + lineHeight * 0.5, "1-3", fontSize, SVGConstants.SVG_BOLD_VALUE,
+            parent = parent)
+        addTextElement(x, y + (height - 5) * 0.75 + 5.0 + lineHeight * 0.5, "4-6", fontSize, SVGConstants.SVG_BOLD_VALUE,
+            parent = parent)
+        addRect(x + 18.0, y, width - 18.0, height, id = id, parent = parent)
+    }
+
+    fun addSingleCritLocation(x: Double, y: Double, width: Double, height: Double, id: String,
+                              fontSize: Float, parent: Element) {
+        addRect(x + 18.0, y, width - 18.0, height, id = id, parent = parent)
     }
 
     fun addStructureDiagram(rect: Cell) {
@@ -237,10 +283,13 @@ class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quad_default.svg"
+    override fun isQuad() = true
 }
 
 class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_tripod_default.svg"
+
+    override fun isTripod() = true
 
     override fun maxCrew() = 3
 
@@ -351,6 +400,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quadvee.svg"
+
+    override fun isQuad() = true
 
     override fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
