@@ -1,5 +1,6 @@
 package org.megamek.rstemplate
 
+import org.apache.batik.svggen.SVGConvolveOp
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Element
@@ -23,7 +24,14 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 
     protected val bundle = ResourceBundle.getBundle(MechRecordSheet::class.java.name)
 
-    init {
+    open fun isQuad() = false
+    open fun isTripod() = false
+    open val systems = listOf(Pair(bundle.getString("engineHits"), 3),
+        Pair(bundle.getString("gyroHits"), 3),
+        Pair(bundle.getString("sensorHits"), 2),
+        Pair(bundle.getString("lifeSupport"), 1))
+
+    override fun build() {
         addEquipmentTable(eqTableCell)
         addCrewAndFluffPanels(crewFluffCell)
         addArmorDiagram(armorCell)
@@ -32,9 +40,6 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addHeatPanel(heatCell)
         addHeatScale(heatScaleCell)
     }
-
-    open fun isQuad() = false
-    open fun isTripod() = false
 
     fun addEquipmentTable(rect: Cell) {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
@@ -243,6 +248,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145, "crits_HD", fontSize, g)
         ypos += internal.height * 0.215
         addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
+        ypos += internal.height * 0.3
+        ypos += addSystemPips(internal.x + colWidth + padding * 2.0, ypos, colWidth, g)
         document.documentElement.appendChild(g)
     }
 
@@ -260,6 +267,60 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
                               fontSize: Float, parent: Element) {
         addRect(x + 18.0, y, width - 18.0, height, id = id, parent = parent)
     }
+
+    open fun addSystemPips(x: Double, y: Double, width: Double, parent: Element): Double {
+        val fontSize = FONT_SIZE_FREE_LABEL
+        val lineHeight = calcFontHeight(fontSize)
+        val pipRadius = 2.5
+        val pipDx = 9.2
+        val textWidth = systems.map {
+            calcTextLength("${it.first}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
+        }.max() ?: 0.0
+        val textAnchor = textWidth + padding * 2
+        var ypos = padding + lineHeight
+        val contentWidth = textWidth + (pipRadius + pipDx) * 2 + padding * 4
+        val gContent = createTranslatedGroup(x + (width - contentWidth) * 0.5, y)
+        systems.forEach {
+            addTextElement(
+                textAnchor, ypos, it.first, fontSize, SVGConstants.SVG_BOLD_VALUE,
+                FILL_DARK_GREY, SVGConstants.SVG_END_VALUE, parent = gContent
+            )
+            for (i in 0 until it.second) {
+                val pip = DrawPip(textAnchor + pipRadius + pipDx * i, ypos - pipRadius * 2,
+                    pipRadius, 0.96).draw(document)
+                // so hacky
+                if (it.first.equals(bundle.getString("gyroHits")) && (i + 1 == it.second)) {
+                    pip.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "heavyDutyGyroPip")
+                    pip.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+                }
+                gContent.appendChild(pip)
+            }
+            ypos += lineHeight
+        }
+        ypos = appendSystemCrits(ypos, width, pipDx + pipRadius * 2, fontSize, gContent)
+
+        val corner = 6.78
+        val control = 3.75
+        val border = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        border.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        border.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        border.setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_VALUE, "0.92")
+        border.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${padding * 2},${corner + padding} c 0,-$control ${corner - control},-$corner $corner,-$corner"
+                    + " l ${contentWidth - corner * 2},0 c $control,0 $corner,${corner - control} $corner,$corner"
+                    + " l 0, ${ypos - (corner + padding) * 2} c 0,$control ${control - corner},$corner -$corner,$corner"
+                    + " l ${corner * 2 - contentWidth},0 c -$control,0 -$corner,${control - corner} -$corner,-$corner"
+                    + "Z"
+        )
+        gContent.appendChild(border)
+        parent.appendChild(gContent)
+        return ypos + padding
+    }
+
+    /**
+     * Opportunity for LAMs to add the SI section
+     */
+    open fun appendSystemCrits(ypos: Double, width: Double, rectHeight: Double, fontSize: Float, parent: Element) = ypos
 
     fun addStructureDiagram(rect: Cell) {
         val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("isPanel.title"),
@@ -298,6 +359,14 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_lam.svg"
+
+    override val systems = listOf(
+        Pair(bundle.getString("avionicsHits"), 3),
+        Pair(bundle.getString("engineHits"), 3),
+        Pair(bundle.getString("gyroHits"), 3),
+        Pair(bundle.getString("sensorHits"), 2),
+        Pair(bundle.getString("landingGear"), 1),
+        Pair(bundle.getString("lifeSupport"), 1))
 
     override fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
@@ -395,6 +464,14 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             blankWidth = width * 0.18 - padding, parent = parent)
         ypos += lineHeight
         return ypos
+    }
+
+    override fun appendSystemCrits(y: Double, width: Double, rectHeight: Double, fontSize: Float, parent: Element): Double {
+        addTextElement(width * 0.5, y, bundle.getString("structuralIntegrity"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        addRect(padding, y + padding, width - padding * 2, rectHeight, id = "siPips", parent = parent)
+        return y + calcFontHeight(fontSize) + rectHeight + padding
     }
 }
 

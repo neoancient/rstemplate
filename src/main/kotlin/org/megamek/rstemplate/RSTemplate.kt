@@ -24,6 +24,7 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
+    sheet.build()
     val ostr = FileOutputStream(File(dir, sheet.fileName))
     sheet.export(ostr)
     ostr.close()

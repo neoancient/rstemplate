@@ -80,6 +80,8 @@ abstract class RecordSheet(val size: PaperSize) {
         return doc
     }
 
+    abstract fun build()
+
     /**
      * Loads an SVG document from a resource and embeds it in a another document, optionally scaling it to fit.
      * Scaling always maintains the aspect ratio and will size the embedded image. If both height and width
