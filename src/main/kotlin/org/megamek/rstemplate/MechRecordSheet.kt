@@ -4,6 +4,7 @@ import org.apache.batik.svggen.SVGConvolveOp
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Element
+import java.lang.String.join
 import java.util.*
 
 /**
@@ -250,7 +251,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
         ypos += internal.height * 0.3
         ypos += addSystemPips(internal.x + colWidth + padding * 2.0, ypos, colWidth, g)
-        addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height - ypos, g)
+        addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos,
+            colWidth, if (isTripod()) internal.height * 0.835 - ypos - padding else internal.height - ypos, g)
         document.documentElement.appendChild(g)
     }
 
@@ -320,12 +322,12 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 
     open fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
-        embedImage(x + width * 0.5, y, width * 0.5, height - lineHeight * 2,
+        embedImage(x + width * 0.5, y, width * 0.5, height - lineHeight,
             "damage_transfer_biped.svg", ImageAnchor.TOP, parent)
-        addTextElement(x + width * 0.75, y + height - lineHeight, bundle.getString("damageTransfer.1"),
+        addTextElement(x + width * 0.75, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
-        addTextElement(x + width * 0.75, y + height, bundle.getString("damageTransfer.2"),
+        addTextElement(x + width * 0.75, y + height + lineHeight, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         embedImage(x, y, width * 0.5 - padding, height, "cgllogo.svg", ImageAnchor.RIGHT, parent)
@@ -369,6 +371,22 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override fun maxCrew() = 3
 
     override fun hideCrewIndex(i: Int) = i > 1
+
+    override fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
+        val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
+        embedImage(x + width * 0.7 + padding, y, width * 0.3, height + lineHeight,
+            "damage_transfer_biped.svg", ImageAnchor.LEFT, parent)
+        addTextElement(x + width * 0.55 + padding, y + height * 0.5 - lineHeight * 0.5, bundle.getString("damageTransfer.1"),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        addTextElement(x + width * 0.55 + padding, y + height * 0.5 + lineHeight * 0.5, bundle.getString("damageTransfer.2"),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        addTextElement(x + width * 0.55 + padding, y + height * 0.5 + lineHeight * 1.5, bundle.getString("damageTransfer.3"),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        embedImage(x, y, width * 0.4 + padding, height, "cgllogo.svg", ImageAnchor.RIGHT, parent)
+    }
 }
 
 class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
@@ -486,6 +504,19 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             parent = parent)
         addRect(padding, y + padding, width - padding * 2, rectHeight, id = "siPips", parent = parent)
         return y + calcFontHeight(fontSize) + rectHeight + padding
+    }
+
+    override fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
+        val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
+        embedImage(x + width * 0.5, y, width * 0.5, height + lineHeight,
+            "damage_transfer_biped.svg", ImageAnchor.TOP, parent)
+        addTextElement(x + width * 0.25, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        addTextElement(x + width * 0.25, y + height + lineHeight, bundle.getString("damageTransfer.3"),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        embedImage(x, y, width * 0.5 - padding, height - lineHeight, "cgllogo.svg", ImageAnchor.CENTER, parent)
     }
 }
 
