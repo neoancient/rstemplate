@@ -250,7 +250,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
         ypos += internal.height * 0.3
         ypos += addSystemPips(internal.x + colWidth + padding * 2.0, ypos, colWidth, g)
-        addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height - ypos + lineHeight, g)
+        addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height - ypos, g)
         document.documentElement.appendChild(g)
     }
 
@@ -328,6 +328,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addTextElement(x + width * 0.75, y + height, bundle.getString("damageTransfer.2"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
+        embedImage(x, y, width * 0.5 - padding, height, "cgllogo.svg", ImageAnchor.RIGHT, parent)
     }
 
     /**
