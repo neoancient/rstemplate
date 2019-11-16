@@ -375,7 +375,7 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
         embedImage(x + width * 0.7 + padding, y, width * 0.3, height + lineHeight,
-            "damage_transfer_biped.svg", ImageAnchor.LEFT, parent)
+            "damage_transfer_tripod.svg", ImageAnchor.LEFT, parent)
         addTextElement(x + width * 0.55 + padding, y + height * 0.5 - lineHeight * 0.5, bundle.getString("damageTransfer.1"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
