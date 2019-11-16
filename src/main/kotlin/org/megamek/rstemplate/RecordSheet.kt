@@ -94,10 +94,12 @@ abstract class RecordSheet(val size: PaperSize) {
      * @param h         The maximum height of the image in the parent document. If y is {@code null}, any scaling will not take
      *                  height into account.
      * @param name      The name of the resource file relative to the current class.
+     * @param anchor    How to justify the image within the available space.
      * @param parent    The parent element for the image
      * @return          The final width and height of the embedded image
      */
     fun embedImage(x: Double = 0.0, y: Double = 0.0, w: Double? = null, h: Double? = null, name: String,
+                   anchor: ImageAnchor = ImageAnchor.TOP_LEFT,
                    parent: Element = document.documentElement): Pair<Double, Double> {
         val istr = this::class.java.getResourceAsStream(name)
         if (istr == null) {
@@ -118,9 +120,11 @@ abstract class RecordSheet(val size: PaperSize) {
             scale = w / dim.width
         }
 
+        val xpos = if (w != null) x + anchor.xOffset(w, dim.width * scale) else x
+        val ypos = if (h != null) y + anchor.yOffset(h, dim.height * scale) else y
         val gElement = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         gElement.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale $x $y)")
+            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale $xpos $ypos)")
 
         for (i in 0 until imageDoc.documentElement.childNodes.length) {
             val node = imageDoc.documentElement.childNodes.item(i)
