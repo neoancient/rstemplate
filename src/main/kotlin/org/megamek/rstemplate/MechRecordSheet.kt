@@ -25,6 +25,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 
     protected val bundle = ResourceBundle.getBundle(MechRecordSheet::class.java.name)
 
+    abstract val damageTransferFileName: String
+
     open fun isQuad() = false
     open fun isTripod() = false
     open val systems = listOf(Pair(bundle.getString("engineHits"), 3),
@@ -323,7 +325,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
         embedImage(x + width * 0.5, y, width * 0.5, height - lineHeight,
-            "damage_transfer_biped.svg", ImageAnchor.TOP, parent)
+            damageTransferFileName, ImageAnchor.TOP, parent)
         addTextElement(x + width * 0.75, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
@@ -356,15 +358,18 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 
 class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_default.svg"
+    override val damageTransferFileName = "damage_transfer_biped.svg"
 }
 
 class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quad_default.svg"
+    override val damageTransferFileName = "damage_transfer_quad.svg"
     override fun isQuad() = true
 }
 
 class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_tripod_default.svg"
+    override val damageTransferFileName = "damage_transfer_tripod.svg"
 
     override fun isTripod() = true
 
@@ -391,6 +396,7 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_lam.svg"
+    override val damageTransferFileName = "damage_transfer_biped.svg"
 
     override val systems = listOf(
         Pair(bundle.getString("avionicsHits"), 3),
@@ -522,6 +528,7 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quadvee.svg"
+    override val damageTransferFileName = "damage_transfer_quadvee.svg"
 
     override fun isQuad() = true
 
