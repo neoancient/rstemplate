@@ -250,6 +250,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
         ypos += internal.height * 0.3
         ypos += addSystemPips(internal.x + colWidth + padding * 2.0, ypos, colWidth, g)
+        addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height - ypos, g)
         document.documentElement.appendChild(g)
     }
 
@@ -315,6 +316,18 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         gContent.appendChild(border)
         parent.appendChild(gContent)
         return ypos + padding
+    }
+
+    open fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
+        val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
+        embedImage(x + width * 0.5, y, width * 0.5, height - lineHeight * 2,
+            "damage_transfer_biped.svg", parent)
+        addTextElement(x + width * 0.75, y + height - lineHeight, bundle.getString("damageTransfer.1"),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
+        addTextElement(x + width * 0.75, y + height, bundle.getString("damageTransfer.2"),
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent)
     }
 
     /**

@@ -120,7 +120,7 @@ abstract class RecordSheet(val size: PaperSize) {
 
         val gElement = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         gElement.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale ${x + LEFT_MARGIN} ${y + TOP_MARGIN})")
+            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale $x $y)")
 
         for (i in 0 until imageDoc.documentElement.childNodes.length) {
             val node = imageDoc.documentElement.childNodes.item(i)
@@ -186,7 +186,7 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(0.0, 0.0, width() * 0.67, null, "btlogo.svg").second
+    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), width() * 0.67, null, "btlogo.svg").second
 
     /**
      * Places a generic title under the BT logo
