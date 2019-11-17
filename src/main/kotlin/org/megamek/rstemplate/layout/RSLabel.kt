@@ -27,6 +27,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
     val taperWidth = textHeight * tabBevelX / tabBevelY
     val labelWidth = rectWidth + taperWidth * 2
 
+    fun height() = textHeight * 2
+
     fun draw(): Element {
         val xpos = if (center) {
             x - taperWidth - rectWidth * 0.5
@@ -39,12 +41,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
         val background = sheet.document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         background.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, bgColor)
         background.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            """M 0,$textHeight
-            l $taperWidth,-$textHeight
-            l $rectWidth,0
-            l $taperWidth,$textHeight
-            l -$taperWidth,$textHeight
-            l -$rectWidth,0 Z""".trimIndent())
+            "M 0,$textHeight l $taperWidth,-$textHeight l $rectWidth,0"
+            + " l $taperWidth,$textHeight l -$taperWidth,$textHeight l -$rectWidth,0 Z")
         g.appendChild(background)
 
         val t = sheet.createTextElement(taperWidth + textWidth * 0.05,

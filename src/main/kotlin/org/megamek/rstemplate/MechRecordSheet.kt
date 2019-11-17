@@ -324,6 +324,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("isPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         document.documentElement.appendChild(label.draw())
+        embedImage(rect.x, rect.y + label.height() + 1, rect.width, rect.height - label.height() - 2, "internal_diagram_biped.svg",
+            ImageAnchor.CENTER)
     }
 
     fun addHeatPanel(rect: Cell) {
