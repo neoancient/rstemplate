@@ -331,7 +331,9 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addHeatScale(rect: Cell) {
-
+        val g = createTranslatedGroup(rect.x, rect.y)
+        g.appendChild(createHeatScale(rect.height - padding))
+        document.documentElement.appendChild(g)
     }
 }
 

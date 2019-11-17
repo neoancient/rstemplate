@@ -33,6 +33,9 @@ const val FILL_BLACK = "#000000"
 const val FILL_LIGHT_GREY = "#c8c7c7"
 const val FILL_DARK_GREY = "#231f20"
 const val FILL_WHITE = "#ffffff"
+const val FILL_GREEN = "#ddfeeb"
+const val FILL_YELLOW = "#fffdd4"
+const val FILL_RED = "#fccbce"
 const val FONT_SIZE_TAB_LABEL = 10.6f
 const val FONT_SIZE_FREE_LABEL = 8.6f
 const val FONT_SIZE_VLARGE = 11.59f
@@ -372,9 +375,24 @@ abstract class RecordSheet(val size: PaperSize) {
         parent.appendChild(path)
     }
 
+    /**
+     * Adds a rectangle to the document. If there is no fill or stroke width provided, the rectangle
+     * will be invisible but can be used to mark regions for filling in
+     *
+     * @param x The x coordinate of the top left
+     * @param y The y coordinate of the top left
+     * @param width The rectangle width
+     * @param height The rectangle height
+     * @param fill The color for internal region
+     * @param id The id to assign to the element
+     * @param strokeWidth The width of the stroke to outline the rectangle. If null, no outline will be drawn
+     * @param stroke The color to use for the outline if strokeWidth is not null
+     * @param parent The parent element for the rectangle
+     */
     fun addRect(x: Double, y: Double, width: Double, height: Double,
                 fill: String = SVGConstants.SVG_NONE_VALUE,
-                id: String? = null, parent: Element = document.documentElement) {
+                id: String? = null, strokeWidth: Double? = null,
+                stroke: String = FILL_DARK_GREY, parent: Element = document.documentElement) {
         val rect = document.createElementNS(svgNS, SVGConstants.SVG_RECT_TAG)
         rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
         rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
@@ -383,6 +401,10 @@ abstract class RecordSheet(val size: PaperSize) {
         rect.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         if (id != null) {
             rect.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        }
+        if (strokeWidth != null) {
+            rect.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, stroke)
+            rect.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
         }
         parent.appendChild(rect)
     }
@@ -432,5 +454,43 @@ abstract class RecordSheet(val size: PaperSize) {
                 fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         }
         parent.appendChild(g)
+    }
+
+    /**
+     * Creates the 0-30 heat scale
+     *
+     * @param height The height of the region
+     * @return A group of the heat scale elements
+     */
+    fun createHeatScale(height: Double): Element {
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM).toDouble()
+        val boxHeight = (height - lineHeight * 3 - padding) / 33.0
+        val boxWidth = boxHeight * 13.0 / 8.0 // close enough approximation of the golden ratio
+        val textOffset = (boxHeight + lineHeight) * 0.5 - 1.0
+        var ypos = lineHeight
+        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.1"), FONT_SIZE_MEDIUM,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = g)
+        ypos += lineHeight
+        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.2"), FONT_SIZE_MEDIUM,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = g)
+        ypos += lineHeight
+        g.appendChild(RoundedBorder(boxWidth * 0.5 - boxHeight, ypos - 1.5, boxHeight * 2, boxHeight * 2,
+            4.35, 2.4, 1.45).draw(document))
+        addTextElement(boxWidth * 0.5, ypos + 4.5, bundle.getString("overflow"),
+            4.7f, anchor = SVGConstants.SVG_MIDDLE_VALUE, width = 1.5 * boxHeight, parent = g)
+        ypos += boxHeight * 2 + padding
+        for (i in 30 downTo 0) {
+            addRect(0.0, ypos, boxWidth, boxHeight, fill = when {
+                i < 5 -> FILL_GREEN
+                i < 14 -> FILL_YELLOW
+                else -> FILL_RED
+            }, strokeWidth = 1.45, parent = g)
+            addTextElement(boxWidth * 0.5, ypos + textOffset, i.toString(), FONT_SIZE_MEDIUM,
+                SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            ypos += boxHeight
+        }
+
+        return g
     }
 }
