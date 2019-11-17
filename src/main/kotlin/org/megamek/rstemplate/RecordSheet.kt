@@ -71,6 +71,15 @@ abstract class RecordSheet(val size: PaperSize) {
     fun height() = size.height - TOP_MARGIN - BOTTOM_MARGIN
 
     /**
+     * Checks for an effect at the given heat level
+     *
+     * @param heatLevel The unit's heat level
+     * @return A description of the heat effect at the given heat level, or {@code null} if there is
+     *         none that applies
+     */
+    open fun heatEffect(heatLevel: Int): String? = null
+
+    /**
      * Generates the SVG document
      */
     fun generate(): Document {
@@ -486,11 +495,72 @@ abstract class RecordSheet(val size: PaperSize) {
                 i < 14 -> FILL_YELLOW
                 else -> FILL_RED
             }, strokeWidth = 1.45, parent = g)
-            addTextElement(boxWidth * 0.5, ypos + textOffset, i.toString(), FONT_SIZE_MEDIUM,
+            addTextElement(boxWidth * 0.5, ypos + textOffset,
+                if (heatEffect(i) == null) i.toString() else "$i*", FONT_SIZE_MEDIUM,
                 SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
             ypos += boxHeight
         }
 
         return g
+    }
+
+    fun addHeatEffects(x: Double, y: Double, width: Double, height: Double, parent: Element) {
+        val levelX = x + padding * 4
+        val textX = levelX + padding * 4
+        val pipX = x + width - padding * 2 - 30
+        val textWidth = pipX - textX - padding
+        val effects = HashMap<Int, String>()
+        val effects2 = HashMap<Int, String>()
+        for (heat in 30 downTo 0) {
+            val text = heatEffect(heat)
+            if (text != null) {
+                effects[heat] = text
+                if (calcTextLength(text, FONT_SIZE_MEDIUM) > textWidth) {
+                    var joinIndex = text.indexOf("/")
+                    if (joinIndex < 0) {
+                        joinIndex = text.indexOf(",") + 1
+                    }
+                    if (joinIndex >= 0) {
+                        effects[heat] = text.substring(0, joinIndex)
+                        effects2[heat] = text.substring(joinIndex)
+                    }
+                }
+            }
+        }
+        val lineHeight = (height - padding * 2) / (effects.size + effects2.size + 2)
+        var ypos = y + lineHeight
+        addTextElement(levelX, ypos, bundle.getString("heatLevel.1"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        ypos += lineHeight
+        addTextElement(levelX, ypos, bundle.getString("heatLevel.2"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        addTextElement(textX + textWidth * 0.3, ypos, bundle.getString("effects"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        ypos += lineHeight
+        for (heat in 30 downTo 0) {
+            if (heat in effects) {
+                addTextElement(levelX, ypos, heat.toString(), FONT_SIZE_MEDIUM,
+                    anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+                addTextElement(textX, ypos, effects[heat]!!, FONT_SIZE_MEDIUM,
+                    anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
+                ypos += lineHeight
+                if (heat in effects2) {
+                    addTextElement(textX + padding, ypos, effects2[heat]!!, FONT_SIZE_MEDIUM,
+                        anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
+                    ypos += lineHeight
+                }
+            }
+        }
+
+        addTextElement(x + width - padding * 4, y + 4, bundle.getString("heatSinks"), 8.44f,
+            anchor = SVGConstants.SVG_END_VALUE, id= "hsType", parent = parent)
+        addTextElement(x + width - padding * 4, y + 13, "10", 8.44f,
+            anchor = SVGConstants.SVG_END_VALUE, id= "hsCount", parent = parent)
+        if (this is LAMRecordSheet) {
+            addTextElement(x + width - padding * 4, y + 19, ((this as RecordSheet).bundle).getString("airmechHeat"), 5.8f,
+                anchor = SVGConstants.SVG_END_VALUE, fixedWidth = true, parent = parent)
+        }
+        addRect(x + width - padding * 2 - 30, y + 24, 30.0,height - y - 24, id = "heatSinkPips",
+            parent = parent)
     }
 }

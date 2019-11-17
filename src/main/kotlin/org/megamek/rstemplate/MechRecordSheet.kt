@@ -3,6 +3,7 @@ package org.megamek.rstemplate
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Element
+import java.lang.String.format
 import java.lang.String.join
 import java.util.*
 
@@ -326,14 +327,38 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addHeatPanel(rect: Cell) {
-        addBorder(rect.x, rect.y, rect.width - padding, rect.height,
-            bundle.getString("heatPanel.title"))
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("heatPanel.title"), parent = g)
+        addHeatEffects(inner.x, inner.y, inner.width, inner.height, g)
+        document.documentElement.appendChild(g)
     }
 
     fun addHeatScale(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         g.appendChild(createHeatScale(rect.height - padding))
         document.documentElement.appendChild(g)
+    }
+
+    override fun heatEffect(heatLevel: Int): String? = when (heatLevel) {
+        30 -> bundle.getString("heat.autoShutdown")
+        28 -> format(bundle.getString("heat.ammoExplosion"), 8)
+        26 -> format(bundle.getString("heat.shutdown"), 10)
+        25 -> format(bundle.getString("heat.mpReduction"), -5)
+        24 -> format(bundle.getString("heat.fireMod"), 4)
+        23 -> format(bundle.getString("heat.ammoExplosion"), 6)
+        22 -> format(bundle.getString("heat.shutdown"), 8)
+        20 -> format(bundle.getString("heat.mpReduction"), -4)
+        19 -> format(bundle.getString("heat.ammoExplosion"), 4)
+        18 -> format(bundle.getString("heat.shutdown"), 6)
+        17 -> format(bundle.getString("heat.fireMod"), 3)
+        15 -> format(bundle.getString("heat.mpReduction"), -3)
+        14 -> format(bundle.getString("heat.shutdown"), 4)
+        13 -> format(bundle.getString("heat.fireMod"), 2)
+        10 -> format(bundle.getString("heat.mpReduction"), -2)
+        8 -> format(bundle.getString("heat.fireMod"), 1)
+        5 -> format(bundle.getString("heat.mpReduction"), -1)
+        else -> null
     }
 }
 
@@ -385,50 +410,71 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         Pair(bundle.getString("gyroHits"), 3),
         Pair(bundle.getString("sensorHits"), 2),
         Pair(bundle.getString("landingGear"), 1),
-        Pair(bundle.getString("lifeSupport"), 1))
+        Pair(bundle.getString("lifeSupport"), 1)
+    )
 
     override fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        addField(bundle.getString("tonnage"), "tonnage", x, y, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
-        addFieldSet(listOf(
-            LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
-            LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
-            LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
-        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
+        addField(
+            bundle.getString("tonnage"), "tonnage", x, y, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent
+        )
+        addFieldSet(
+            listOf(
+                LabeledField(bundle.getString("techBase"), "techBase", "Inner Sphere"),
+                LabeledField(bundle.getString("rulesLevel"), "rulesLevel", "Standard"),
+                LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
+            ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent
+        )
 
-        addTextElement(x, y + lineHeight, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
-        addTextElement(x, y + lineHeight * 2, bundle.getString("battlemech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
-        addFieldSet(listOf(
-            LabeledField(bundle.getString("walking"), "mpWalk", "0"),
-            LabeledField(bundle.getString("running"), "mpRun", "0"),
-            LabeledField(bundle.getString("jumping"), "mpJump", "0")
-        ), x, y + lineHeight * 3, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        addTextElement(
+            x, y + lineHeight, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent
+        )
+        addTextElement(
+            x, y + lineHeight * 2, bundle.getString("battlemech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent
+        )
+        addFieldSet(
+            listOf(
+                LabeledField(bundle.getString("walking"), "mpWalk", "0"),
+                LabeledField(bundle.getString("running"), "mpRun", "0"),
+                LabeledField(bundle.getString("jumping"), "mpJump", "0")
+            ), x, y + lineHeight * 3, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+        )
 
-        addTextElement(x + width * 0.48, y + lineHeight * 3, bundle.getString("airmech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
-        addFieldSet(listOf(
-            LabeledField(bundle.getString("walking"), "mpAirMechWalk", "0"),
-            LabeledField(bundle.getString("running"), "mpAirMechRun", "0")
-        ), x + width * 0.24, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
-        addFieldSet(listOf(
-            LabeledField(bundle.getString("cruising"), "mpAirMechCruise", "0"),
-            LabeledField(bundle.getString("flanking"), "mpAirMechFlank", "0")
-        ), x + width * 0.48, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        addTextElement(
+            x + width * 0.48, y + lineHeight * 3, bundle.getString("airmech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+        )
+        addFieldSet(
+            listOf(
+                LabeledField(bundle.getString("walking"), "mpAirMechWalk", "0"),
+                LabeledField(bundle.getString("running"), "mpAirMechRun", "0")
+            ), x + width * 0.24, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+        )
+        addFieldSet(
+            listOf(
+                LabeledField(bundle.getString("cruising"), "mpAirMechCruise", "0"),
+                LabeledField(bundle.getString("flanking"), "mpAirMechFlank", "0")
+            ), x + width * 0.48, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 38.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+        )
 
-        addTextElement(x + width * 0.72, y + lineHeight * 3, bundle.getString("fighter"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
-        addFieldSet(listOf(
-            LabeledField(bundle.getString("safeThrust"), "mpSafeThrust", "0"),
-            LabeledField(bundle.getString("maxThrust"), "mpMaxThrust", "0")
-        ), x + width * 0.72, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 47.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        addTextElement(
+            x + width * 0.72, y + lineHeight * 3, bundle.getString("fighter"), fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, parent = parent
+        )
+        addFieldSet(
+            listOf(
+                LabeledField(bundle.getString("safeThrust"), "mpSafeThrust", "0"),
+                LabeledField(bundle.getString("maxThrust"), "mpMaxThrust", "0")
+            ), x + width * 0.72, y + lineHeight * 4, fontSize, FILL_DARK_GREY, 47.0,
+            SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+        )
 
         return lineHeight * 6
     }
@@ -447,63 +493,101 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         val fontWeight = SVGConstants.SVG_BOLD_VALUE
         val lineHeight = calcFontHeight(fontSize)
         var ypos = y + lineHeight * 1.5
-        addField(bundle.getString("name"), "pilotName$crewIndex", padding, ypos, fontSize,
+        addField(
+            bundle.getString("name"), "pilotName$crewIndex", padding, ypos, fontSize,
             blankId = "blankCrewName$crewIndex",
             blankWidth = width - padding * 2
                     - calcTextLength("${bundle.getString("name")}_", fontSize, fontWeight),
             labelId = "crewName$crewIndex", labelFixedWidth = false, hidden = hideCrewIndex(crewIndex),
-            parent = parent)
+            parent = parent
+        )
         ypos += lineHeight * 1.5
         addTextElement(parent, padding, ypos, bundle.getString("battlemech"), fontSize, weight = fontWeight)
         ypos += lineHeight
-        addField(bundle.getString("gunnerySkill"), "gunnerySkill$crewIndex", padding,
+        addField(
+            bundle.getString("gunnerySkill"), "gunnerySkill$crewIndex", padding,
             ypos, fontSize, defaultText = "0",
             fieldOffset = width * 0.32,
             blankId = "blankGunnerySkill$crewIndex", labelId = "gunnerySkillText$crewIndex",
             blankWidth = width * 0.13, hidden = hideCrewIndex(crewIndex),
-            parent = parent)
-        addField(bundle.getString("pilotingSkill"), "pilotingSkill$crewIndex", width * 0.5,
+            parent = parent
+        )
+        addField(
+            bundle.getString("pilotingSkill"), "pilotingSkill$crewIndex", width * 0.5,
             ypos, fontSize, defaultText = "0",
             fieldOffset = width * 0.32,
             blankId = "blankPilotingSkill$crewIndex", labelId = "pilotingSkillText$crewIndex",
             blankWidth = width * 0.18 - padding, hidden = hideCrewIndex(crewIndex),
-            parent = parent)
+            parent = parent
+        )
         ypos += lineHeight
         addTextElement(parent, padding, ypos, bundle.getString("aerospace"), fontSize, weight = fontWeight)
         ypos += lineHeight
-        addField(bundle.getString("gunnerySkill"), "asfGunnerySkill", padding,
+        addField(
+            bundle.getString("gunnerySkill"), "asfGunnerySkill", padding,
             ypos, fontSize, defaultText = "0",
             fieldOffset = width * 0.32,
             blankId = "asfBlankGunnerySkill", labelId = "asfGunnerySkillText",
-            blankWidth = width * 0.13, parent = parent)
-        addField(bundle.getString("pilotingSkill"), "asfPilotingSkill", width * 0.5,
+            blankWidth = width * 0.13, parent = parent
+        )
+        addField(
+            bundle.getString("pilotingSkill"), "asfPilotingSkill", width * 0.5,
             ypos, fontSize, defaultText = "0",
             fieldOffset = width * 0.32,
             blankId = "asfBlankPilotingSkill", labelId = "asfPilotingSkillText",
-            blankWidth = width * 0.18 - padding, parent = parent)
+            blankWidth = width * 0.18 - padding, parent = parent
+        )
         ypos += lineHeight
         return ypos
     }
 
-    override fun appendSystemCrits(y: Double, width: Double, rectHeight: Double, fontSize: Float, parent: Element): Double {
-        addTextElement(width * 0.5, y, bundle.getString("structuralIntegrity"),
+    override fun appendSystemCrits(
+        y: Double,
+        width: Double,
+        rectHeight: Double,
+        fontSize: Float,
+        parent: Element
+    ): Double {
+        addTextElement(
+            width * 0.5, y, bundle.getString("structuralIntegrity"),
             fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
-            parent = parent)
+            parent = parent
+        )
         addRect(padding, y + padding, width - padding * 2, rectHeight, id = "siPips", parent = parent)
         return y + calcFontHeight(fontSize) + rectHeight + padding
     }
 
     override fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
-        embedImage(x + width * 0.5, y, width * 0.5, height + lineHeight,
-            "damage_transfer_biped.svg", ImageAnchor.TOP, parent)
-        addTextElement(x + width * 0.25, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
+        embedImage(
+            x + width * 0.5, y, width * 0.5, height + lineHeight,
+            "damage_transfer_biped.svg", ImageAnchor.TOP, parent
+        )
+        addTextElement(
+            x + width * 0.25,
+            y + height,
+            join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
+            FONT_SIZE_MEDIUM,
+            SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY,
+            SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent
+        )
+        addTextElement(
+            x + width * 0.25, y + height + lineHeight, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
-            parent = parent)
-        addTextElement(x + width * 0.25, y + height + lineHeight, bundle.getString("damageTransfer.3"),
-            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
-            parent = parent)
+            parent = parent
+        )
         embedImage(x, y, width * 0.5 - padding, height - lineHeight, "cgllogo.svg", ImageAnchor.CENTER, parent)
+    }
+
+    override fun heatEffect(heatLevel: Int): String? = when (heatLevel) {
+        25 -> format(bundle.getString("heat.lamMPReduction"), 5, 10)
+        20 -> format(bundle.getString("heat.lamMPReduction"), 4, 8)
+        15 -> format(bundle.getString("heat.lamMPReduction"), 3, 7)
+        10 -> format(bundle.getString("heat.lamMPReduction"), 2, 6)
+        5 -> format(bundle.getString("heat.lamMPReduction"), 1, 5)
+        else -> super.heatEffect(heatLevel)
     }
 }
 
