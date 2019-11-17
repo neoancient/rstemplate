@@ -15,11 +15,11 @@ const val padding = 3.0
 
 abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
-        width() * 0.4, height() / 2.0 - logoHeight - titleHeight)
-    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0, height() / 2.0)
+        width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
+    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0, (height() - footerHeight) / 2.0)
     val crewFluffCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height)
-    val critTableCell = Cell(LEFT_MARGIN.toDouble(), size.height / 2.0, width() * 0.667, height() / 2.0 - footerHeight)
-    val heatScaleCell = Cell(armorCell.rightX() - 20, armorCell.bottomY(), 20.0, armorCell.height - footerHeight)
+    val critTableCell = Cell(LEFT_MARGIN.toDouble(), armorCell.bottomY(), width() * 0.667, (height() - footerHeight) / 2.0)
+    val heatScaleCell = Cell(armorCell.rightX() - 20, armorCell.bottomY(), 20.0, (height() - footerHeight) / 2.0)
     val structureCell = Cell(armorCell.x, armorCell.bottomY(), armorCell.width - heatScaleCell.width, heatScaleCell.height * 0.5)
     val heatCell = structureCell.translate(0.0, structureCell.height)
 
