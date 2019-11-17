@@ -1,6 +1,5 @@
 package org.megamek.rstemplate
 
-import org.apache.batik.svggen.SVGConvolveOp
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Element
@@ -138,18 +137,9 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         }
         val chartBounds = Cell(width * 0.35, y,
             width * 0.65 - padding,20.0)
-        val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
-        path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M ${chartBounds.x},${chartBounds.y + 1.015} c 0,-0.56 0.454,-1.015 1.015,-1.015 l ${chartBounds.width - 2.03},0"
-                    + " c 0.561,0 1.016,0.455 1.016,1.015 l 0,${chartBounds.height - 2.03}"
-                    + " c 0,0.56 -0.455,1.015 -1.016,1.015 l -${chartBounds.width - 2.03},0"
-                    + " c -0.561,0 -1.016,0.455 -1.016,-1.015 l 0,-${chartBounds.height - 2.03} Z")
-        path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
-        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
-        path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "1.0")
-        path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
-        path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
-        g.appendChild(path)
+        val outline = RoundedBorder(chartBounds.x, chartBounds.y, chartBounds.width, chartBounds.height,
+            1.015, 0.56, 1.0).draw(document)
+        g.appendChild(outline)
         val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
             "M ${chartBounds.x},${chartBounds.y + chartBounds.height / 2.0} l ${chartBounds.width},0"
@@ -304,19 +294,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         }
         ypos = appendSystemCrits(ypos, width, pipDx + pipRadius * 2, fontSize, gContent)
 
-        val corner = 6.78
-        val control = 3.75
-        val border = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
-        border.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
-        border.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
-        border.setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_VALUE, "0.92")
-        border.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M ${padding * 2},${corner + padding} c 0,-$control ${corner - control},-$corner $corner,-$corner"
-                    + " l ${contentWidth - corner * 2},0 c $control,0 $corner,${corner - control} $corner,$corner"
-                    + " l 0, ${ypos - (corner + padding) * 2} c 0,$control ${control - corner},$corner -$corner,$corner"
-                    + " l ${corner * 2 - contentWidth},0 c -$control,0 -$corner,${control - corner} -$corner,-$corner"
-                    + "Z"
-        )
+        val border = RoundedBorder(padding * 2, padding, contentWidth, ypos - padding * 2, 6.78,
+            3.75, 0.92).draw(document)
         gContent.appendChild(border)
         parent.appendChild(gContent)
         return ypos + padding
