@@ -16,7 +16,8 @@ const val padding = 3.0
 abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
         width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
-    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0, (height() - footerHeight) / 2.0)
+    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0,
+        (height() - footerHeight) / 2.0 - padding)
     val crewFluffCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height)
     val critTableCell = Cell(LEFT_MARGIN.toDouble(), armorCell.bottomY(), width() * 0.667, (height() - footerHeight) / 2.0)
     val heatScaleCell = Cell(armorCell.rightX() - 20, armorCell.bottomY(), 20.0, (height() - footerHeight) / 2.0)
@@ -26,6 +27,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     protected val bundle = ResourceBundle.getBundle(MechRecordSheet::class.java.name)
 
     abstract val damageTransferFileName: String
+    abstract val armorDiagramFileName: String
+    abstract val isDiagramFileName: String
 
     open fun isQuad() = false
     open fun isTripod() = false
@@ -207,9 +210,19 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun hideCrewIndex(i: Int) = i > 0
 
     fun addArmorDiagram(rect: Cell) {
-        val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("armorPanel.title"),
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
-        document.documentElement.appendChild(label.draw())
+        g.appendChild(label.draw())
+        val dim = embedImage(0.0, padding, rect.width, rect.height, "armor_diagram_biped.svg", ImageAnchor.CENTER, g)
+        val pipScale = dim.second / 333.0
+        val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonArmorPips")
+        pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
+            + "${2.5 * pipScale - rect.x},${padding + 2.5 * pipScale - rect.y})")
+        g.appendChild(pipG)
+        document.documentElement.appendChild(g)
     }
 
     fun addCritTable(rect: Cell) {
@@ -321,11 +334,20 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun appendSystemCrits(ypos: Double, width: Double, rectHeight: Double, fontSize: Float, parent: Element) = ypos
 
     fun addStructureDiagram(rect: Cell) {
-        val label = RSLabel(this, rect.x + rect.width * 0.5, rect.y, bundle.getString("isPanel.title"),
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("isPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
-        document.documentElement.appendChild(label.draw())
-        embedImage(rect.x, rect.y + label.height() + 1, rect.width, rect.height - label.height() - 2, "internal_diagram_biped.svg",
-            ImageAnchor.CENTER)
+        g.appendChild(label.draw())
+        val dim = embedImage(0.0, label.height() + 1, rect.width, rect.height - label.height() - 2, "internal_diagram_biped.svg",
+            ImageAnchor.CENTER, parent = g)
+        val pipScale = dim.second / 177
+        val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonStructurePips")
+        pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+            "${SVGConstants.SVG_MATRIX_VALUE}($pipScale,0,0,$pipScale,"
+            + "${37.2 * pipScale - rect.x},${44.8 * pipScale - rect.y - label.height() - 1})")
+        g.appendChild(pipG)
+        document.documentElement.appendChild(g)
     }
 
     fun addHeatPanel(rect: Cell) {
@@ -367,17 +389,23 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_default.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
+    override val armorDiagramFileName = "armor_diagram_biped.svg"
+    override val isDiagramFileName = "armor_diagram_biped.svg"
 }
 
 class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quad_default.svg"
     override val damageTransferFileName = "damage_transfer_quad.svg"
     override fun isQuad() = true
+    override val armorDiagramFileName = "armor_diagram_quad.svg"
+    override val isDiagramFileName = "armor_diagram_quad.svg"
 }
 
 class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_tripod_default.svg"
     override val damageTransferFileName = "damage_transfer_tripod.svg"
+    override val armorDiagramFileName = "armor_diagram_tripod.svg"
+    override val isDiagramFileName = "armor_diagram_tripod.svg"
 
     override fun isTripod() = true
 
@@ -405,6 +433,8 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_lam.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
+    override val armorDiagramFileName = "armor_diagram_biped.svg"
+    override val isDiagramFileName = "armor_diagram_biped.svg"
 
     override val systems = listOf(
         Pair(bundle.getString("avionicsHits"), 3),
@@ -596,6 +626,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quadvee.svg"
     override val damageTransferFileName = "damage_transfer_quadvee.svg"
+    override val armorDiagramFileName = "armor_diagram_quadvee.svg"
+    override val isDiagramFileName = "armor_diagram_quadvee.svg"
 
     override fun isQuad() = true
 
