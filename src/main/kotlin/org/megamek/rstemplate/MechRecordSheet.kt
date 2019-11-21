@@ -631,8 +631,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quadvee.svg"
     override val damageTransferFileName = "damage_transfer_quadvee.svg"
-    override val armorDiagramFileName = "armor_diagram_quad.svg"
-    override val isDiagramFileName = "internal_diagram_quad.svg"
+    override val armorDiagramFileName = "armor_diagram_quadvee.svg"
+    override val isDiagramFileName = "internal_diagram_quadvee.svg"
 
     override fun isQuad() = true
 
