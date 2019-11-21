@@ -1,10 +1,7 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.FILL_DARK_GREY
-import org.megamek.rstemplate.FILL_LIGHT_GREY
-import org.megamek.rstemplate.FILL_WHITE
-import org.megamek.rstemplate.svgNS
+import org.megamek.rstemplate.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.util.*
@@ -73,10 +70,10 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
     }
 
     private fun absLineTo(x: Double, y: Double): String {
-        return "L ${this.x + x},${this.y + y}"
+        return "L ${(this.x + x).truncate()},${(this.y + y).truncate()}"
     }
 
     private fun relLineTo(x: Double, y: Double): String {
-        return "l $x,$y"
+        return "l ${x.truncate()},${y.truncate()}"
     }
 }

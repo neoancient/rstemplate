@@ -9,7 +9,7 @@ import org.w3c.dom.Element
 // Ratio of distance from end point to control point to the radius.
 private const val CONST_C = 0.55191502449
 // Format String for writing a curve to a path definition attribute
-private const val FMT_CURVE = " c %f %f,%f %f,%f %f"
+private const val FMT_CURVE = " c %.2f %.2f,%.2f %.2f,%.2f %.2f"
 
 /**
  * Approximates a circle using four Bezier curves.

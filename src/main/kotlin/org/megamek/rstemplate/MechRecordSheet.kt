@@ -6,7 +6,6 @@ import org.w3c.dom.Element
 import java.lang.String.format
 import java.lang.String.join
 import java.util.*
-import kotlin.math.min
 
 /**
  * Base class for Mech record sheets
@@ -51,7 +50,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     fun addEquipmentTable(rect: Cell) {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
             bundle.getString("dataPanel.title"), true, false, parent = g)
@@ -109,13 +108,13 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false, parent = tempG)
         val contentGroup = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         contentGroup.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${tempBorder.x},${tempBorder.y})")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${tempBorder.x.truncate()},${tempBorder.y.truncate()})")
         var ypos = 0.0
         for (i in 0 until maxCrew()) {
             ypos = addCrewData(i, ypos, tempBorder.width, contentGroup)
             val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
             g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-                "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x},${rect.y})")
+                "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
             g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "warriorData${crewSizeId[i]}")
             ypos += addCrewDamageTrack(0.0, ypos, tempBorder.width,
                 id = "crewDamage$i", hidden = hideCrewIndex(i), parent = contentGroup)
@@ -147,9 +146,10 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         g.appendChild(outline)
         val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M ${chartBounds.x},${chartBounds.y + chartBounds.height / 2.0} l ${chartBounds.width},0"
+            "M ${chartBounds.x.truncate()},${(chartBounds.y + chartBounds.height / 2.0).truncate()}"
+                    + " l ${chartBounds.width.truncate()},0"
                     + (1..5).map {
-                " M ${chartBounds.x + it * chartBounds.width / 6.0},${chartBounds.y} l 0,${chartBounds.height}"
+                " M ${(chartBounds.x + it * chartBounds.width / 6.0).truncate()},${chartBounds.y.truncate()} l 0,${chartBounds.height.truncate()}"
             }.joinToString(" "))
         grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
         grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
@@ -220,8 +220,9 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonArmorPips")
         // The canon pip images are centered on 502.33,496.33 and need to be scaled 0.966 to fit the full-sized diagrams
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
-            + "${padding + rect.width * 0.5 - 496.77 * pipScale},${padding + rect.height * 0.5 - 213.53 * pipScale})")
+            "${SVGConstants.SVG_MATRIX_VALUE} (${pipScale.truncate()} 0 0 ${pipScale.truncate()},"
+                + "${(padding + rect.width * 0.5 - 496.77 * pipScale).truncate()}"
+                + " ${(padding + rect.height * 0.5 - 213.53 * pipScale).truncate()})")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
         for (id in arrayOf("shieldRA", "shieldDCRA", "shieldDARA", "shieldLA", "shieldDCLA", "shieldDALA")) {
@@ -348,9 +349,9 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonStructurePips")
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
-                    + "${rect.width * 0.5 - 479.07 * pipScale},"
-                    + "${label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.6 * pipScale})")
+            "${SVGConstants.SVG_MATRIX_VALUE} (${pipScale.truncate()} 0 0 ${pipScale.truncate()} "
+                    + "${(rect.width * 0.5 - 479.07 * pipScale).truncate()},"
+                    + "${(label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.6 * pipScale).truncate()})")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
     }

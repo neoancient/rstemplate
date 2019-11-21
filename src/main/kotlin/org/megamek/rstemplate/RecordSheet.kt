@@ -15,6 +15,7 @@ import org.w3c.dom.Element
 import java.awt.Font
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import java.lang.String.format
 import java.util.*
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -47,6 +48,8 @@ const val FONT_SIZE_VSMALL = 5.8f
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 val crewSizeId = listOf("Single", "Dual", "Triple")
+fun Double.truncate() = format("%.2f", this)
+fun Float.truncate() = format("%.2f", this)
 
 abstract class RecordSheet(val size: PaperSize) {
     abstract val fileName: String
@@ -137,7 +140,7 @@ abstract class RecordSheet(val size: PaperSize) {
         val ypos = if (h != null) y + anchor.yOffset(h, dim.height * scale) else y
         val gElement = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         gElement.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.TRANSFORM_MATRIX}($scale 0 0 $scale $xpos $ypos)")
+            "${SVGConstants.TRANSFORM_MATRIX}(${scale.truncate()} 0 0 ${scale.truncate()} ${xpos.truncate()} ${ypos.truncate()})")
 
         for (i in 0 until imageDoc.documentElement.childNodes.length) {
             val node = imageDoc.documentElement.childNodes.item(i)
@@ -154,17 +157,17 @@ abstract class RecordSheet(val size: PaperSize) {
                                  fill: String = "#000000", maxWidth: Double? = null): Double {
         val newText = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         newText.setTextContent(text)
-        newText.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
-        newText.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
+        newText.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
+        newText.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
         newText.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
-        newText.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.toString() + "px")
+        newText.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.truncate() + "px")
         newText.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, weight)
         newText.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
         newText.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         if (maxWidth != null && calcTextLength(text, fontSize, weight) > maxWidth) {
             newText.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE,
                 SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
-            newText.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, maxWidth.toString())
+            newText.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, maxWidth.truncate())
         }
         parent.appendChild(newText)
 
@@ -247,18 +250,18 @@ abstract class RecordSheet(val size: PaperSize) {
         textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_DARK_GREY)
 
         var tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
-        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0.0")
-        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "-$height")
-        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.95).toString())
+        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0")
+        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "-${height.truncate()}")
+        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.95).truncate())
         tspan.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
         tspan.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "tspanCopyright")
         tspan.textContent = line1
         textElem.appendChild(tspan)
 
         tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
-        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0.0")
-        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "0.0")
-        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.9).toString())
+        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0")
+        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "0")
+        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.9).truncate())
         tspan.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
         tspan.textContent = line2
         textElem.appendChild(tspan)
@@ -287,8 +290,10 @@ abstract class RecordSheet(val size: PaperSize) {
                   bevelBottomLeft: Boolean = true,
                   parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
-        g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
+        if (x != 0.0 && y != 0.0) {
+            g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
+                "${SVGConstants.SVG_TRANSLATE_VALUE} (${x.truncate()} ${y.truncate()})")
+        }
 
         val label = RSLabel(this,2.5, 3.0, title, FONT_SIZE_TAB_LABEL)
         val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
@@ -318,17 +323,17 @@ abstract class RecordSheet(val size: PaperSize) {
                        id: String? = null, fixedWidth: Boolean = false, width: Double? = null,
                        hidden: Boolean = false): Element {
         val t = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
-        t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
-        t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
+        t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
+        t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
         t.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, TYPEFACE)
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.toString())
+        t.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.truncate())
         t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, fontWeight)
         t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         t.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
         if (fixedWidth) {
             t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
             t.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
-                (width ?: calcTextLength(text, fontSize, fontWeight)).toString())
+                (width ?: calcTextLength(text, fontSize, fontWeight)).truncate())
         }
         if (id != null) {
             t.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
@@ -372,9 +377,9 @@ abstract class RecordSheet(val size: PaperSize) {
                           parent: Element = document.documentElement) {
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M $x,$y L ${x + width},$y")
+            "M ${x.truncate()},${y.truncate()} L ${(x + width).truncate()},${y.truncate()}")
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, stroke)
-        path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
+        path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.truncate())
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
         if (id != null) {
             path.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
@@ -404,17 +409,17 @@ abstract class RecordSheet(val size: PaperSize) {
                 id: String? = null, strokeWidth: Double? = null,
                 stroke: String = FILL_DARK_GREY, parent: Element = document.documentElement) {
         val rect = document.createElementNS(svgNS, SVGConstants.SVG_RECT_TAG)
-        rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.toString())
-        rect.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.toString())
+        rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
+        rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
+        rect.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.truncate())
+        rect.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.truncate())
         rect.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         if (id != null) {
             rect.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
         if (strokeWidth != null) {
             rect.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, stroke)
-            rect.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
+            rect.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.truncate())
         }
         parent.appendChild(rect)
     }
@@ -422,7 +427,7 @@ abstract class RecordSheet(val size: PaperSize) {
     fun createTranslatedGroup(x: Double, y: Double): Element {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} ($x,$y)")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${x.truncate()} ${y.truncate()})")
         return g
     }
 
@@ -438,9 +443,9 @@ abstract class RecordSheet(val size: PaperSize) {
         val hexRadius = (rect.height - lineHeight * 2.0) / sqrt(3.0) // distance from center to each vertex
         val hexDY = (rect.height - lineHeight * 2.0) * 0.5 // the delta y between the center and the top and bottom
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M ${-hexRadius * 0.5},${-hexDY} L ${-hexRadius},0.0"
-                + " L ${-hexRadius * 0.5},$hexDY L ${hexRadius * 0.5},$hexDY"
-                + " L $hexRadius,0.0 L ${hexRadius * 0.5},${-hexDY} Z")
+            "M ${(-hexRadius * 0.5).truncate()},${(-hexDY).truncate()} L ${(-hexRadius).truncate()},0"
+                + " L ${(-hexRadius * 0.5).truncate()},${hexDY.truncate()} L ${(hexRadius * 0.5).truncate()},${hexDY.truncate()}"
+                + " L ${hexRadius.truncate()},0 L ${(hexRadius * 0.5).truncate()},${(-hexDY).truncate()} Z")
         val pathTransform = createTranslatedGroup(rect.width * 0.75, rect.height * 0.5)
         pathTransform.appendChild(path)
         g.appendChild(pathTransform)

@@ -3,9 +3,9 @@ package org.megamek.rstemplate.layout
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.FILL_DARK_GREY
 import org.megamek.rstemplate.svgNS
+import org.megamek.rstemplate.truncate
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import java.util.*
 
 /**
  * Creates a rectangular border with rounded corners
@@ -35,10 +35,11 @@ class RoundedBorder (val x: Double, val y: Double, val width: Double, val height
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M $x,${y + radius} c 0,-$control ${radius - control},-$radius $radius,-$radius"
-                    + " l ${width - radius * 2},0 c $control,0 $radius,${radius - control}, $radius,$radius"
-                    + " l 0,${height - radius * 2} c 0,$control ${control - radius},$radius, -$radius,$radius"
-                    + " l -${width - radius * 2},0 c -$control,0 -$radius,${control - radius}, -$radius,-$radius"
+            "M ${x.truncate()},${(y + radius).truncate()}"
+                    + " c 0,${(-control).truncate()} ${(radius - control).truncate()},${(-radius).truncate()} ${radius.truncate()},${(-radius).truncate()}"
+                    + " l ${(width - radius * 2).truncate()},0 c ${control.truncate()},0 ${radius.truncate()},${(radius - control).truncate()}, ${radius.truncate()},${radius.truncate()}"
+                    + " l 0,${(height - radius * 2).truncate()} c 0,${control.truncate()} ${(control - radius).truncate()},${radius.truncate()}, ${(-radius).truncate()},${radius.truncate()}"
+                    + " l -${(width - radius * 2).truncate()},0 c ${(-control).truncate()},0 ${(-radius).truncate()},${(control - radius).truncate()}, ${(-radius).truncate()},${(-radius).truncate()}"
                     + "Z"
         )
 
