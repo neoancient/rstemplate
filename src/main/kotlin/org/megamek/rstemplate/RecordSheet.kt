@@ -297,7 +297,7 @@ abstract class RecordSheet(val size: PaperSize) {
 
         val label = RSLabel(this,2.5, 3.0, title, FONT_SIZE_TAB_LABEL)
         val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
-            label.rectWidth + 4, FILL_LIGHT_GREY, 3.0, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+            label.rectWidth + 4, FILL_LIGHT_GREY, 5.2, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
         val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
         g.appendChild(shadow.draw(document))
