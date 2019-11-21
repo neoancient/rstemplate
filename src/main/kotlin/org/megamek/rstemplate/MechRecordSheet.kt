@@ -286,7 +286,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun addSystemPips(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = FONT_SIZE_FREE_LABEL
         val lineHeight = calcFontHeight(fontSize)
-        val pipRadius = 2.5
+        val pipRadius = 2.8
         val pipDx = 9.2
         val textWidth = systems.map {
             calcTextLength("${it.first}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
@@ -302,7 +302,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             )
             for (i in 0 until it.second) {
                 val pip = DrawPip(textAnchor + pipRadius + pipDx * i, ypos - pipRadius * 2,
-                    pipRadius, 0.96).draw(document)
+                    pipRadius, 1.72).draw(document)
                 // so hacky
                 if (it.first.equals(bundle.getString("gyroHits")) && (i + 1 == it.second)) {
                     pip.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "heavyDutyGyroPip")
