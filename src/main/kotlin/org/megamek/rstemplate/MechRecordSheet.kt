@@ -260,7 +260,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145, "crits_HD", fontSize, g)
         ypos += internal.height * 0.215
         addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
-        ypos += internal.height * 0.3
+        ypos += internal.height * 0.31
         ypos += addSystemPips(internal.x + colWidth + padding * 2.0, ypos, colWidth, g)
         addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos,
             colWidth, if (isTripod()) internal.height * 0.835 - ypos - padding else internal.height - ypos, g)
@@ -323,7 +323,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
         embedImage(x + width * 0.5, y, width * 0.5, height - lineHeight,
-            damageTransferFileName, ImageAnchor.TOP, parent)
+            damageTransferFileName, ImageAnchor.CENTER, parent)
         addTextElement(x + width * 0.75, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
