@@ -108,14 +108,15 @@ abstract class RecordSheet(val size: PaperSize) {
      * @param name      The name of the resource file relative to the current class.
      * @param anchor    How to justify the image within the available space.
      * @param parent    The parent element for the image
-     * @return          The final width and height of the embedded image
+     * @return          An array with the final width and height of the image after scaling
+     *                  and the scale factor, in that order.
      */
     fun embedImage(x: Double = 0.0, y: Double = 0.0, w: Double? = null, h: Double? = null, name: String,
                    anchor: ImageAnchor = ImageAnchor.TOP_LEFT,
-                   parent: Element = document.documentElement): Pair<Double, Double> {
+                   parent: Element = document.documentElement): Array<Double> {
         val istr = this::class.java.getResourceAsStream(name)
         if (istr == null) {
-            return Pair(0.0, 0.0)
+            return arrayOf(0.0, 0.0, 0.0)
         }
         val factory = SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName())
         val imageDoc = factory.createDocument(this::class.java.getResource(name).toString(), istr)
@@ -144,7 +145,7 @@ abstract class RecordSheet(val size: PaperSize) {
         }
         parent.appendChild(gElement)
 
-        return Pair(dim.width * scale, dim.height * scale)
+        return arrayOf(dim.width * scale, dim.height * scale, scale)
     }
 
     protected fun addTextElement(parent: Element, x: Double, y: Double, text: String,
@@ -202,7 +203,7 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), width() * 0.67, null, "btlogo.svg").second
+    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), width() * 0.67, null, "btlogo.svg")[1]
 
     /**
      * Places a generic title under the BT logo

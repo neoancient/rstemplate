@@ -215,11 +215,10 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         g.appendChild(label.draw())
-        val dim = embedImage(padding, padding, rect.width - padding, rect.height - padding, armorDiagramFileName, ImageAnchor.CENTER, g)
+        val pipScale = embedImage(padding, padding, rect.width - padding, rect.height - padding, armorDiagramFileName, ImageAnchor.CENTER, g)[2] * 0.966
         val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonArmorPips")
         // The canon pip images are centered on 502.33,496.33 and need to be scaled 0.966 to fit the full-sized diagrams
-        val pipScale = min(dim.first / (rect.width - padding), dim.second / (rect.height - padding)) / 0.966
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
             + "${padding + rect.width * 0.5 - 496.77 * pipScale},${padding + rect.height * 0.5 - 213.53 * pipScale})")
@@ -344,15 +343,14 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("isPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         g.appendChild(label.draw())
-        val dim = embedImage(0.0, label.height() + 1, rect.width, rect.height - label.height() - 2,
-            isDiagramFileName, ImageAnchor.CENTER, parent = g)
+        val pipScale = embedImage(0.0, label.height() + 1, rect.width, rect.height - label.height() - 2,
+            isDiagramFileName, ImageAnchor.CENTER, parent = g)[2] * 0.966
         val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonStructurePips")
-        val pipScale = min(dim.first / (rect.width), dim.second / (label.height() + 1)) / 0.966
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
                     + "${rect.width * 0.5 - 479.07 * pipScale},"
-                    + "${label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.16 * pipScale})")
+                    + "${label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.6 * pipScale})")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
     }
