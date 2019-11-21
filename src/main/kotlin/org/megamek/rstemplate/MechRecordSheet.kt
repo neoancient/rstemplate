@@ -6,6 +6,7 @@ import org.w3c.dom.Element
 import java.lang.String.format
 import java.lang.String.join
 import java.util.*
+import kotlin.math.min
 
 /**
  * Base class for Mech record sheets
@@ -104,7 +105,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
 
     open fun addCrewAndFluffPanels(rect: Cell) {
         val tempG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
-        val tempBorder = addBorder(rect.x, rect.y, rect.width, rect.height,
+        val tempBorder = addBorder(rect.x, rect.y, rect.width - padding, rect.height,
             bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false, parent = tempG)
         val contentGroup = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         contentGroup.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -119,10 +120,10 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             ypos += addCrewDamageTrack(0.0, ypos, tempBorder.width,
                 id = "crewDamage$i", hidden = hideCrewIndex(i), parent = contentGroup)
             addRect(0.0, ypos, tempBorder.width, 13.5, id = "spas$i", parent = contentGroup)
-            addBorder(0.0, 0.0, rect.width, tempBorder.y - rect.y + ypos + padding * 6,
+            addBorder(0.0, 0.0, rect.width - padding, tempBorder.y - rect.y + ypos + padding * 6,
                 bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
                 parent = g)
-            addRect(0.0, tempBorder.y - rect.y + ypos + padding * 6, rect.width - padding * 2,
+            addRect(0.0, tempBorder.y - rect.y + ypos + padding * 6, rect.width - padding * 3,
                 rect.height - tempBorder.y + rect.y - ypos - padding * 6,
                 id = "fluff${crewSizeId[i]}Pilot", parent = g)
             if (hideCrewIndex(i)) {
@@ -214,15 +215,20 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         g.appendChild(label.draw())
-        val dim = embedImage(0.0, padding, rect.width, rect.height, armorDiagramFileName, ImageAnchor.CENTER, g)
-        val pipScale = dim.second / 333.0
+        val dim = embedImage(padding, padding, rect.width - padding, rect.height - padding, armorDiagramFileName, ImageAnchor.CENTER, g)
         val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonArmorPips")
+        // The canon pip images are centered on 502.33,496.33 and need to be scaled 0.966 to fit the full-sized diagrams
+        val pipScale = min(dim.first / (rect.width - padding), dim.second / (rect.height - padding)) / 0.966
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
-            + "${2.5 * pipScale - rect.x},${padding + 2.5 * pipScale - rect.y})")
+            + "${padding + rect.width * 0.5 - 496.77 * pipScale},${padding + rect.height * 0.5 - 213.53 * pipScale})")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
+        for (id in arrayOf("shieldRA", "shieldDCRA", "shieldDARA", "shieldLA", "shieldDCLA", "shieldDALA")) {
+            val elem = document.getElementById(id)
+            elem?.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        }
     }
 
     fun addCritTable(rect: Cell) {
@@ -340,12 +346,13 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         g.appendChild(label.draw())
         val dim = embedImage(0.0, label.height() + 1, rect.width, rect.height - label.height() - 2,
             isDiagramFileName, ImageAnchor.CENTER, parent = g)
-        val pipScale = dim.second / 177
         val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonStructurePips")
+        val pipScale = min(dim.first / (rect.width), dim.second / (label.height() + 1)) / 0.966
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_MATRIX_VALUE}($pipScale,0,0,$pipScale,"
-            + "${37.2 * pipScale - rect.x},${44.8 * pipScale - rect.y - label.height() - 1})")
+            "${SVGConstants.SVG_MATRIX_VALUE} ($pipScale,0,0,$pipScale,"
+                    + "${rect.width * 0.5 - 479.07 * pipScale},"
+                    + "${label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.16 * pipScale})")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
     }
@@ -404,8 +411,8 @@ class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
 class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_tripod_default.svg"
     override val damageTransferFileName = "damage_transfer_tripod.svg"
-    override val armorDiagramFileName = "armor_diagram_biped.svg"//"armor_diagram_tripod.svg"
-    override val isDiagramFileName = "internal_diagram_biped.svg"//"internal_diagram_tripod.svg"
+    override val armorDiagramFileName = "armor_diagram_tripod.svg"
+    override val isDiagramFileName = "internal_diagram_tripod.svg"
 
     override fun isTripod() = true
 

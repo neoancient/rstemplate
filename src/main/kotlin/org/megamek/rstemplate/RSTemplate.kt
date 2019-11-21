@@ -9,7 +9,7 @@ import java.io.FileOutputStream
  */
 fun main() {
     writeRecordSheets(PaperSize.LETTER, "templates_us")
-    writeRecordSheets(PaperSize.LETTER, "templates_iso")
+    writeRecordSheets(PaperSize.A4, "templates_iso")
 }
 
 fun writeRecordSheets(size: PaperSize, dir: String) {
