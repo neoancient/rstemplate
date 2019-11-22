@@ -497,10 +497,12 @@ abstract class RecordSheet(val size: PaperSize) {
             4.7f, anchor = SVGConstants.SVG_MIDDLE_VALUE, width = 1.5 * boxHeight, parent = g)
         ypos += boxHeight * 2 + padding
         for (i in 30 downTo 0) {
-            addRect(0.0, ypos, boxWidth, boxHeight, fill = when {
-                i < 5 -> FILL_GREEN
-                i < 14 -> FILL_YELLOW
-                else -> FILL_ORANGE
+            addRect(0.0, ypos, boxWidth, boxHeight, fill = if (i < 10) {
+                // gradient green -> yellow
+                format("#%xffcc", 0xcc + i * (0xff - 0xcc) / 10)
+            } else {
+                // gradient yellow -> red
+                format("#ff%xcc", 0xff - (i - 10) * (0xff - 0xcc) / 20)
             }, strokeWidth = 1.45, parent = g)
             addTextElement(boxWidth * 0.5, ypos + textOffset,
                 if (heatEffect(i) == null) i.toString() else "$i*", FONT_SIZE_MEDIUM,
