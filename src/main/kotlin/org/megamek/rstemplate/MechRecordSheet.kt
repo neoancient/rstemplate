@@ -117,7 +117,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
                 "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
             g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "warriorData${crewSizeId[i]}")
             ypos += addCrewDamageTrack(0.0, ypos, tempBorder.width,
-                id = "crewDamage$i", hidden = hideCrewIndex(i), parent = contentGroup)
+                id = "crewDamage$i", parent = contentGroup)
             addRect(0.0, ypos, tempBorder.width, 13.5, id = "spas$i", parent = contentGroup)
             addBorder(0.0, 0.0, rect.width - padding, tempBorder.y - rect.y + ypos + padding * 6,
                 bundle.getString("crewPanel.title"), bevelTopRight = false, bevelBottomLeft = false,
@@ -134,12 +134,12 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addCrewDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
-                           id: String? = null, hidden: Boolean = false, parent: Element): Double {
+                           id: String? = null, parent: Element): Double {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (id != null) {
             g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
         }
-        val chartBounds = Cell(width * 0.35, y,
+        val chartBounds = Cell(x + width * 0.35, y,
             width * 0.65 - padding,20.0)
         val outline = RoundedBorder(chartBounds.x, chartBounds.y, chartBounds.width, chartBounds.height,
             1.015, 0.56, 1.0).draw(document)
@@ -239,8 +239,10 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val fontSize = 9.65f
         var ypos = internal.y + internal.height * 0.05
         if (isQuad()) {
-            addSingleCritLocation(internal.x + padding, ypos + internal.height * 0.087, colWidth, internal.height * 0.145,"crits_FLL", fontSize, g)
-            addSingleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos + internal.height * 0.087, colWidth, internal.height * 0.145,"crits_FRL", fontSize, g)
+            addSingleCritLocation(internal.x + padding, ypos + internal.height * 0.087,
+                colWidth,internal.height * 0.145,"crits_FLL", g)
+            addSingleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos + internal.height * 0.087,
+                colWidth, internal.height * 0.145,"crits_FRL", g)
         } else {
             addDoubleCritLocation(internal.x + padding, ypos, colWidth, internal.height * 0.3,"crits_LA", fontSize, g)
             addDoubleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos, colWidth, internal.height * 0.3,"crits_RA", fontSize, g)
@@ -250,15 +252,15 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addDoubleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos, colWidth, internal.height * 0.3, "crits_RT", fontSize, g)
         ypos += internal.height * 0.387
         addSingleCritLocation(internal.x + padding, ypos, colWidth, internal.height * 0.145,
-            if (isQuad()) "crits_RLL" else "crits_LL", fontSize, g)
+            if (isQuad()) "crits_RLL" else "crits_LL", g)
         addSingleCritLocation(internal.x + colWidth * 2.0 + padding * 3.0, ypos, colWidth, internal.height * 0.145,
-            if (isQuad()) "crits_RRL" else "crits_RL", fontSize, g)
+            if (isQuad()) "crits_RRL" else "crits_RL", g)
         if (isTripod()) {
             addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145,
-                "crits_CL", fontSize, g)
+                "crits_CL", g)
         }
         ypos = internal.y + internal.height * 0.02
-        addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145, "crits_HD", fontSize, g)
+        addSingleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.145, "crits_HD", g)
         ypos += internal.height * 0.215
         addDoubleCritLocation(internal.x + colWidth + padding * 2.0, ypos, colWidth, internal.height * 0.3, "crits_CT", fontSize, g)
         ypos += internal.height * 0.31
@@ -279,7 +281,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 
     fun addSingleCritLocation(x: Double, y: Double, width: Double, height: Double, id: String,
-                              fontSize: Float, parent: Element) {
+                              parent: Element) {
         addRect(x + 18.0, y, width - 18.0, height, id = id, parent = parent)
     }
 
@@ -331,7 +333,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addTextElement(x + width * 0.75, y + height + lineHeight, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
-        embedImage(x, y, width * 0.5 - padding, height, "cgllogo.svg", ImageAnchor.RIGHT, parent)
+        embedImage(x, y, width * 0.5 - padding, height, CGL_LOGO, ImageAnchor.RIGHT, parent)
     }
 
     /**
@@ -432,7 +434,7 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         addTextElement(x + width * 0.55 + padding, y + height * 0.5 + lineHeight * 1.5, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
-        embedImage(x, y, width * 0.4 + padding, height, "cgllogo.svg", ImageAnchor.RIGHT, parent)
+        embedImage(x, y, width * 0.4 + padding, height, CGL_LOGO, ImageAnchor.RIGHT, parent)
     }
 }
 
@@ -580,19 +582,19 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     }
 
     override fun appendSystemCrits(
-        y: Double,
+        ypos: Double,
         width: Double,
         rectHeight: Double,
         fontSize: Float,
         parent: Element
     ): Double {
         addTextElement(
-            width * 0.5, y, bundle.getString("structuralIntegrity"),
+            width * 0.5, ypos, bundle.getString("structuralIntegrity"),
             fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent
         )
-        addRect(padding, y + padding, width - padding * 2, rectHeight, id = "siPips", parent = parent)
-        return y + calcFontHeight(fontSize) + rectHeight + padding
+        addRect(padding, ypos + padding, width - padding * 2, rectHeight, id = "siPips", parent = parent)
+        return ypos + calcFontHeight(fontSize) + rectHeight + padding
     }
 
     override fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
@@ -616,7 +618,7 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent
         )
-        embedImage(x, y, width * 0.5 - padding, height - lineHeight, "cgllogo.svg", ImageAnchor.CENTER, parent)
+        embedImage(x, y, width * 0.5 - padding, height - lineHeight, CGL_LOGO, ImageAnchor.CENTER, parent)
     }
 
     override fun heatEffect(heatLevel: Int): String? = when (heatLevel) {

@@ -45,7 +45,8 @@ const val FONT_SIZE_LARGE = 7.2f
 const val FONT_SIZE_MEDIUM = 6.76f
 const val FONT_SIZE_SMALL = 6.2f
 const val FONT_SIZE_VSMALL = 5.8f
-
+const val BT_LOGO = "btlogo.svg"
+const val CGL_LOGO = "cgllogo.svg"
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 val crewSizeId = listOf("Single", "Dual", "Triple")
@@ -207,7 +208,7 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), width() * 0.67, null, "btlogo.svg")[1]
+    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), width() * 0.67, null, BT_LOGO)[1]
 
     /**
      * Places a generic title under the BT logo
