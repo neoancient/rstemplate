@@ -37,6 +37,7 @@ const val FILL_WHITE = "#ffffff"
 const val FILL_GREEN = "#ddfeeb"
 const val FILL_YELLOW = "#fffdd4"
 const val FILL_RED = "#fccbce"
+const val FILL_ORANGE = "#ffe6cc"
 const val FONT_SIZE_TAB_LABEL = 10.6f
 const val FONT_SIZE_FREE_LABEL = 8.6f
 const val FONT_SIZE_VLARGE = 11.59f
@@ -48,8 +49,8 @@ const val FONT_SIZE_VSMALL = 5.8f
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 val crewSizeId = listOf("Single", "Dual", "Triple")
-fun Double.truncate() = format("%.2f", this)
-fun Float.truncate() = format("%.2f", this)
+fun Double.truncate() = format("%.3f", this)
+fun Float.truncate() = format("%.3f", this)
 
 abstract class RecordSheet(val size: PaperSize) {
     abstract val fileName: String
@@ -499,7 +500,7 @@ abstract class RecordSheet(val size: PaperSize) {
             addRect(0.0, ypos, boxWidth, boxHeight, fill = when {
                 i < 5 -> FILL_GREEN
                 i < 14 -> FILL_YELLOW
-                else -> FILL_RED
+                else -> FILL_ORANGE
             }, strokeWidth = 1.45, parent = g)
             addTextElement(boxWidth * 0.5, ypos + textOffset,
                 if (heatEffect(i) == null) i.toString() else "$i*", FONT_SIZE_MEDIUM,

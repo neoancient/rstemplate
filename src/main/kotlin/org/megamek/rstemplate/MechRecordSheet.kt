@@ -221,8 +221,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         // The canon pip images are centered on 502.33,496.33 and need to be scaled 0.966 to fit the full-sized diagrams
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_MATRIX_VALUE} (${pipScale.truncate()} 0 0 ${pipScale.truncate()},"
-                + "${(padding + rect.width * 0.5 - 496.77 * pipScale).truncate()}"
-                + " ${(padding + rect.height * 0.5 - 213.53 * pipScale).truncate()})")
+                + (padding + rect.width * 0.5 - 497.165 * pipScale).truncate()
+                + (padding + rect.height * 0.5 - 213.53 * pipScale).truncate() + ")")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
         for (id in arrayOf("shieldRA", "shieldDCRA", "shieldDARA", "shieldLA", "shieldDCLA", "shieldDALA")) {
@@ -350,7 +350,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonStructurePips")
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_MATRIX_VALUE} (${pipScale.truncate()} 0 0 ${pipScale.truncate()} "
-                    + "${(rect.width * 0.5 - 479.07 * pipScale).truncate()},"
+                    + "${(rect.width * 0.5 - 478.445 * pipScale).truncate()},"
                     + "${(label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.6 * pipScale).truncate()})")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
