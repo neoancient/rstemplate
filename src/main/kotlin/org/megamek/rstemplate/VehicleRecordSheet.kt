@@ -84,6 +84,36 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("crewPanel.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val fontWeight = SVGConstants.SVG_BOLD_VALUE
+        val lineHeight = calcFontHeight(fontSize)
+        var ypos = inner.y + lineHeight * 1.5
+        addField(bundle.getString("crew"), "crewName", padding, ypos, fontSize,
+            blankId = "blankCrewName",
+            blankWidth = inner.width - padding * 2
+                    - calcTextLength("${bundle.getString("crew")}_", fontSize, fontWeight),
+            labelFixedWidth = false, parent = g)
+        ypos += lineHeight * 1.5
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill", padding,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = inner.width * 0.32,
+            blankId = "blankGunnerySkill", labelId = "gunnerySkillText",
+            blankWidth = inner.width * 0.13, parent = g)
+        addField(bundle.getString("drivingSkill"), "drivingSkill", inner.width * 0.5,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = inner.width * 0.32,
+            blankId = "blankDrivingSkill", labelId = "drivingSkillText",
+            blankWidth = inner.width * 0.18 - padding, parent = g)
+        ypos += lineHeight * 2.0
+        g.appendChild(DamageCheckBox(bundle.getString("commanderHit"), "+1")
+            .draw(this, inner.x, ypos, fontSize, width = inner.width * 0.45))
+        g.appendChild(DamageCheckBox(bundle.getString("driverHit"), "+2")
+            .draw(this, inner.x + inner.width * 0.5, ypos, fontSize, width = inner.width * 0.45))
+        ypos += lineHeight * 1.8
+        addTextElement(inner.x, ypos, bundle.getString("commanderHitMod"),
+            4.83f, fixedWidth = true, parent = g)
+        addTextElement(inner.x + inner.width * 0.5, ypos, bundle.getString("driverHitMod"),
+            4.83f, fixedWidth = true, parent = g)
         document.documentElement.appendChild(g)
     }
 

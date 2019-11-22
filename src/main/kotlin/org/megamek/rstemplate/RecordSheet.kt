@@ -44,7 +44,7 @@ const val FONT_SIZE_VLARGE = 11.59f
 const val FONT_SIZE_LARGE = 7.2f
 const val FONT_SIZE_MEDIUM = 6.76f
 const val FONT_SIZE_SMALL = 6.2f
-const val FONT_SIZE_VSMALL = 5.8f
+const val FONT_SIZE_VSMALL = 5.7f
 const val BT_LOGO = "btlogo.svg"
 const val CGL_LOGO = "cgllogo.svg"
 
