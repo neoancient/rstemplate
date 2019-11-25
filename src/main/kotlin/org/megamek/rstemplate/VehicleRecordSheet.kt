@@ -121,6 +121,34 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("criticalDamage.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val lineHeight = inner.height / 7.0
+        var ypos = inner.y + lineHeight * 0.5
+        g.appendChild(DamageCheckBox(bundle.getString("turretLocked"))
+            .draw(this, inner.x, ypos, fontSize, width = inner.width * 0.45))
+        g.appendChild(DamageCheckBox(bundle.getString("engineHit"))
+            .draw(this, inner.x + inner.width * 0.5, ypos, fontSize, width = inner.width * 0.45))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("sensorHits"), listOf("+1", "+2", "+3", "D"))
+            .draw(this, inner.x, ypos, fontSize, offset = inner.width * 0.95 - (calcFontHeight(fontSize) + padding) * 4))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("motiveSystemHits"), listOf("+1", "+2", "+3"))
+            .draw(this, inner.x, ypos, fontSize, offset = inner.width * 0.95 - (calcFontHeight(fontSize) + padding) * 4))
+        ypos += lineHeight
+        addTextElement(inner.x + inner.width * 0.5, ypos + lineHeight * 0.5, bundle.getString("stabilizers"),
+            fontSize, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("front"))
+            .draw(this, inner.x, ypos, fontSize, width = inner.width * 0.3))
+        g.appendChild(DamageCheckBox(bundle.getString("left"))
+            .draw(this, inner.x + inner.width * 0.33, ypos, fontSize, width = inner.width * 0.3))
+        g.appendChild(DamageCheckBox(bundle.getString("right"))
+            .draw(this, inner.x + inner.width * 0.67, ypos, fontSize, width = inner.width * 0.3))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("rear"))
+            .draw(this, inner.x, ypos, fontSize, width = inner.width * 0.3))
+        g.appendChild(DamageCheckBox(bundle.getString("turret1"))
+            .draw(this, inner.x + inner.width * 0.33, ypos, fontSize, width = inner.width * 0.3))
         document.documentElement.appendChild(g)
     }
 
@@ -142,6 +170,6 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
     }
 }
 
-class WheeledVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
-    override val fileName = "vehicle_wheeled_default"
+class SingleTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "vehicle_turret_standard.svg"
 }

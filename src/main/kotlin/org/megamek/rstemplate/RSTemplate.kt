@@ -21,7 +21,7 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     outputRS(TripodMechRecordSheet(size), dir)
     outputRS(LAMRecordSheet(size), dir)
     outputRS(QuadVeeRecordSheet(size), dir)
-    outputRS(WheeledVehicleRecordSheet(size), dir)
+    outputRS(SingleTurretVehicleRecordSheet(size), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
