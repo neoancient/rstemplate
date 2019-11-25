@@ -332,7 +332,7 @@ abstract class RecordSheet(val size: PaperSize) {
         t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, fontWeight)
         t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         t.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
-        if (fixedWidth) {
+        if (fixedWidth || width != null) {
             t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
             t.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
                 (width ?: calcTextLength(text, fontSize, fontWeight)).truncate())
