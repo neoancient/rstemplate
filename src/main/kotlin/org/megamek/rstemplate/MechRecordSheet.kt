@@ -11,8 +11,6 @@ import java.util.*
  * Base class for Mech record sheets
  */
 
-const val padding = 3.0
-
 abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
         width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
@@ -314,7 +312,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             }
             ypos += lineHeight
         }
-        ypos = appendSystemCrits(ypos, width, pipDx + pipRadius * 2, fontSize, gContent)
+        ypos = appendSystemCrits(ypos, width, pipDx * 2, fontSize, gContent)
 
         val border = RoundedBorder(padding * 2, padding, contentWidth, ypos - padding * 2, 6.78,
             3.75, 0.92).draw(document)
@@ -593,7 +591,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent
         )
-        addRect(padding, ypos + padding, width - padding * 2, rectHeight, id = "siPips", parent = parent)
+        addRect(padding * 4, ypos + padding, width - padding * 8, rectHeight,
+            id = "siPips", parent = parent)
         return ypos + calcFontHeight(fontSize) + rectHeight + padding
     }
 

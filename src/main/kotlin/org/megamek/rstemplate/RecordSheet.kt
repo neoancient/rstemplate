@@ -24,6 +24,8 @@ import kotlin.math.sqrt
  *
  */
 
+const val padding = 3.0
+
 const val SVGNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 const val LEFT_MARGIN = 36
 const val RIGHT_MARGIN = 36
@@ -208,7 +210,8 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(), width() * 0.67, null, BT_LOGO)[1]
+    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(),
+        width() * 0.67 - padding, null, BT_LOGO)[1]
 
     /**
      * Places a generic title under the BT logo
@@ -405,11 +408,12 @@ abstract class RecordSheet(val size: PaperSize) {
      * @param strokeWidth The width of the stroke to outline the rectangle. If null, no outline will be drawn
      * @param stroke The color to use for the outline if strokeWidth is not null
      * @param parent The parent element for the rectangle
+     * @return The rect element
      */
     fun addRect(x: Double, y: Double, width: Double, height: Double,
                 fill: String = SVGConstants.SVG_NONE_VALUE,
                 id: String? = null, strokeWidth: Double? = null,
-                stroke: String = FILL_DARK_GREY, parent: Element = document.documentElement) {
+                stroke: String = FILL_DARK_GREY, parent: Element = document.documentElement): Element {
         val rect = document.createElementNS(svgNS, SVGConstants.SVG_RECT_TAG)
         rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
         rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
@@ -424,6 +428,7 @@ abstract class RecordSheet(val size: PaperSize) {
             rect.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.truncate())
         }
         parent.appendChild(rect)
+        return rect
     }
 
     fun createTranslatedGroup(x: Double, y: Double): Element {
