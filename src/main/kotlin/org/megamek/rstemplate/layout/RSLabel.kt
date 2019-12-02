@@ -46,7 +46,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
         g.appendChild(background)
 
         val t = sheet.createTextElement(taperWidth + textWidth * 0.05,
-            textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fgColor)
+            textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fgColor,
+            fixedWidth = true)
         g.appendChild(t)
 
         return g

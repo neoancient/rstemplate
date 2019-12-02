@@ -220,13 +220,11 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         pipG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_MATRIX_VALUE} (${pipScale.truncate()} 0 0 ${pipScale.truncate()},"
                 + (padding + rect.width * 0.5 - 497.165 * pipScale).truncate()
-                + (padding + rect.height * 0.5 - 213.53 * pipScale).truncate() + ")")
+                + " " + (padding + rect.height * 0.5 - 214.068 * pipScale).truncate() + ")")
         g.appendChild(pipG)
         document.documentElement.appendChild(g)
-        for (id in arrayOf("shieldRA", "shieldDCRA", "shieldDARA", "shieldLA", "shieldDCLA", "shieldDALA")) {
-            val elem = document.getElementById(id)
-            elem?.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
-        }
+        document.getElementById("shieldRA")?.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        document.getElementById("shieldLA")?.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
     }
 
     fun addCritTable(rect: Cell) {
@@ -298,7 +296,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         systems.forEach {
             addTextElement(
                 textAnchor, ypos, it.first, fontSize, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY, SVGConstants.SVG_END_VALUE, parent = gContent
+                FILL_DARK_GREY, SVGConstants.SVG_END_VALUE, fixedWidth = true, parent = gContent
             )
             for (i in 0 until it.second) {
                 val pip = DrawPip(textAnchor + pipRadius + pipDx * i, ypos - pipRadius * 2,
