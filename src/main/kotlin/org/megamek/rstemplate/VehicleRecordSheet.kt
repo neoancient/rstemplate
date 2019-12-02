@@ -49,17 +49,19 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             FILL_DARK_GREY, parent = g)
         addFieldSet(listOf(
             LabeledField(bundle.getString("cruising"), "mpWalk", "0"),
-            LabeledField(bundle.getString("flanking"), "mpRun", "0"),
-            LabeledField(bundle.getString("jumping"), "mpJump", "0", labelId="lblJump")
+            LabeledField(bundle.getString("flanking"), "mpRun", "0")
         ), internal.x + padding, ypos + lineHeight, fontSize, FILL_DARK_GREY, 38.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addField(bundle.getString("jumping"), "mpJump",
+            internal.x + internal.width * 0.25, ypos + lineHeight * 2, fontSize,
+            FILL_DARK_GREY, "0", 38.0, labelId = "lblJump", parent = g)
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
             LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
             LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
         ), internal.x + padding + internal.width * 0.5, ypos, fontSize, FILL_DARK_GREY, parent = g)
-        ypos += lineHeight * 4
+        ypos += lineHeight * 3
         addFieldSet(listOf(
             LabeledField(bundle.getString("movementType"), "movementType"),
             LabeledField(bundle.getString("engineType"), "engineType")

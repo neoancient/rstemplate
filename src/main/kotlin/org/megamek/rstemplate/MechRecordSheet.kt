@@ -476,7 +476,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             listOf(
                 LabeledField(bundle.getString("walking"), "mpWalk", "0"),
                 LabeledField(bundle.getString("running"), "mpRun", "0"),
-                LabeledField(bundle.getString("jumping"), "mpJump", "0")
+                LabeledField(bundle.getString("jumping"), "mpJump", "0",
+                    labelId = "lblJump")
             ), x, y + lineHeight * 3, fontSize, FILL_DARK_GREY, 38.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = parent
         )
