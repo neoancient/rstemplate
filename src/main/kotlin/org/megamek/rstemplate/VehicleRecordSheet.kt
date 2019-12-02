@@ -15,7 +15,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
         width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding)
     val criticalDamageCell = Cell(crewCell.x, crewCell.bottomY() + padding, crewCell.width, crewCell.height)
-    val notesCell = Cell(crewCell.x, criticalDamageCell.bottomY() + padding, crewCell.width, crewCell.height)
+    val notesCell = Cell(crewCell.x, criticalDamageCell.bottomY() + padding, crewCell.width, crewCell.height + padding)
 
     protected val bundle = ResourceBundle.getBundle(VehicleRecordSheet::class.java.name)
     abstract val turretCount: Int
@@ -174,9 +174,13 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
 
     fun addNotesPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "notes")
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("notes.title"), parent = g)
         document.documentElement.appendChild(g)
+        val fluffCell = rect.inset(padding, padding, padding, padding)
+        addRect(fluffCell.x, fluffCell.y, fluffCell.width, fluffCell.height,
+            stroke = SVGConstants.SVG_NONE_VALUE, id = "fluffImage")
     }
 
     fun addArmorDiagram(rect: Cell) {
