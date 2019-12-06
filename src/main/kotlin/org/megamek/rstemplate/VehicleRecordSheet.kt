@@ -9,9 +9,9 @@ import java.util.*
  */
 abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
     val eqTableCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
-        width() * 0.40, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
+        width() * 0.40, height() - footerHeight - logoHeight - titleHeight - padding)
     val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0,
-        (height() - footerHeight) / 2.0 - padding)
+        height() - footerHeight - padding)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
         width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding)
     val criticalDamageCell = Cell(crewCell.x, crewCell.bottomY() + padding, crewCell.width, crewCell.height)
@@ -20,7 +20,6 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
     protected val bundle = ResourceBundle.getBundle(VehicleRecordSheet::class.java.name)
     abstract val turretCount: Int
     abstract val armorDiagramFileName: String
-    open val halfPage = true
 
     override fun build() {
         addEquipmentTable(eqTableCell)
@@ -187,7 +186,8 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
-        embedImage(0.0, 0.0, rect.width, rect.height, armorDiagramFileName, ImageAnchor.CENTER, g)
+        embedImage(0.0, label.height(), rect.width, rect.height - label.height() - padding,
+            armorDiagramFileName, ImageAnchor.CENTER, g)
         embedImage(rect.width - 50.0, rect.height - 30.0, 50.0, 30.0,
             CGL_LOGO, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g)
         g.appendChild(label.draw())
@@ -199,16 +199,19 @@ class SingleTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) 
     override val fileName = "vehicle_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vee_turret.svg"
     override val turretCount = 1
+    override fun halfPage() = true
 }
 
 class NoTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vee_noturret.svg"
     override val turretCount = 0
+    override fun halfPage() = true
 }
 
 class DualTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_dualturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vee_dualturret.svg"
     override val turretCount = 2
+    override fun halfPage() = true
 }

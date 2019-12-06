@@ -75,7 +75,13 @@ abstract class RecordSheet(val size: PaperSize) {
     /**
      * @return height of printable area
      */
-    fun height() = size.height - TOP_MARGIN - BOTTOM_MARGIN
+    fun height(): Double = if (halfPage()) {
+        size.height * 0.5 - TOP_MARGIN
+    } else {
+        (size.height - TOP_MARGIN - BOTTOM_MARGIN).toDouble()
+    }
+
+    open fun halfPage() = false
 
     /**
      * Checks for an effect at the given heat level
@@ -244,15 +250,21 @@ abstract class RecordSheet(val size: PaperSize) {
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")
         val line2 = bundle.getString("copyright.line2.text")
+        val bottomY = if (halfPage()) {
+            size.height * 0.5
+        } else {
+            (size.height - BOTTOM_MARGIN).toDouble()
+        }
 
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${size.width / 2.0} ${size.height - BOTTOM_MARGIN})")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${size.width / 2.0} $bottomY)")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VSMALL}px")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, SVGConstants.SVG_BOLD_VALUE)
         textElem.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, SVGConstants.SVG_MIDDLE_VALUE)
         textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_DARK_GREY)
+        textElem.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "footer")
 
         var tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
         tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0")
