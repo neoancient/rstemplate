@@ -75,13 +75,9 @@ abstract class RecordSheet(val size: PaperSize) {
     /**
      * @return height of printable area
      */
-    fun height(): Double = if (halfPage()) {
-        size.height * 0.5 - TOP_MARGIN
-    } else {
-        (size.height - TOP_MARGIN - BOTTOM_MARGIN).toDouble()
-    }
+    open fun height(): Double = (size.height - TOP_MARGIN - BOTTOM_MARGIN).toDouble()
 
-    open fun halfPage() = false
+    open fun fullPage() = true
 
     /**
      * Checks for an effect at the given heat level
@@ -100,7 +96,12 @@ abstract class RecordSheet(val size: PaperSize) {
         val doc = domImpl.createDocument(SVGNS, SVGConstants.SVG_SVG_TAG, null)
         val svgRoot = doc.documentElement
         svgRoot.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, size.width.toString())
-        svgRoot.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, size.height.toString())
+        svgRoot.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE,
+            if (fullPage()) {
+                size.height.toString()
+            } else {
+                height().toString()
+            })
 
         return doc
     }
@@ -216,7 +217,7 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), TOP_MARGIN.toDouble(),
+    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
         width() * 0.67 - padding, null, BT_LOGO)[1]
 
     /**
@@ -228,7 +229,7 @@ abstract class RecordSheet(val size: PaperSize) {
         val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${LEFT_MARGIN + width() / 3.0} ${TOP_MARGIN + logoHeight + height})")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${LEFT_MARGIN + width() / 3.0} ${(if (fullPage()) TOP_MARGIN else 0) + logoHeight + height})")
         textElem.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "title")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VLARGE}px")
@@ -250,11 +251,7 @@ abstract class RecordSheet(val size: PaperSize) {
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")
         val line2 = bundle.getString("copyright.line2.text")
-        val bottomY = if (halfPage()) {
-            size.height * 0.5
-        } else {
-            (size.height - BOTTOM_MARGIN).toDouble()
-        }
+        val bottomY = if (fullPage()) height() + TOP_MARGIN else height()
 
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
