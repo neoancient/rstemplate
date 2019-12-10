@@ -28,6 +28,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     abstract val armorDiagramFileName: String
     abstract val isDiagramFileName: String
 
+    override final fun height() = super.height()
+
     open fun isQuad() = false
     open fun isTripod() = false
     open val systems = listOf(Pair(bundle.getString("engineHits"), 3),
@@ -159,19 +161,19 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val starty = chartBounds.y + calcFontHeight(5.8f)
         val cons = listOf("3", "5", "7", "10", "11", bundle.getString("dead"))
         for (i in 1..6) {
-            addTextElement(g, startx + i * chartBounds.width / 6.0, starty,
+            addTextElement(startx + i * chartBounds.width / 6.0, starty,
                 i.toString(), 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY)
-            addTextElement(g, startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
+                FILL_DARK_GREY, parent = g)
+            addTextElement(startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
                 cons[i - 1], 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY, maxWidth = chartBounds.width / 6.0 - 4.0)
+                FILL_DARK_GREY, width = chartBounds.width / 6.0 - 4.0, parent = g)
         }
-        addTextElement(g, chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
+        addTextElement(chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
             5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY)
-        addTextElement(g, chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
+            FILL_DARK_GREY, parent = g)
+        addTextElement(chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
             5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY)
+            FILL_DARK_GREY, parent = g)
         parent.appendChild(g)
         return height
     }
@@ -539,7 +541,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             parent = parent
         )
         ypos += lineHeight * 1.5
-        addTextElement(parent, padding, ypos, bundle.getString("battlemech"), fontSize, weight = fontWeight)
+        addTextElement(padding, ypos, bundle.getString("battlemech"), fontSize,
+            fontWeight = fontWeight, parent = parent)
         ypos += lineHeight
         addField(
             bundle.getString("gunnerySkill"), "gunnerySkill$crewIndex", padding,
@@ -558,7 +561,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             parent = parent
         )
         ypos += lineHeight
-        addTextElement(parent, padding, ypos, bundle.getString("aerospace"), fontSize, weight = fontWeight)
+        addTextElement(padding, ypos, bundle.getString("aerospace"), fontSize,
+            fontWeight = fontWeight, parent = parent)
         ypos += lineHeight
         addField(
             bundle.getString("gunnerySkill"), "asfGunnerySkill", padding,

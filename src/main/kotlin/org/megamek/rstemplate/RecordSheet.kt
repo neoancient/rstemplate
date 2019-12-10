@@ -162,29 +162,6 @@ abstract class RecordSheet(val size: PaperSize) {
         return arrayOf(dim.width * scale, dim.height * scale, scale)
     }
 
-    protected fun addTextElement(parent: Element, x: Double, y: Double, text: String,
-                                 fontSize: Float, anchor: String = SVGConstants.SVG_START_VALUE,
-                                 weight: String = SVGConstants.SVG_NORMAL_VALUE,
-                                 fill: String = "#000000", maxWidth: Double? = null): Double {
-        val newText = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
-        newText.setTextContent(text)
-        newText.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
-        newText.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
-        newText.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
-        newText.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.truncate() + "px")
-        newText.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, weight)
-        newText.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
-        newText.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
-        if (maxWidth != null && calcTextLength(text, fontSize, weight) > maxWidth) {
-            newText.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE,
-                SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
-            newText.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, maxWidth.truncate())
-        }
-        parent.appendChild(newText)
-
-        return calcTextLength(text, fontSize, weight)
-    }
-
     /**
      * Determines the vertical space taken up by a line of text.
      *
@@ -352,6 +329,9 @@ abstract class RecordSheet(val size: PaperSize) {
             t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
             t.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE,
                 textLength.truncate())
+        } else if (width != null && !fixedWidth) {
+            t.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,
+                "mml-field-width:${width.truncate()}")
         }
         if (id != null) {
             t.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
@@ -369,24 +349,26 @@ abstract class RecordSheet(val size: PaperSize) {
                  fieldOffset: Double? = null,
                  fieldAnchor: String = SVGConstants.SVG_START_VALUE,
                  labelId: String? = null, blankId: String? = null,
-                 blankWidth: Double? = null, labelFixedWidth: Boolean = true, hidden: Boolean = false,
+                 blankWidth: Double? = null, labelFixedWidth: Boolean = true,
+                 maxWidth: Double? = null, hidden: Boolean = false,
                  parent: Element = document.documentElement) {
         addFieldSet(listOf(LabeledField(label, id, defaultText, labelId, blankId)), x, y, fontSize, fill,
-            fieldOffset, fieldAnchor, blankWidth, labelFixedWidth, hidden, parent)
+            fieldOffset, fieldAnchor, blankWidth, labelFixedWidth, maxWidth, hidden, parent)
     }
 
     fun addFieldSet(fields: List<LabeledField>, x: Double, y: Double,
                     fontSize: Float, fill: String = FILL_DARK_GREY,
                     fieldOffset: Double? = null,
                     fieldAnchor: String = SVGConstants.SVG_START_VALUE,
-                    blankWidth: Double? = null, labelFixedWidth: Boolean = true, hidden: Boolean = false,
+                    blankWidth: Double? = null, labelFixedWidth: Boolean = true,
+                    maxWidth: Double? = null, hidden: Boolean = false,
                     parent: Element = document.documentElement) {
         val labelWidth = fieldOffset ?: fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (field in fields.withIndex()) {
             field.value.draw(this, x, y + lineHeight * field.index, fontSize, fill,
                 x + labelWidth, blankWidth, fieldAnchor = fieldAnchor, labelFixedWidth = labelFixedWidth,
-                hidden = hidden, parent = parent)
+                maxWidth = maxWidth, hidden = hidden, parent = parent)
         }
     }
 

@@ -46,7 +46,8 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         var fontSize = 9.67f
         var lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
+        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize,
+            SVGConstants.SVG_BOLD_VALUE, maxWidth = internal.width, parent = g)
         ypos += lineHeight
         fontSize = 7.7f
         lineHeight = calcFontHeight(fontSize)
@@ -99,9 +100,10 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         val lineHeight = calcFontHeight(fontSize)
         var ypos = inner.y + lineHeight * 1.5
         addField(bundle.getString("crew"), "pilotName0", padding, ypos, fontSize,
-            blankId = "blankPilotName0",
+            blankId = "blankCrewName0",
             blankWidth = inner.width - padding * 2
-                    - calcTextLength("${bundle.getString("crew")}_", fontSize, fontWeight),
+                    - calcTextLength("${bundle.getString("crew")}_",
+                fontSize, fontWeight),
             labelFixedWidth = false, parent = g)
         ypos += lineHeight * 1.5
         addField(bundle.getString("gunnerySkill"), "gunnerySkill0", padding,

@@ -37,17 +37,18 @@ class LabeledField(val labelText: String, val id: String,
      * @param fieldAnchor Sets justification of the field element. If this is middle or end, the fieldX
      *                    parameter should be provided a value that will ensure enough space that the
      *                    field text does not overlap the label.
+     * @param maxWidth    If non-null, sets a custom attribute for max width of the field
      * @param parent      The parent for the label and field elements
      */
     fun draw(sheet: RecordSheet, x: Double, y: Double, fontSize: Float,
              fill: String = FILL_DARK_GREY, fieldX: Double? = null, lineWidth: Double? = null,
              fieldAnchor: String = SVGConstants.SVG_START_VALUE, labelFixedWidth: Boolean = true,
-             hidden: Boolean = false, parent: Element) {
+             maxWidth: Double? = null, hidden: Boolean = false, parent: Element) {
         sheet.addTextElement(x, y, labelText, fontSize, SVGConstants.SVG_BOLD_VALUE, fill,
             SVGConstants.SVG_START_VALUE, id = labelId, fixedWidth = labelFixedWidth, hidden = hidden, parent = parent)
         val xpos = fieldX ?: x + sheet.calcTextLength("${labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
         sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE, fill,
-            fieldAnchor, id, hidden = hidden, parent = parent)
+            fieldAnchor, id, width = maxWidth?.minus(xpos), hidden = hidden, parent = parent)
         if (lineWidth != null) {
             sheet.addHorizontalLine(xpos, y + 1.0, lineWidth, 0.72, fill,
                 id = blankId ?: "blank$id", hidden = hidden, parent = parent)
