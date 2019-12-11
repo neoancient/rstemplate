@@ -1,9 +1,9 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.FILL_DARK_GREY
-import org.megamek.rstemplate.FONT_SIZE_VSMALL
-import org.megamek.rstemplate.RecordSheet
+import org.megamek.rstemplate.templates.FILL_DARK_GREY
+import org.megamek.rstemplate.templates.FONT_SIZE_VSMALL
+import org.megamek.rstemplate.templates.RecordSheet
 import org.w3c.dom.Element
 
 const val padding = 3.0
@@ -20,7 +20,8 @@ class DamageCheckBox(private val label: String, private val text: List<String>? 
             this(label, text, text.size)
 
     fun draw(sheet: RecordSheet, x: Double = 0.0, y: Double = 0.0, fontSize: Float, width: Double? = null,
-             offset: Double? = null, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE, fill: String = FILL_DARK_GREY): Element {
+             offset: Double? = null, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE, fill: String = FILL_DARK_GREY
+    ): Element {
         val g = sheet.createTranslatedGroup(x, y)
         val boxSize = sheet.calcFontHeight(fontSize).toDouble()
         val textLength = offset ?: width?.minus((boxSize + padding) * boxCount)

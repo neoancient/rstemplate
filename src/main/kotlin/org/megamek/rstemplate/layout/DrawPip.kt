@@ -1,8 +1,8 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.FILL_DARK_GREY
-import org.megamek.rstemplate.svgNS
+import org.megamek.rstemplate.templates.FILL_DARK_GREY
+import org.megamek.rstemplate.templates.svgNS
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -22,7 +22,9 @@ class DrawPip(val x: Double, val y: Double, val radius: Double, val strokeWidth:
     fun draw(document: Document): Element {
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
-        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
+            FILL_DARK_GREY
+        )
         path.setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_ATTRIBUTE, strokeWidth.toString())
 
         // Move to start of pip, at (1, 0)

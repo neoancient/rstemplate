@@ -1,7 +1,7 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.*
+import org.megamek.rstemplate.templates.*
 import org.w3c.dom.Element
 
 /**
@@ -18,14 +18,14 @@ import org.w3c.dom.Element
  */
 class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: String,
                val fontSize: Float, val bgColor: String = FILL_BLACK,
-               val fgColor: String = FILL_WHITE, val center: Boolean = false){
+               val fgColor: String = FILL_WHITE, val center: Boolean = false,
+               val width: Double? = null) {
 
     val textHeight = sheet.calcFontHeight(fontSize) * 0.625
     val textWidth = sheet.calcTextLength(text, fontSize, SVGConstants.SVG_BOLD_VALUE)
     val rectMargin = textWidth * 0.05
-    val rectWidth = textWidth + rectMargin * 2.0
     val taperWidth = textHeight * tabBevelX / tabBevelY
-    val labelWidth = rectWidth + taperWidth * 2
+    val rectWidth = width ?: textWidth + rectMargin * 2
 
     fun height() = textHeight * 2
 
@@ -45,9 +45,9 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
             + " l ${taperWidth.truncate()},${textHeight.truncate()} l ${(-taperWidth).truncate()},${textHeight.truncate()} l ${(-rectWidth).truncate()},0 Z")
         g.appendChild(background)
 
-        val t = sheet.createTextElement(taperWidth + textWidth * 0.05,
+        val t = sheet.createTextElement(taperWidth + rectWidth * 0.5,
             textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fgColor,
-            fixedWidth = true)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true)
         g.appendChild(t)
 
         return g

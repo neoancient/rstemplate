@@ -1,4 +1,4 @@
-package org.megamek.rstemplate
+package org.megamek.rstemplate.templates
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
 import org.apache.batik.anim.dom.SVGDOMImplementation
@@ -194,15 +194,18 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    fun addLogo() = embedImage(LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
-        width() * 0.67 - padding, null, BT_LOGO)[1]
+    open fun addLogo() = embedImage(
+        LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
+        width() * 0.67 - padding, null,
+        BT_LOGO
+    )[1]
 
     /**
      * Places a generic title under the BT logo
      *
      * @return The height of the title text
      */
-    fun addTitle(parent: Element = document.documentElement): Double {
+    open fun addTitle(parent: Element = document.documentElement): Double {
         val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -212,7 +215,9 @@ abstract class RecordSheet(val size: PaperSize) {
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VLARGE}px")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, SVGConstants.SVG_BOLD_VALUE)
         textElem.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, SVGConstants.SVG_MIDDLE_VALUE)
-        textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_BLACK)
+        textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE,
+            FILL_BLACK
+        )
         textElem.textContent = "RECORD SHEET"
         parent.appendChild(textElem)
         return height * 1.5
@@ -223,7 +228,7 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the copyright footer's text element.
      */
-    fun addCopyrightFooter(parent: Element = document.documentElement): Double {
+    open fun addCopyrightFooter(parent: Element = document.documentElement): Double {
         val bundle = ResourceBundle.getBundle(RecordSheet::class.java.name)
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")
@@ -237,7 +242,9 @@ abstract class RecordSheet(val size: PaperSize) {
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VSMALL}px")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, SVGConstants.SVG_BOLD_VALUE)
         textElem.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, SVGConstants.SVG_MIDDLE_VALUE)
-        textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, FILL_DARK_GREY)
+        textElem.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE,
+            FILL_DARK_GREY
+        )
         textElem.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "footer")
 
         var tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
@@ -269,6 +276,7 @@ abstract class RecordSheet(val size: PaperSize) {
      * @param width The width of the region
      * @param height The height of the region
      * @param title The title text
+     * @param topTab Whether to place the title in a raised tab at the top
      * @param bottomTab Whether to add a tab on the bottom right like the one at the top
      * @param bevelTopRight Whether to bevel the top right corner
      * @param bevelBottomLeft Whether to bevel the bottom left corner
@@ -276,7 +284,7 @@ abstract class RecordSheet(val size: PaperSize) {
      * @return The area inside the border
      */
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
-                  bottomTab: Boolean = false,
+                  topTab: Boolean = true, bottomTab: Boolean = false,
                   bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true,
                   parent: Element = document.documentElement): Cell {
@@ -286,11 +294,14 @@ abstract class RecordSheet(val size: PaperSize) {
                 "${SVGConstants.SVG_TRANSLATE_VALUE} (${x.truncate()} ${y.truncate()})")
         }
 
-        val label = RSLabel(this,2.5, 3.0, title, FONT_SIZE_TAB_LABEL)
+        val label = RSLabel(this,2.5, 3.0, title,
+            FONT_SIZE_TAB_LABEL, width = if (topTab) null else width - 5.0 - bevelX * 2)
         val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
-            label.rectWidth + 4, FILL_LIGHT_GREY, 5.2, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+            label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
+            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
         val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
-            label.rectWidth + 4, FILL_DARK_GREY, 1.932, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+            label.rectWidth + 4, FILL_DARK_GREY, 1.932,
+            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
@@ -302,21 +313,23 @@ abstract class RecordSheet(val size: PaperSize) {
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
                        fill: String = FILL_DARK_GREY, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null, fixedWidth: Boolean = false, hidden: Boolean = false,
-                       width: Double? = null,parent: Element = document.documentElement) {
+                       width: Double? = null, parent: Element = document.documentElement) {
         val element = createTextElement(x, y, text, fontSize, fontWeight, fill, anchor,
             id, fixedWidth, width, hidden)
         parent.appendChild(element)
     }
 
     fun createTextElement(x: Double, y: Double, text: String, fontSize: Float,
-                       fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
-                       fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
-                       id: String? = null, fixedWidth: Boolean = false, width: Double? = null,
-                       hidden: Boolean = false): Element {
+                          fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
+                          fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
+                          id: String? = null, fixedWidth: Boolean = false, width: Double? = null,
+                          hidden: Boolean = false): Element {
         val t = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
         t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, TYPEFACE)
+        t.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE,
+            TYPEFACE
+        )
         t.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.truncate())
         t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, fontWeight)
         t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
@@ -439,7 +452,9 @@ abstract class RecordSheet(val size: PaperSize) {
         val lineHeight = calcFontHeight(fontSize)
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
-        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
+            FILL_DARK_GREY
+        )
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "2.9")
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.CSS_BEVEL_VALUE)
         val hexRadius = (rect.height - lineHeight * 2.0) / sqrt(3.0) // distance from center to each vertex
@@ -452,23 +467,30 @@ abstract class RecordSheet(val size: PaperSize) {
         pathTransform.appendChild(path)
         g.appendChild(pathTransform)
         addTextElement(rect.width * 0.75, rect.height * 0.5 - hexDY - 3.0, "A",
-            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "B",
-            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "C",
-            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75, rect.height * 0.5 + hexDY + lineHeight - 1.0, "D",
-            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "E",
-            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "F",
-            fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            fontSize, SVGConstants.SVG_BOLD_VALUE,
+            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
 
         val words = bundle.getString("advancedMovementCompass").split(" ")
         val firstLineY = (rect.height + lineHeight) * 0.5 - (lineHeight * words.size - 1) * 0.5
         for (word in words.withIndex()) {
             addTextElement(rect.width * 0.25, firstLineY + lineHeight * word.index , word.value,
-                fontSize, SVGConstants.SVG_BOLD_VALUE, FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+                fontSize, SVGConstants.SVG_BOLD_VALUE,
+                FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         }
         parent.appendChild(g)
     }
@@ -486,10 +508,12 @@ abstract class RecordSheet(val size: PaperSize) {
         val boxWidth = boxHeight * 13.0 / 8.0 // close enough approximation of the golden ratio
         val textOffset = (boxHeight + lineHeight) * 0.5 - 1.0
         var ypos = lineHeight
-        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.1"), FONT_SIZE_MEDIUM,
+        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.1"),
+            FONT_SIZE_MEDIUM,
             SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = g)
         ypos += lineHeight
-        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.2"), FONT_SIZE_MEDIUM,
+        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.2"),
+            FONT_SIZE_MEDIUM,
             SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = g)
         ypos += lineHeight
         g.appendChild(RoundedBorder(boxWidth * 0.5 - boxHeight, ypos - 1.5, boxHeight * 2, boxHeight * 2,
@@ -506,7 +530,8 @@ abstract class RecordSheet(val size: PaperSize) {
                 format("#ff%xcc", 0xff - (i - 10) * (0xff - 0xcc) / 20)
             }, strokeWidth = 1.45, parent = g)
             addTextElement(boxWidth * 0.5, ypos + textOffset,
-                if (heatEffect(i) == null) i.toString() else "$i*", FONT_SIZE_MEDIUM,
+                if (heatEffect(i) == null) i.toString() else "$i*",
+                FONT_SIZE_MEDIUM,
                 SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
             ypos += boxHeight
         }
@@ -539,23 +564,29 @@ abstract class RecordSheet(val size: PaperSize) {
         }
         val lineHeight = (height - padding * 2) / (effects.size + effects2.size + 2)
         var ypos = y + lineHeight
-        addTextElement(levelX, ypos, bundle.getString("heatLevel.1"), FONT_SIZE_MEDIUM,
+        addTextElement(levelX, ypos, bundle.getString("heatLevel.1"),
+            FONT_SIZE_MEDIUM,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
         ypos += lineHeight
-        addTextElement(levelX, ypos, bundle.getString("heatLevel.2"), FONT_SIZE_MEDIUM,
+        addTextElement(levelX, ypos, bundle.getString("heatLevel.2"),
+            FONT_SIZE_MEDIUM,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
-        addTextElement(textX + textWidth * 0.3, ypos, bundle.getString("effects"), FONT_SIZE_MEDIUM,
+        addTextElement(textX + textWidth * 0.3, ypos, bundle.getString("effects"),
+            FONT_SIZE_MEDIUM,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
         ypos += lineHeight
         for (heat in 30 downTo 0) {
             if (heat in effects) {
-                addTextElement(levelX, ypos, heat.toString(), FONT_SIZE_MEDIUM,
+                addTextElement(levelX, ypos, heat.toString(),
+                    FONT_SIZE_MEDIUM,
                     anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
-                addTextElement(textX, ypos, effects[heat]!!, FONT_SIZE_MEDIUM,
+                addTextElement(textX, ypos, effects[heat]!!,
+                    FONT_SIZE_MEDIUM,
                     anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
                 ypos += lineHeight
                 if (heat in effects2) {
-                    addTextElement(textX + padding, ypos, effects2[heat]!!, FONT_SIZE_MEDIUM,
+                    addTextElement(textX + padding, ypos, effects2[heat]!!,
+                        FONT_SIZE_MEDIUM,
                         anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
                     ypos += lineHeight
                 }

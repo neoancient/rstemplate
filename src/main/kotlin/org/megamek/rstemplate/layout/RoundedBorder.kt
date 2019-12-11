@@ -1,9 +1,9 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.FILL_DARK_GREY
-import org.megamek.rstemplate.svgNS
-import org.megamek.rstemplate.truncate
+import org.megamek.rstemplate.templates.FILL_DARK_GREY
+import org.megamek.rstemplate.templates.svgNS
+import org.megamek.rstemplate.templates.truncate
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -20,7 +20,8 @@ import org.w3c.dom.Element
  */
 class RoundedBorder (val x: Double, val y: Double, val width: Double, val height: Double,
                      val radius: Double, val control: Double, val strokeWidth: Double,
-                     val stroke: String = FILL_DARK_GREY) {
+                     val stroke: String = FILL_DARK_GREY
+) {
 
     /**
      * Creates the path for the boder

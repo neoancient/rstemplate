@@ -1,7 +1,10 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.*
+import org.megamek.rstemplate.templates.FILL_DARK_GREY
+import org.megamek.rstemplate.templates.FILL_WHITE
+import org.megamek.rstemplate.templates.svgNS
+import org.megamek.rstemplate.templates.truncate
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.util.*
@@ -19,6 +22,7 @@ const val STROKE_WIDTH = 1.932
 class CellBorder(val x: Double, val y: Double, val width: Double, val height: Double,
                  val textWidth: Double, val stroke: String = FILL_DARK_GREY,
                  val strokeWidth: Double = STROKE_WIDTH,
+                 val topTab: Boolean = true,
                  val bottomTab: Boolean = false,
                  val bevelTopRight: Boolean = true, val bevelBottomRight: Boolean = true,
                  val bevelBottomLeft: Boolean = true) {
@@ -26,7 +30,9 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
     fun draw(doc: Document): Element {
         val path = doc.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
 
-        path.setAttributeNS(null, SVGConstants.CSS_FILL_PROPERTY, FILL_WHITE)
+        path.setAttributeNS(null, SVGConstants.CSS_FILL_PROPERTY,
+            FILL_WHITE
+        )
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, stroke)
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
@@ -39,13 +45,22 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
         val sj = StringJoiner(" ")
         sj.add("M $x,${y + tabBevelY}")
         sj.add(absLineTo(tabBevelX, 0.0))
-        sj.add(relLineTo(textWidth, 0.0))
-        sj.add(relLineTo(tabBevelX, tabBevelY))
-        if (bevelTopRight) {
-            sj.add(absLineTo(width - bevelX, tabBevelY))
-            sj.add(relLineTo(bevelX, bevelY))
+        if (topTab) {
+            sj.add(relLineTo(textWidth, 0.0))
+            sj.add(relLineTo(tabBevelX, tabBevelY))
+            if (bevelTopRight) {
+                sj.add(absLineTo(width - bevelX, tabBevelY))
+                sj.add(relLineTo(bevelX, bevelY))
+            } else {
+                sj.add(absLineTo(width, tabBevelY))
+            }
         } else {
-            sj.add(absLineTo(width, tabBevelY))
+            if (bevelTopRight) {
+                sj.add(absLineTo(width - tabBevelX, 0.0))
+                sj.add(relLineTo(bevelX, tabBevelY))
+            } else {
+                sj.add(absLineTo(width, 0.0))
+            }
         }
         if (bottomTab) {
             sj.add(absLineTo(width, height))

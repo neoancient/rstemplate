@@ -1,10 +1,8 @@
 package org.megamek.rstemplate.layout
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.FILL_BLACK
-import org.megamek.rstemplate.FILL_DARK_GREY
-import org.megamek.rstemplate.RecordSheet
-import org.w3c.dom.Document
+import org.megamek.rstemplate.templates.FILL_DARK_GREY
+import org.megamek.rstemplate.templates.RecordSheet
 import org.w3c.dom.Element
 
 /**

@@ -1,8 +1,8 @@
 package org.megamek.rstemplate
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.megamek.rstemplate.layout.PaperSize
+import org.megamek.rstemplate.templates.BipedMechRecordSheet
 import java.io.File
 import java.io.FileOutputStream
 

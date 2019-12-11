@@ -1,6 +1,7 @@
 package org.megamek.rstemplate
 
 import org.megamek.rstemplate.layout.PaperSize
+import org.megamek.rstemplate.templates.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -24,6 +25,7 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     outputRS(NoTurretVehicleRecordSheet(size), dir)
     outputRS(SingleTurretVehicleRecordSheet(size), dir)
     outputRS(DualTurretVehicleRecordSheet(size), dir)
+    outputRS(TankTables(size), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {

@@ -1,4 +1,4 @@
-package org.megamek.rstemplate
+package org.megamek.rstemplate.templates
 
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
@@ -8,12 +8,15 @@ import java.util.*
  *
  */
 abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
-    val eqTableCell = Cell(LEFT_MARGIN.toDouble(), logoHeight + titleHeight,
-        width() * 0.40, height() - footerHeight - logoHeight - titleHeight - padding)
+    val eqTableCell = Cell(
+        LEFT_MARGIN.toDouble(), logoHeight + titleHeight,
+        width() * 0.40, height() - footerHeight - logoHeight - titleHeight - padding
+    )
     val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0,
         padding, width() / 3.0,height() - footerHeight - padding * 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
-        width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding)
+        width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding
+    )
     val criticalDamageCell = Cell(crewCell.x, crewCell.bottomY() + padding, crewCell.width, crewCell.height)
     val notesCell = Cell(crewCell.x, criticalDamageCell.bottomY() + padding, crewCell.width, crewCell.height + padding)
 
@@ -41,7 +44,8 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
-            bundle.getString("dataPanel.title"), true, false, parent = g)
+            bundle.getString("dataPanel.title"), false,
+            true, false, parent = g)
         var ypos = internal.y
         var fontSize = 9.67f
         var lineHeight = calcFontHeight(fontSize)
@@ -56,7 +60,8 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         addFieldSet(listOf(
             LabeledField(bundle.getString("cruising"), "mpWalk", "0"),
             LabeledField(bundle.getString("flanking"), "mpRun", "0")
-        ), internal.x + padding, ypos + lineHeight, fontSize, FILL_DARK_GREY, 40.0,
+        ), internal.x + padding, ypos + lineHeight, fontSize,
+            FILL_DARK_GREY, 40.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addField(bundle.getString("jumping"), "mpJump",
             internal.x + internal.width * 0.25, ypos + lineHeight * 2, fontSize,
@@ -66,18 +71,22 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
             LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
             LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
-        ), internal.x + padding + internal.width * 0.5, ypos, fontSize, FILL_DARK_GREY, parent = g)
+        ), internal.x + padding + internal.width * 0.5, ypos, fontSize,
+            FILL_DARK_GREY, parent = g)
         ypos += lineHeight * 3
         addFieldSet(listOf(
             LabeledField(bundle.getString("movementType"), "movementType"),
             LabeledField(bundle.getString("engineType"), "engineType")
-        ), internal.x + padding, ypos, fontSize, FILL_DARK_GREY, parent = g)
+        ), internal.x + padding, ypos, fontSize,
+            FILL_DARK_GREY, parent = g)
         ypos += lineHeight * 2
         addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
         ypos += lineHeight * 0.5
-        addTextElement(internal.x, ypos, bundle.getString("weaponsAndEquipment"), FONT_SIZE_FREE_LABEL,
+        addTextElement(internal.x, ypos, bundle.getString("weaponsAndEquipment"),
+            FONT_SIZE_FREE_LABEL,
             SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
-        addTextElement(internal.width * 0.78, ypos, bundle.getString("hexes"), FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+        addTextElement(internal.width * 0.78, ypos, bundle.getString("hexes"),
+            FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
 
         addRect(internal.x, ypos, internal.width - padding, internal.bottomY() - ypos - lineHeight * 2.0,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
@@ -99,14 +108,16 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         val fontWeight = SVGConstants.SVG_BOLD_VALUE
         val lineHeight = calcFontHeight(fontSize)
         var ypos = inner.y + lineHeight * 1.5
-        addField(bundle.getString("crew"), "pilotName0", padding, ypos, fontSize,
+        addField(bundle.getString("crew"), "pilotName0",
+            padding, ypos, fontSize,
             blankId = "blankCrewName0",
             blankWidth = inner.width - padding * 2
                     - calcTextLength("${bundle.getString("crew")}_",
                 fontSize, fontWeight),
             labelFixedWidth = false, parent = g)
         ypos += lineHeight * 1.5
-        addField(bundle.getString("gunnerySkill"), "gunnerySkill0", padding,
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill0",
+            padding,
             ypos, fontSize, defaultText = "0",
             fieldOffset = inner.width * 0.32,
             blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0",
@@ -185,7 +196,12 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("notes.title"), parent = g)
         document.documentElement.appendChild(g)
-        val fluffCell = rect.inset(padding, padding, padding, padding)
+        val fluffCell = rect.inset(
+            padding,
+            padding,
+            padding,
+            padding
+        )
         addRect(fluffCell.x, fluffCell.y, fluffCell.width, fluffCell.height,
             stroke = SVGConstants.SVG_NONE_VALUE, id = "fluffImage")
     }
