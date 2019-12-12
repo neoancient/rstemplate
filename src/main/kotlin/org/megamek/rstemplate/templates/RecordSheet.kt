@@ -79,6 +79,8 @@ abstract class RecordSheet(val size: PaperSize) {
 
     open fun fullPage() = true
 
+    open fun showLogo() = true
+
     /**
      * Checks for an effect at the given heat level
      *
@@ -174,8 +176,12 @@ abstract class RecordSheet(val size: PaperSize) {
         return fm.height.toFloat()
     }
 
-    fun calcTextLength(text: String, fontSize: Float, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE): Double {
-        val font = font.deriveFont(if (fontWeight == SVGConstants.SVG_BOLD_VALUE) Font.BOLD else Font.PLAIN, fontSize)
+    fun calcTextLength(text: String, fontSize: Float, style: String = SVGConstants.SVG_NORMAL_VALUE): Double {
+        val font = font.deriveFont(when (style) {
+            SVGConstants.SVG_BOLD_VALUE -> Font.BOLD
+            SVGConstants.SVG_ITALIC_VALUE -> Font.ITALIC
+            else -> Font.PLAIN
+        }, fontSize)
         return font.getStringBounds(text, svgGenerator.getFontRenderContext()).getWidth()
     }
 
@@ -194,11 +200,14 @@ abstract class RecordSheet(val size: PaperSize) {
      *
      * @return The height of the logo after scaling
      */
-    open fun addLogo() = embedImage(
-        LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
-        width() * 0.67 - padding, null,
-        BT_LOGO
-    )[1]
+    open fun addLogo() = if (showLogo()) {
+        embedImage(
+            LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
+            width() * 0.67 - padding, null, BT_LOGO
+        )[1]
+    } else {
+        0.0
+    }
 
     /**
      * Places a generic title under the BT logo
@@ -309,34 +318,45 @@ abstract class RecordSheet(val size: PaperSize) {
         return Cell(x, y, width, height).inset(3.0, 5.0,3.0 + label.textHeight * 2, 5.0)
     }
 
+    fun formatStyle(fontSize: Float, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
+                    fontStyle: String = SVGConstants.SVG_NORMAL_VALUE): String {
+        val sj = StringJoiner(";")
+        sj.add(SVGConstants.CSS_FONT_FAMILY_PROPERTY + ":" + TYPEFACE)
+        sj.add(SVGConstants.CSS_FONT_SIZE_PROPERTY + ":" + fontSize.truncate() + "px")
+        sj.add(SVGConstants.CSS_FONT_WEIGHT_PROPERTY + ":" + fontWeight)
+        sj.add(SVGConstants.CSS_FONT_STYLE_PROPERTY + ":" + fontStyle)
+        return sj.toString()
+    }
+
     fun addTextElement(x: Double, y: Double, text: String, fontSize: Float,
                        fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
+                       fontStyle: String = SVGConstants.SVG_NORMAL_VALUE,
                        fill: String = FILL_DARK_GREY, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null, fixedWidth: Boolean = false, hidden: Boolean = false,
-                       width: Double? = null, parent: Element = document.documentElement) {
-        val element = createTextElement(x, y, text, fontSize, fontWeight, fill, anchor,
-            id, fixedWidth, width, hidden)
+                       width: Double? = null, rightJustified: Boolean = false,
+                       parent: Element = document.documentElement) {
+        val element = createTextElement(x, y, text, fontSize, fontWeight, fontStyle, fill, anchor,
+            id, fixedWidth, width, rightJustified, hidden)
         parent.appendChild(element)
     }
 
     fun createTextElement(x: Double, y: Double, text: String, fontSize: Float,
                           fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
+                          fontStyle: String = SVGConstants.SVG_NORMAL_VALUE,
                           fill: String = FILL_BLACK, anchor: String = SVGConstants.SVG_START_VALUE,
-                          id: String? = null, fixedWidth: Boolean = false, width: Double? = null,
+                          id: String? = null, fixedWidth: Boolean = false,
+                          width: Double? = null, rightJustified: Boolean = false,
                           hidden: Boolean = false): Element {
         val t = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
+        val style = formatStyle(fontSize, fontWeight, fontStyle)
         t.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
         t.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE,
-            TYPEFACE
-        )
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, fontSize.truncate())
-        t.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, fontWeight)
+        t.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE, style)
         t.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, fill)
         t.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
         var textLength = calcTextLength(text, fontSize, fontWeight)
-        if (fixedWidth || (width != null && textLength > width)) {
-            if (width != null && textLength > width) {
+        if (fixedWidth || (width != null && (rightJustified || textLength > width))) {
+            if (width != null && (rightJustified || textLength > width)) {
                 textLength = width
             }
             t.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
@@ -344,7 +364,7 @@ abstract class RecordSheet(val size: PaperSize) {
                 textLength.truncate())
         } else if (width != null && !fixedWidth) {
             t.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,
-                "mml-field-width:${width.truncate()}")
+                "$style;mml-field-width:${width.truncate()}")
         }
         if (id != null) {
             t.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
@@ -468,29 +488,29 @@ abstract class RecordSheet(val size: PaperSize) {
         g.appendChild(pathTransform)
         addTextElement(rect.width * 0.75, rect.height * 0.5 - hexDY - 3.0, "A",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "B",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "C",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75, rect.height * 0.5 + hexDY + lineHeight - 1.0, "D",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "E",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "F",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
 
         val words = bundle.getString("advancedMovementCompass").split(" ")
         val firstLineY = (rect.height + lineHeight) * 0.5 - (lineHeight * words.size - 1) * 0.5
         for (word in words.withIndex()) {
             addTextElement(rect.width * 0.25, firstLineY + lineHeight * word.index , word.value,
                 fontSize, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         }
         parent.appendChild(g)
     }

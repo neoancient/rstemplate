@@ -44,7 +44,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
-            bundle.getString("dataPanel.title"), false,
+            bundle.getString("dataPanel.title"), true,
             true, false, parent = g)
         var ypos = internal.y
         var fontSize = 9.67f
@@ -55,8 +55,8 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         ypos += lineHeight
         fontSize = 7.7f
         lineHeight = calcFontHeight(fontSize)
-        addTextElement(internal.x + padding, ypos, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = g)
+        addTextElement(internal.x + padding, ypos, bundle.getString("movementPoints"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = g)
         addFieldSet(listOf(
             LabeledField(bundle.getString("cruising"), "mpWalk", "0"),
             LabeledField(bundle.getString("flanking"), "mpRun", "0")
@@ -83,8 +83,8 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
         ypos += lineHeight * 0.5
         addTextElement(internal.x, ypos, bundle.getString("weaponsAndEquipment"),
-            FONT_SIZE_FREE_LABEL,
-            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
+            FONT_SIZE_FREE_LABEL, SVGConstants.SVG_BOLD_VALUE, fixedWidth = true,
+            width = internal.width * 0.6, parent = g)
         addTextElement(internal.width * 0.78, ypos, bundle.getString("hexes"),
             FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
 

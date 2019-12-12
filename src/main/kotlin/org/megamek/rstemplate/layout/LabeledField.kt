@@ -42,11 +42,13 @@ class LabeledField(val labelText: String, val id: String,
              fill: String = FILL_DARK_GREY, fieldX: Double? = null, lineWidth: Double? = null,
              fieldAnchor: String = SVGConstants.SVG_START_VALUE, labelFixedWidth: Boolean = true,
              maxWidth: Double? = null, hidden: Boolean = false, parent: Element) {
-        sheet.addTextElement(x, y, labelText, fontSize, SVGConstants.SVG_BOLD_VALUE, fill,
-            SVGConstants.SVG_START_VALUE, id = labelId, fixedWidth = labelFixedWidth, hidden = hidden, parent = parent)
+        sheet.addTextElement(x, y, labelText, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            SVGConstants.SVG_NORMAL_VALUE, fill, SVGConstants.SVG_START_VALUE,
+            id = labelId, fixedWidth = labelFixedWidth, hidden = hidden, parent = parent)
         val xpos = fieldX ?: x + sheet.calcTextLength("${labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
-        sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE, fill,
-            fieldAnchor, id, width = maxWidth?.minus(xpos), hidden = hidden, parent = parent)
+        sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE,
+            SVGConstants.SVG_NORMAL_VALUE, fill, fieldAnchor, id,
+            width = maxWidth?.minus(xpos), hidden = hidden, parent = parent)
         if (lineWidth != null) {
             sheet.addHorizontalLine(xpos, y + 1.0, lineWidth, 0.72, fill,
                 id = blankId ?: "blank$id", hidden = hidden, parent = parent)

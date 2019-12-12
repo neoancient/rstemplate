@@ -3,6 +3,7 @@ package org.megamek.rstemplate.layout
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.templates.*
 import org.w3c.dom.Element
+import java.lang.Double.min
 
 /**
  * Adds a text label with diamonds on the sides
@@ -46,8 +47,9 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
         g.appendChild(background)
 
         val t = sheet.createTextElement(taperWidth + rectWidth * 0.5,
-            textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fgColor,
-            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true)
+            textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fill = fgColor,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true,
+            width = min(rectWidth - rectMargin * 2, textWidth * 1.5))
         g.appendChild(t)
 
         return g

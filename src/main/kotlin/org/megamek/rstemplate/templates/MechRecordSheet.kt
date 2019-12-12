@@ -55,7 +55,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
-            bundle.getString("dataPanel.title"), false,true,
+            bundle.getString("dataPanel.title"), true,true,
             false, parent = g)
         var ypos = internal.y
         val fontSize = 9.67f
@@ -90,8 +90,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     open fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        addTextElement(x, y, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
+        addTextElement(x, y, bundle.getString("movementPoints"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("walking"), "mpWalk", "0"),
             LabeledField(bundle.getString("running"), "mpRun", "0"),
@@ -169,18 +169,18 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val cons = listOf("3", "5", "7", "10", "11", bundle.getString("dead"))
         for (i in 1..6) {
             addTextElement(startx + i * chartBounds.width / 6.0, starty,
-                i.toString(), 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY, parent = g)
+                i.toString(), 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
             addTextElement(startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
-                cons[i - 1], 5.8f, SVGConstants.SVG_MIDDLE_VALUE, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY, width = chartBounds.width / 6.0 - 4.0, parent = g)
+                cons[i - 1], 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, width = chartBounds.width / 6.0 - 4.0, parent = g)
         }
         addTextElement(chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
-            5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = g)
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            parent = g)
         addTextElement(chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
-            5.2f, SVGConstants.SVG_END_VALUE, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = g)
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            parent = g)
         parent.appendChild(g)
         return height
     }
@@ -282,10 +282,10 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     fun addDoubleCritLocation(x: Double, y: Double, width: Double, height: Double, id: String,
                               fontSize: Float, parent: Element) {
         val lineHeight = calcFontHeight(fontSize)
-        addTextElement(x, y + (height - 5) * 0.25 + lineHeight * 0.5, "1-3", fontSize, SVGConstants.SVG_BOLD_VALUE,
-            parent = parent)
-        addTextElement(x, y + (height - 5) * 0.75 + 5.0 + lineHeight * 0.5, "4-6", fontSize, SVGConstants.SVG_BOLD_VALUE,
-            parent = parent)
+        addTextElement(x, y + (height - 5) * 0.25 + lineHeight * 0.5, "1-3",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        addTextElement(x, y + (height - 5) * 0.75 + 5.0 + lineHeight * 0.5, "4-6",
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addRect(x + 18.0, y, width - 18.0, height, id = id, parent = parent)
     }
 
@@ -309,7 +309,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         systems.forEach {
             addTextElement(
                 textAnchor, ypos, it.first, fontSize, SVGConstants.SVG_BOLD_VALUE,
-                FILL_DARK_GREY, SVGConstants.SVG_END_VALUE, fixedWidth = true, parent = gContent
+                anchor = SVGConstants.SVG_END_VALUE, fixedWidth = true, parent = gContent
             )
             for (i in 0 until it.second) {
                 val pip = DrawPip(textAnchor + pipRadius + pipDx * i, ypos - pipRadius * 2,
@@ -340,11 +340,11 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             damageTransferFileName, ImageAnchor.CENTER, parent)
         addTextElement(x + width * 0.75, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         addTextElement(x + width * 0.75, y + height + lineHeight, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         embedImage(x, y, width * 0.5 - padding, height,
             CGL_LOGO, ImageAnchor.RIGHT, parent)
@@ -441,15 +441,15 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             "damage_transfer_tripod.svg", ImageAnchor.LEFT, parent)
         addTextElement(x + width * 0.55 + padding, y + height * 0.5 - lineHeight * 0.5, bundle.getString("damageTransfer.1"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         addTextElement(x + width * 0.55 + padding, y + height * 0.5 + lineHeight * 0.5, bundle.getString("damageTransfer.2"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         addTextElement(x + width * 0.55 + padding, y + height * 0.5 + lineHeight * 1.5, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         embedImage(x, y, width * 0.4 + padding, height,
             CGL_LOGO, ImageAnchor.RIGHT, parent)
@@ -487,12 +487,12 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         )
 
         addTextElement(
-            x, y + lineHeight, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent
+            x, y + lineHeight, bundle.getString("movementPoints"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = parent
         )
         addTextElement(
-            x, y + lineHeight * 2, bundle.getString("battlemech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent
+            x, y + lineHeight * 2, bundle.getString("battlemech"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = parent
         )
         addFieldSet(
             listOf(
@@ -505,8 +505,9 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         )
 
         addTextElement(
-            x + width * 0.48, y + lineHeight * 3, bundle.getString("airmech"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+            x + width * 0.48, y + lineHeight * 3, bundle.getString("airmech"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+            parent = parent
         )
         addFieldSet(
             listOf(
@@ -526,8 +527,8 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         )
 
         addTextElement(
-            x + width * 0.72, y + lineHeight * 3, bundle.getString("fighter"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent
+            x + width * 0.72, y + lineHeight * 3, bundle.getString("fighter"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = parent
         )
         addFieldSet(
             listOf(
@@ -620,7 +621,7 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         addTextElement(
             width * 0.5, ypos, bundle.getString("structuralIntegrity"),
             fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent
         )
         addRect(
@@ -639,16 +640,14 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             x + width * 0.25,
             y + height,
             join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
-            FONT_SIZE_MEDIUM,
-            SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY,
-            SVGConstants.SVG_MIDDLE_VALUE,
+            FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent
         )
         addTextElement(
             x + width * 0.25, y + height + lineHeight, bundle.getString("damageTransfer.3"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, SVGConstants.SVG_MIDDLE_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent
         )
         embedImage(x, y, width * 0.5 - padding, height - lineHeight,
@@ -676,16 +675,16 @@ class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        addTextElement(x, y, bundle.getString("movementPoints"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
+        addTextElement(x, y, bundle.getString("movementPoints"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("walking"), "mpWalk", "0"),
             LabeledField(bundle.getString("running"), "mpRun", "0"),
             LabeledField(bundle.getString("jumping"), "mpJump", "0")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 38.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
-        addTextElement(x + width * 0.25, y + lineHeight, bundle.getString("vehicle"), fontSize, SVGConstants.SVG_BOLD_VALUE,
-            FILL_DARK_GREY, parent = parent)
+        addTextElement(x + width * 0.25, y + lineHeight, bundle.getString("vehicle"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("cruising"), "mpCruise", "0"),
             LabeledField(bundle.getString("flanking"), "mpFlank", "0")

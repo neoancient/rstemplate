@@ -57,7 +57,7 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
         } else {
             if (bevelTopRight) {
                 sj.add(absLineTo(width - tabBevelX, 0.0))
-                sj.add(relLineTo(bevelX, tabBevelY))
+                sj.add(relLineTo(tabBevelX, tabBevelY))
             } else {
                 sj.add(absLineTo(width, 0.0))
             }
