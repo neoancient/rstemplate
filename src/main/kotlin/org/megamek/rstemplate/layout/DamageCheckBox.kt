@@ -37,7 +37,7 @@ class DamageCheckBox(private val label: String, private val text: List<String>? 
                 sheet.addTextElement(xpos + boxSize * 0.5,
                     (boxSize + sheet.calcFontHeight(FONT_SIZE_VSMALL)) * 0.4,
                     text[i], FONT_SIZE_VSMALL, fill = fill, anchor = SVGConstants.SVG_MIDDLE_VALUE,
-                    fixedWidth = true, width = boxSize * 0.5, parent = g)
+                    fixedWidth = true, width = boxSize * 0.6, parent = g)
             }
             xpos += boxSize + padding
         }
