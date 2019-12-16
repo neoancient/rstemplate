@@ -239,3 +239,25 @@ class DualTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val turretCount = 2
     override fun fullPage() = false
 }
+
+class SingleTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "vehicle_turret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_vee_turret.svg"
+    override val turretCount = 1
+    override fun fullPage() = false
+}
+
+class NoTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "vehicle_noturret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_vee_noturret.svg"
+    override val turretCount = 0
+    override fun fullPage() = false
+}
+
+class DualTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "vehicle_dualturret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_vee_dualturret.svg"
+    override val turretCount = 2
+    override fun fullPage() = false
+}
+
