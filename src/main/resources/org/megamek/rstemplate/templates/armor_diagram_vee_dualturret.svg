@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="175" height="320"
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="175" height="333"
      xml:space="preserve">
-<g id="armor_diagram_vee_dualturret" transform="matrix(1,0,0,-1,-406.25377,751.72782)"><g
+<g id="armor_diagram_vee_dualturret" transform="matrix(1,0,0,-1,-406.25377,751.72782)"><rect id="logo_spacer"
+fill="#ffffff" x="530.8" y="420.23" width="50" height="30"/><g
              id="g1550"
              transform="translate(543.256,724.9876)"><path
                d="m 0,0 8.581,8.58 5.718,-4.767 12.395,-149.002 -2.862,-103.432 c 0,0 -2.381,-23.833 -16.68,-23.833 v 2.384 h -40.517 v -2.859 h -24.138 v 2.859 H -98.02 v -2.384 c -14.299,0 -16.68,23.833 -16.68,23.833 l -2.861,103.432 12.394,149.002 5.719,4.767 8.58,-8.58 z"

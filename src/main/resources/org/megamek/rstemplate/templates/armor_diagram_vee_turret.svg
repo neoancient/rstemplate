@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="168" height="296"
-     xml:space="preserve">
-<g id="armor_diagram_vee_turret" transform="matrix(1,0,0,-1,-402.67674,716.15846)">
-<g
-       id="g22"
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="168" height="299"
+     xml:space="preserve"><g id="armor_diagram_vee_turret" transform="matrix(1,0,0,-1,-402.67674,716.15846)"><rect id="logo_spacer"
+fill="#ffffff" x="520" y="417.26" width="50" height="30"/><g
        transform="translate(557.6664,472.0991)"><path
          d="m 0,0 c 0,0 1.835,-18.813 -16.517,-22.942 l 0,2.294 -39.456,0 0,-2.753 -22.939,0 0,2.753 -39,0 0,-2.294 C -131.677,-22.942 -133.969,0 -133.969,0 l -2.754,99.56 11.93,110.572 5.505,4.588 8.26,-8.259 87.171,0 7.34,8.259 4.588,-4.13 L 1.835,99.1 0,0 Z"
          style="fill:#c7c8ca;fill-opacity:1;fill-rule:nonzero;stroke:none"
