@@ -23,6 +23,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
     protected val bundle = ResourceBundle.getBundle(VehicleRecordSheet::class.java.name)
     abstract val turretCount: Int
     abstract val armorDiagramFileName: String
+    open fun isVTOL() = false
 
     final override fun height(): Double = if (!fullPage()) {
         size.height * 0.5 - TOP_MARGIN - padding
@@ -128,9 +129,9 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             blankId = "blankPilotingSkill0", labelId = "pilotingSkillText0",
             blankWidth = inner.width * 0.18 - padding, parent = g)
         ypos += lineHeight * 2.0
-        g.appendChild(DamageCheckBox(bundle.getString("commanderHit"), "+1")
+        g.appendChild(DamageCheckBox(bundle.getString(if (isVTOL()) "copilotHit" else "commanderHit"), "+1")
             .draw(this, inner.x, ypos, fontSize, width = inner.width * 0.45))
-        g.appendChild(DamageCheckBox(bundle.getString("driverHit"), "+2")
+        g.appendChild(DamageCheckBox(bundle.getString(if (isVTOL()) "pilotHit" else "driverHit"), "+2")
             .draw(this, inner.x + inner.width * 0.5, ypos, fontSize, width = inner.width * 0.45))
         ypos += lineHeight * 1.8
         addTextElement(inner.x, ypos, bundle.getString("commanderHitMod"),
@@ -140,7 +141,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addCriticalDamagePanel(rect: Cell) {
+    open fun addCriticalDamagePanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("criticalDamage.title"), parent = g)
@@ -149,7 +150,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         var ypos = inner.y + lineHeight * 0.5
         if (turretCount == 1) {
             g.appendChild(DamageCheckBox(bundle.getString("turretLocked"))
-                    .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.55))
+                .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.55))
         } else if (turretCount == 2) {
             g.appendChild(DamageCheckBox(bundle.getString("turretLocked"), listOf("F", "R"))
                 .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.55))
@@ -259,5 +260,67 @@ class DualTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) 
     override val armorDiagramFileName = "armor_diagram_sh_vee_dualturret.svg"
     override val turretCount = 2
     override fun fullPage() = false
+}
+
+abstract class AbstractVTOLRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override fun fullPage() = false
+    override fun isVTOL() = true
+    override fun addCriticalDamagePanel(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("criticalDamage.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val lineHeight = inner.height / (6.0 + turretCount)
+        var ypos = inner.y + lineHeight * 0.5
+        g.appendChild(DamageCheckBox(bundle.getString("flightStabilizer"), listOf("+3"))
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.55))
+        g.appendChild(DamageCheckBox(bundle.getString("engineHit"))
+            .draw(this, inner.x + inner.width * 0.6, ypos,
+                fontSize, width = inner.width * 0.35))
+        ypos += lineHeight
+        if (turretCount == 1) {
+            g.appendChild(DamageCheckBox(bundle.getString("turretLocked"))
+                .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.55))
+            ypos += lineHeight
+        }
+        g.appendChild(DamageCheckBox(bundle.getString("sensorHits"), listOf("+1", "+2", "+3", "D"))
+            .draw(this, inner.x + padding, ypos, fontSize,
+                offset = inner.width * 0.95 - padding - (calcFontHeight(fontSize) + padding) * 4))
+        ypos += lineHeight
+        addTextElement(inner.x + inner.width * 0.5, ypos + lineHeight * 0.5, bundle.getString("stabilizers"),
+            fontSize, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("front"))
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.29))
+        g.appendChild(DamageCheckBox(bundle.getString("left"))
+            .draw(this, inner.x + inner.width * 0.33, ypos, fontSize, width = inner.width * 0.29))
+        g.appendChild(DamageCheckBox(bundle.getString("right"))
+            .draw(this, inner.x + padding + inner.width * 0.6315, ypos, fontSize, width = inner.width * 0.29))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("rear"))
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.29))
+        if (turretCount == 1) {
+            g.appendChild(DamageCheckBox(bundle.getString("turret"))
+                .draw(this, inner.x + inner.width * 0.33, ypos, fontSize, width = inner.width * 0.29))
+        }
+        ypos += lineHeight
+        if (isVTOL()) {
+            addTextElement(inner.x + padding, ypos + padding, bundle.getString("cruisingOnly"),
+                4.83f, fixedWidth = true, parent = g)
+        }
+        document.documentElement.appendChild(g)
+    }
+}
+
+class VTOLRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
+    override val fileName = "vtol_noturret.svg"
+    override val armorDiagramFileName = "armor_diagram_vtol_noturret.svg"
+    override val turretCount = 0
+}
+
+class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
+    override val fileName = "vtol_chinturret.svg"
+    override val armorDiagramFileName = "armor_diagram_vtol_noturret.svg"
+    override val turretCount = 1
 }
 
