@@ -31,6 +31,7 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     outputRS(VTOLRecordSheet(size), dir)
     outputRS(VTOLTurretRecordSheet(size), dir)
     outputRS(TankTables(size), dir)
+    outputRS(VTOLTables(size), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
