@@ -624,4 +624,144 @@ abstract class RecordSheet(val size: PaperSize) {
         addRect(x + width - padding * 2 - 30, y + 24, 30.0,height - y - 24, id = "heatSinkPips",
             parent = parent)
     }
+
+    /**
+     * Adds a text element with a series of values arrayed in a grid
+     *
+     * @param x The x coordinate of the top left corner of the table
+     * @param y The y coordinate of the top left corner of the table
+     * @param width The width of the table
+     * @param fontSize The size of font to use for the table
+     * @param values A list of rows, each row being a list of cell values
+     * @param colOffsets The x offset of the beginning of each column, expressed as a fraction
+     *                   of the table width. This list needs to be at least as long as the longest row.
+     * @param headers If non-null, the list of values to use for the column headers, which will be bold
+     * @param anchor The text anchor to use for each cell.
+     * @param firstColBold If true, the first column will be bold
+     * @param firstColAnchor Only used if {@code firstColBold} is true. Allows the first column
+     *                       to have a different anchor than the remainder of the table. If null,
+     *                       the value of {@code anchor} will be used.
+     * @return The height of the table
+     */
+    fun createTable(x: Double, y: Double, width: Double, fontSize: Float,
+                    values: List<List<String>>, colOffsets: List<Double>,
+                    headers: List<String>? = null, anchor: String = SVGConstants.SVG_MIDDLE_VALUE,
+                    firstColBold: Boolean = true, firstColAnchor: String? = null,
+                    parent: Element = document.documentElement): Double {
+        val lineHeight = calcFontHeight(fontSize)
+        var ypos = 0.0
+        val g = createTranslatedGroup(x, y)
+        if (headers != null) {
+            val text = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
+            text.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,
+                formatStyle(fontSize, SVGConstants.SVG_BOLD_VALUE))
+            text.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
+            for (header in headers.withIndex()) {
+                if (header.index > 0 || !firstColBold || firstColAnchor == null) {
+                    text.appendChild(createTspan(width * colOffsets[header.index],ypos, header.value))
+                }
+            }
+            g.appendChild(text)
+            ypos += lineHeight
+        }
+        val rowYPos = ArrayList<Double>()
+        val text = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
+        text.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,
+            formatStyle(fontSize))
+        text.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
+        for (row in values) {
+            rowYPos.add(ypos)
+            var lineCount = 0
+            for (cell in row.withIndex()) {
+                if (firstColBold && cell.index == 0) {
+                    continue
+                }
+                val lines = cell.value.split("\n".toRegex())
+                for (line in lines.withIndex()) {
+                    text.appendChild(createTspan(width * colOffsets[cell.index],
+                        ypos + lineHeight * line.index, line.value))
+                }
+                lineCount = Integer.max(lineCount, lines.size)
+            }
+            ypos += lineHeight * lineCount
+        }
+        if (firstColBold) {
+            val colX = width * colOffsets[0]
+            val colText = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
+            colText.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,
+                formatStyle(fontSize, SVGConstants.SVG_BOLD_VALUE))
+            colText.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, firstColAnchor ?: anchor)
+            if (headers != null && firstColAnchor != null) {
+                colText.appendChild(createTspan(colX, rowYPos[0] - lineHeight, headers[0]))
+            }
+            for (row in values.withIndex()) {
+                colText.appendChild(createTspan(colX, rowYPos[row.index], row.value[0]))
+            }
+            g.appendChild(colText)
+        }
+        g.appendChild(text)
+        parent.appendChild(g)
+        return ypos
+    }
+
+    fun createTspan(x: Double, y: Double, text: String): Element {
+        val tspan = document.createElementNS(null, SVGConstants.SVG_TSPAN_TAG)
+        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
+        tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
+        tspan.textContent = text
+        return tspan
+    }
+
+    /**
+     * Adds a paragraph of multiline text. Anything between curly braces will be italicized.
+     *
+     * @param x The x coordinate of the top left corner of the text block
+     * @param y The y coordinate of the top right corner of the text block
+     * @param text The text of the paragraph. All but the last line will be justified
+     * @param fontSize The size of the font to use for the text
+     * @param parent The parent element to add this paragraph to
+     * @return The height of the paragraph
+     */
+    fun addParagraph(x: Double, y: Double, width: Double, text: String, fontSize: Float,
+                     parent: Element): Double {
+        val styles = listOf(SVGConstants.SVG_NORMAL_VALUE, SVGConstants.SVG_ITALIC_VALUE)
+        val lineHeight = calcFontHeight(fontSize)
+        var ypos = y
+        val lines = text.split("\n".toRegex())
+        for (line in lines.withIndex()) {
+            ypos += lineHeight
+            val segments = line.value.split("[{}]".toRegex())
+            val last = line.index == lines.size - 1
+            if (segments.size > 1) {
+                var styleIndex = if (line.value.startsWith("{")) 1 else 0
+                val mult = if (last) 1.0 else (width - padding * 2) / getLineLength(segments, styleIndex == 1)
+                var xpos = x
+                for (seg in segments) {
+                    if (seg.isEmpty()) continue
+                    val textWidth = mult * calcTextLength(seg, fontSize, styles[styleIndex])
+                    addTextElement(xpos, ypos, seg, fontSize,
+                        rightJustified = !last,
+                        width = if (last) null else textWidth, fontStyle = styles[styleIndex], parent = parent)
+                    xpos += textWidth
+                    styleIndex = 1 - styleIndex
+                }
+            } else {
+                addTextElement(x, ypos, line.value, fontSize,
+                    rightJustified = !last,
+                    width = if (last) null else width - padding * 2, parent = parent)
+            }
+        }
+        return ypos - y
+    }
+
+    private fun getLineLength(segments: List<String>, startItalic: Boolean): Double {
+        var italic = startItalic
+        var length = 0.0
+        for (seg in segments) {
+            length += calcTextLength(seg, FONT_SIZE_VSMALL,
+                if (italic) SVGConstants.SVG_ITALIC_VALUE else SVGConstants.SVG_NORMAL_VALUE)
+            italic = !italic
+        }
+        return length
+    }
 }
