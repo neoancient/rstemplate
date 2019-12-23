@@ -430,7 +430,7 @@ class VTOLTables(size: PaperSize): VehicleTables(size) {
             parent = g)
         addElevationTrack(padding * 1.5, inner.y + inner.height * 0.1,
             inner.width - padding * 2, inner.height * 0.3, (1..15).toList(), g)
-        addElevationTrack(padding * 1.5, inner.y + inner.height * 0.6,
+        addElevationTrack(padding * 1.5, inner.y + inner.height * 0.55,
             inner.width - padding * 2, inner.height * 0.3, (16..30).toList(), g)
         document.documentElement.appendChild(g)
     }
@@ -479,7 +479,7 @@ class VTOLTables(size: PaperSize): VehicleTables(size) {
         val lineHeight = calcFontHeight(FONT_SIZE_VSMALL)
         createTable(inner.x, inner.y + (inner.height - lineHeight * 5) * 0.5,
             inner.width, FONT_SIZE_VSMALL, listOf(
-            listOf("-1" + bundle.getString("orLower"), bundle.getString("none")),
+            listOf("-1 " + bundle.getString("orLower"), bundle.getString("none")),
             listOf("0", bundle.getString("noPunch")),
             listOf("1-2", bundle.getString("noKick")),
             listOf("3", bundle.getString("clubOnly")),

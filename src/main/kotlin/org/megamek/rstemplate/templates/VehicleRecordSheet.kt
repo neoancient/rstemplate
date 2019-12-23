@@ -320,7 +320,7 @@ class VTOLRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
 
 class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
     override val fileName = "vtol_chinturret.svg"
-    override val armorDiagramFileName = "armor_diagram_vtol_noturret.svg"
+    override val armorDiagramFileName = "armor_diagram_vtol_chinturret.svg"
     override val turretCount = 1
 }
 
