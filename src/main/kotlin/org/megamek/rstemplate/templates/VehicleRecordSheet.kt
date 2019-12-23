@@ -8,12 +8,16 @@ import java.util.*
  *
  */
 abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
-    val eqTableCell = Cell(
-        LEFT_MARGIN.toDouble(), logoHeight + titleHeight,
-        width() * 0.40, height() - footerHeight - logoHeight - titleHeight - padding
-    )
+    val eqTableCell = if (fullPage()) {
+        Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
+            width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
+    } else {
+        Cell(LEFT_MARGIN.toDouble(), logoHeight + titleHeight,
+            width() * 0.4, height() - footerHeight - logoHeight - titleHeight - padding)
+    }
     val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0,
-        padding, width() / 3.0,height() - footerHeight - padding * 2.0)
+            if (fullPage()) TOP_MARGIN.toDouble() else padding,
+            width() / 3.0,height() - footerHeight - padding * 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
         width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding
     )
@@ -322,5 +326,12 @@ class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
     override val fileName = "vtol_chinturret.svg"
     override val armorDiagramFileName = "armor_diagram_vtol_chinturret.svg"
     override val turretCount = 1
+}
+
+class NavalTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "naval_turret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
+    override val turretCount = 1
+    override fun fullPage() = true
 }
 
