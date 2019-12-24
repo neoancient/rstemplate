@@ -46,12 +46,11 @@ abstract class VeeMotiveDamageTable(private val sheet: RecordSheet) {
             FONT_SIZE_VSMALL,
             motiveTypeMods, listOf(0.1, 0.75), listOf(bundle.getString("vehicleTypeModifier")),
             SVGConstants.SVG_START_VALUE, false, parent = g)
-        ypos += lineHeight
-        sheet.addParagraph(
-            org.megamek.rstemplate.templates.padding, ypos,
-            inner.width - org.megamek.rstemplate.templates.padding * 2,
+        ypos += lineHeight * 0.5
+        sheet.addParagraph(inner.x + padding, ypos,
+            inner.width - padding,
             bundle.getString("motiveSystemNote.$unitType"),
-            4.8f, g)
+            if (narrow) 3.8f else 4.8f, g)
         parent.appendChild(g)
     }
 }

@@ -328,10 +328,27 @@ class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
     override val turretCount = 1
 }
 
-class NavalTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+abstract class BaseNavalRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override fun fullPage() = true
+
+    val hitLocationCell = Cell(eqTableCell.x, eqTableCell.bottomY() + padding * 2,
+        eqTableCell.width, (height() - footerHeight) * 0.3 - padding)
+    val motiveTableCell = Cell(notesCell.x, eqTableCell.y,
+        notesCell.width, hitLocationCell.height)
+    val criticalHitsCell = Cell(hitLocationCell.x, hitLocationCell.bottomY() + padding,
+        motiveTableCell.rightX() - hitLocationCell.x, (height() - footerHeight) * 0.2 - padding)
+
+    override fun build() {
+        super.build()
+        NavalHitLocationTable(this).draw(hitLocationCell)
+        NavalMotiveDamageTable(this).draw(motiveTableCell)
+        NavalCriticalHitTable(this).draw(criticalHitsCell)
+    }
+}
+
+class NavalTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
     override val turretCount = 1
-    override fun fullPage() = true
 }
 

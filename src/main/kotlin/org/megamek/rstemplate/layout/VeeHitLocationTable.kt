@@ -18,12 +18,10 @@ abstract class VeeHitLocationTable(private val sheet: RecordSheet) {
 
     protected val bundle: ResourceBundle = ResourceBundle.getBundle(VeeHitLocationTable::class.java.name)
 
-    abstract fun title(): String
-
     fun draw(rect: Cell, parent: Element = sheet.document.documentElement) {
         val g = sheet.createTranslatedGroup(rect.x, rect.y)
         val inner = sheet.addBorder(0.0, 0.0, rect.width, rect.height,
-            title(), topTab = false, bottomTab = false,
+            bundle.getString("hitTable.$unitType.title"), topTab = false, bottomTab = false,
             parent = g)
         val lineHeight = sheet.calcFontHeight(FONT_SIZE_VSMALL)
         var ypos = inner.y + lineHeight
@@ -42,12 +40,12 @@ abstract class VeeHitLocationTable(private val sheet: RecordSheet) {
         val notesG = sheet.document.createElementNS(null, SVGConstants.SVG_G_TAG)
         var notesY = 0.0
         for (i in 1..hitLocNotesCount) {
-            notesY += sheet.addParagraph(
-                org.megamek.rstemplate.templates.padding, notesY, inner.width - org.megamek.rstemplate.templates.padding * 2, bundle.getString("hitLocNotes.$unitType.$i"),
-                FONT_SIZE_VSMALL, notesG)
+            notesY += sheet.addParagraph(inner.x + padding, notesY,
+                inner.width - padding, bundle.getString("hitLocNotes.$unitType.$i"),
+                if (unitType == "naval") 4.8f else FONT_SIZE_VSMALL, notesG)
         }
         notesG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE}(0,${(inner.bottomY() - notesY - org.megamek.rstemplate.templates.padding -lineHeight).truncate()})")
+            "${SVGConstants.SVG_TRANSLATE_VALUE}(0,${(inner.bottomY() - notesY - padding * 2 - lineHeight).truncate()})")
         g.appendChild(notesG)
         parent.appendChild(g)
     }
@@ -102,12 +100,10 @@ open class TankHitLocationTable(sheet: RecordSheet): VeeHitLocationTable(sheet) 
             bundle.getString("turret") + bundle.getString("critical"),
             bundle.getString("turret") + bundle.getString("critical"))
     )
-
-    override fun title(): String = bundle.getString("hitTable.tank.title")
 }
 
 class NavalHitLocationTable(sheet: RecordSheet): TankHitLocationTable(sheet) {
-    override fun title(): String = bundle.getString("hitTable.naval.title")
+    override val unitType = "naval"
 }
 
 class VTOLHitLocationTable(sheet: RecordSheet): VeeHitLocationTable(sheet) {
@@ -158,6 +154,4 @@ class VTOLHitLocationTable(sheet: RecordSheet): VeeHitLocationTable(sheet) {
             bundle.getString("rotors") + bundle.getString("critical") + "*\u2020",
             bundle.getString("rotors") + bundle.getString("critical") + "*\u2020",
             bundle.getString("rotors") + bundle.getString("critical") + "*\u2020"))
-
-    override fun title(): String = bundle.getString("hitTable.vtol.title")
 }
