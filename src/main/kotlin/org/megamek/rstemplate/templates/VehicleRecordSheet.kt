@@ -333,7 +333,7 @@ abstract class BaseNavalRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
 
     val hitLocationCell = Cell(eqTableCell.x, eqTableCell.bottomY() + padding * 2,
         eqTableCell.width, (height() - footerHeight) * 0.3 - padding)
-    val motiveTableCell = Cell(notesCell.x, eqTableCell.y,
+    val motiveTableCell = Cell(notesCell.x, hitLocationCell.y,
         notesCell.width, hitLocationCell.height)
     val criticalHitsCell = Cell(hitLocationCell.x, hitLocationCell.bottomY() + padding,
         motiveTableCell.rightX() - hitLocationCell.x, (height() - footerHeight) * 0.2 - padding)
@@ -350,5 +350,11 @@ class NavalTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
     override val turretCount = 1
+}
+
+class NavalNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "naval_noturret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_noturret.svg"
+    override val turretCount = 0
 }
 

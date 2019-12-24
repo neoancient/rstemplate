@@ -30,6 +30,7 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     outputRS(DualTurretSHVehicleRecordSheet(size), dir)
     outputRS(VTOLRecordSheet(size), dir)
     outputRS(VTOLTurretRecordSheet(size), dir)
+    outputRS(NavalNoTurretRecordSheet(size), dir)
     outputRS(NavalTurretRecordSheet(size), dir)
     outputRS(TankTables(size), dir)
     outputRS(VTOLTables(size), dir)
