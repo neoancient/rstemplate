@@ -2,6 +2,7 @@ package org.megamek.rstemplate.templates
 
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.layout.*
+import org.w3c.dom.Element
 import java.util.*
 
 /**
@@ -15,9 +16,9 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
         Cell(LEFT_MARGIN.toDouble(), logoHeight + titleHeight,
             width() * 0.4, height() - footerHeight - logoHeight - titleHeight - padding)
     }
-    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0,
+    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding,
             if (fullPage()) TOP_MARGIN.toDouble() else padding,
-            width() / 3.0,height() - footerHeight - padding * 2.0)
+            width() / 3.0 - padding,height() - footerHeight - padding * 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
         width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding
     )
@@ -211,7 +212,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             stroke = SVGConstants.SVG_NONE_VALUE, id = "fluffImage")
     }
 
-    fun addArmorDiagram(rect: Cell) {
+    open fun addArmorDiagram(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
@@ -317,19 +318,20 @@ abstract class AbstractVTOLRecordSheet(size: PaperSize): VehicleRecordSheet(size
 }
 
 class VTOLRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
-    override val fileName = "vtol_noturret.svg"
+    override val fileName = "vtol_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vtol_noturret.svg"
     override val turretCount = 0
 }
 
 class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
-    override val fileName = "vtol_chinturret.svg"
+    override val fileName = "vtol_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vtol_chinturret.svg"
     override val turretCount = 1
 }
 
 abstract class BaseNavalRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override fun fullPage() = true
+    open fun isSubmarine() = false
 
     val hitLocationCell = Cell(eqTableCell.x, eqTableCell.bottomY() + padding * 2,
         eqTableCell.width, (height() - footerHeight) * 0.3 - padding)
@@ -343,6 +345,60 @@ abstract class BaseNavalRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
         NavalHitLocationTable(this).draw(hitLocationCell)
         NavalMotiveDamageTable(this).draw(motiveTableCell)
         NavalCriticalHitTable(this).draw(criticalHitsCell)
+    }
+
+    override fun addArmorDiagram(rect: Cell) {
+        if (isSubmarine()) {
+            val newArmorPanel = Cell(rect.x, rect.y, rect.width, rect.height * 0.87)
+            super.addArmorDiagram(newArmorPanel)
+            val g = createTranslatedGroup(rect.x + padding, newArmorPanel.bottomY())
+            val inner = addBorder(0.0, 0.0, rect.width - padding,
+                criticalHitsCell.bottomY() - newArmorPanel.bottomY(),
+                bundle.getString("depthTable.title"), true, false,
+                parent = g)
+            addDepthTrack(padding * 1.5, inner.y + inner.height * 0.1,
+                inner.width - padding * 2, inner.height * 0.3, (1..10).toList(), g)
+            addDepthTrack(padding * 1.5, inner.y + inner.height * 0.55,
+                inner.width - padding * 2, inner.height * 0.3, (11..20).toList(), g)
+            document.documentElement.appendChild(g)
+        } else {
+            super.addArmorDiagram(rect)
+        }
+    }
+
+    private fun addDepthTrack(x: Double, y: Double,
+                              width: Double, height: Double, range: List<Int>, parent: Element) {
+        val outline = RoundedBorder(x, y, width, height,
+            1.315, 0.726, 1.0).draw(document)
+        parent.appendChild(outline)
+        val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        val colOffset = x + width * 0.2
+        val colWidth = (width - colOffset) / range.size
+        grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${x.truncate()},${(y + height / 2.0).truncate()}"
+                    + " h${width.truncate()}"
+                    + (0 until range.size).map {
+                " M ${(colOffset + it * colWidth).truncate()},${y.truncate()} v${height.truncate()}"
+            }.joinToString(" "))
+        grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
+            FILL_DARK_GREY)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        parent.appendChild(grid)
+        val fontSize = FONT_SIZE_MEDIUM
+        val startX = colOffset + colWidth * 0.5
+        val startY = y + (height - calcFontHeight(fontSize)) * 0.5 - 1
+        addTextElement(x + padding, startY, bundle.getString("turn"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        addTextElement(x + padding, height / 2.0 + startY, bundle.getString("depth"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        for (i in 0 until range.size) {
+            addTextElement(startX + i * colWidth, startY, range[i].toString(), fontSize,
+                SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+                parent = parent)
+        }
     }
 }
 
@@ -358,3 +414,16 @@ class NavalNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val turretCount = 0
 }
 
+class SubmarineTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "submarine_turret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
+    override val turretCount = 1
+    override fun isSubmarine() = true
+}
+
+class SubmarineNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "submarine_noturret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_noturret.svg"
+    override val turretCount = 0
+    override fun isSubmarine() = true
+}
