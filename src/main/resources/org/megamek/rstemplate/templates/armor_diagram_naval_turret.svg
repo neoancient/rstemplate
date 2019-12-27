@@ -259,108 +259,80 @@
       <rect x="-53.28" width="106.56" y="13.6" height="6.8" id="structurePipsFR02"/>
       <rect x="-49" width="98" y="20.4" height="6.8" id="structurePipsFR03"/>
     </g>
-    <g id="structurePipsRS" transform="translate(491.13,177.88)">
-      <rect x="0" width="39" y="0" height="6.8" id="structurePipsRS00"/>
-      <rect x="0" width="39" y="6.8" height="6.8" id="structurePipsRS01"/>
-      <rect x="0" width="39" y="13.6" height="6.8" id="structurePipsRS02"/>
-      <rect x="0" width="39" y="20.4" height="6.8" id="structurePipsRS03"/>
-      <rect x="0" width="39" y="27.2" height="6.8" id="structurePipsRS04"/>
-      <rect x="0" width="39" y="34.0" height="6.8" id="structurePipsRS05"/>
-      <rect x="0" width="39" y="40.8" height="6.8" id="structurePipsRS06"/>
-      <rect x="0" width="39" y="47.6" height="6.8" id="structurePipsRS07"/>
-      <rect x="0" width="39" y="54.4" height="6.8" id="structurePipsRS08"/>
-      <rect x="0" width="39" y="61.2" height="6.8" id="structurePipsRS09"/>
-      <rect x="0" width="39" y="68" height="6.8" id="structurePipsRS10"/>
-      <rect x="0" width="39" y="74.8" height="6.8" id="structurePipsRS11"/>
-      <rect x="0" width="39" y="81.6" height="6.8" id="structurePipsRS12"/>
-      <rect x="0" width="39" y="88.4" height="6.8" id="structurePipsRS13"/>
-      <rect x="0" width="39" y="95.2" height="6.8" id="structurePipsRS14"/>
-      <rect x="0" width="39" y="102" height="6.8" id="structurePipsRS15"/>
-      <rect x="0" width="39" y="108.8" height="6.8" style="mml-gap:0,39" id="structurePipsRS16"/>
-      <rect x="0" width="39" y="115.6" height="6.8" style="mml-gap:0,39" id="structurePipsRS17"/>
-      <rect x="0" width="39" y="122.4" height="6.8" style="mml-gap:0,39" id="structurePipsRS18"/>
-      <rect x="0" width="39" y="129.2" height="6.8" style="mml-gap:0,39" id="structurePipsRS19"/>
-      <rect x="0" width="39" y="136" height="6.8" style="mml-gap:0,39" id="structurePipsRS20"/>
-      <rect x="0" width="39" y="142.8" height="6.8" style="mml-gap:0,39" id="structurePipsRS21"/>
-      <rect x="0" width="39" y="149.6" height="6.8" style="mml-gap:0,39" id="structurePipsRS22"/>
-      <rect x="0" width="39" y="156.4" height="6.8" style="mml-gap:0,39" id="structurePipsRS23"/>
-      <rect x="0" width="39" y="163.2" height="6.8" style="mml-gap:0,39" id="structurePipsRS24"/>
-      <rect x="0" width="39" y="170" height="6.8" style="mml-gap:0,39" id="structurePipsRS25"/>
-      <rect x="0" width="39" y="176.8" height="6.8" style="mml-gap:0,39" id="structurePipsRS26"/>
-      <rect x="0" width="39" y="183.6" height="6.8" style="mml-gap:0,39" id="structurePipsRS27"/>
-      <rect x="0" width="39" y="190.4" height="6.8" style="mml-gap:0,39" id="structurePipsRS28"/>
-      <rect x="0" width="39" y="197.2" height="6.8" style="mml-gap:0,39" id="structurePipsRS29"/>
-      <rect x="0" width="39" y="204" height="6.8" style="mml-gap:0,39" id="structurePipsRS30"/>
-      <rect x="0" width="39" y="210.8" height="6.8" style="mml-gap:0,39" id="structurePipsRS31"/>
-      <rect x="0" width="39" y="217.6" height="6.8" style="mml-gap:0,39" id="structurePipsRS32"/>
-      <rect x="0" width="39" y="224.4" height="6.8" id="structurePipsRS33"/>
-      <rect x="0" width="39" y="231.2" height="6.8" id="structurePipsRS34"/>
-      <rect x="0" width="39" y="238" height="6.8" id="structurePipsRS35"/>
-      <rect x="0" width="39" y="244.8" height="6.8" id="structurePipsRS36"/>
-      <rect x="0" width="39" y="251.6" height="6.8" id="structurePipsRS37"/>
-      <rect x="0" width="39" y="258.4" height="6.8" id="structurePipsRS38"/>
-      <rect x="0" width="39" y="265.2" height="6.8" id="structurePipsRS39"/>
-      <rect x="0" width="39" y="272" height="6.8" id="structurePipsRS40"/>
-      <rect x="0" width="39" y="278.8" height="6.8" id="structurePipsRS41"/>
-      <rect x="0" width="39" y="285.6" height="6.8" id="structurePipsRS42"/>
-      <rect x="0" width="39" y="292.4" height="6.8" id="structurePipsRS43"/>
-      <rect x="0" width="39" y="299.2" height="6.8" id="structurePipsRS44"/>
-      <rect x="0" width="39" y="306" height="6.8" id="structurePipsRS45"/>
-      <rect x="0" width="39" y="312.8" height="6.8" id="structurePipsRS46"/>
-      <rect x="0" width="39" y="319.6" height="6.8" id="structurePipsRS47"/>
-      <rect x="0" width="39" y="326.4" height="6.8" id="structurePipsRS48"/>
-    </g>
-    <g id="structurePipsLS" transform="matrix(-1,0,0,1,486.6,177.88)">
-      <rect x="0" width="39" y="0" height="6.8" id="structurePipsLS00"/>
-      <rect x="0" width="39" y="6.8" height="6.8" id="structurePipsLS01"/>
-      <rect x="0" width="39" y="13.6" height="6.8" id="structurePipsLS02"/>
-      <rect x="0" width="39" y="20.4" height="6.8" id="structurePipsLS03"/>
-      <rect x="0" width="39" y="27.2" height="6.8" id="structurePipsLS04"/>
-      <rect x="0" width="39" y="34.0" height="6.8" id="structurePipsLS05"/>
-      <rect x="0" width="39" y="40.8" height="6.8" id="structurePipsLS06"/>
-      <rect x="0" width="39" y="47.6" height="6.8" id="structurePipsLS07"/>
-      <rect x="0" width="39" y="54.4" height="6.8" id="structurePipsLS08"/>
-      <rect x="0" width="39" y="61.2" height="6.8" id="structurePipsLS09"/>
-      <rect x="0" width="39" y="68" height="6.8" id="structurePipsLS10"/>
-      <rect x="0" width="39" y="74.8" height="6.8" id="structurePipsLS11"/>
-      <rect x="0" width="39" y="81.6" height="6.8" id="structurePipsLS12"/>
-      <rect x="0" width="39" y="88.4" height="6.8" id="structurePipsLS13"/>
-      <rect x="0" width="39" y="95.2" height="6.8" id="structurePipsLS14"/>
-      <rect x="0" width="39" y="102" height="6.8" id="structurePipsLS15"/>
-      <rect x="0" width="39" y="108.8" height="6.8" style="mml-gap:0,39" id="structurePipsLS16"/>
-      <rect x="0" width="39" y="115.6" height="6.8" style="mml-gap:0,39" id="structurePipsLS17"/>
-      <rect x="0" width="39" y="122.4" height="6.8" style="mml-gap:0,39" id="structurePipsLS18"/>
-      <rect x="0" width="39" y="129.2" height="6.8" style="mml-gap:0,39" id="structurePipsLS19"/>
-      <rect x="0" width="39" y="136" height="6.8" style="mml-gap:0,39" id="structurePipsLS20"/>
-      <rect x="0" width="39" y="142.8" height="6.8" style="mml-gap:0,39" id="structurePipsLS21"/>
-      <rect x="0" width="39" y="149.6" height="6.8" style="mml-gap:0,39" id="structurePipsLS22"/>
-      <rect x="0" width="39" y="156.4" height="6.8" style="mml-gap:0,39" id="structurePipsLS23"/>
-      <rect x="0" width="39" y="163.2" height="6.8" style="mml-gap:0,39" id="structurePipsLS24"/>
-      <rect x="0" width="39" y="170" height="6.8" style="mml-gap:0,39" id="structurePipsLS25"/>
-      <rect x="0" width="39" y="176.8" height="6.8" style="mml-gap:0,39" id="structurePipsLS26"/>
-      <rect x="0" width="39" y="183.6" height="6.8" style="mml-gap:0,39" id="structurePipsLS27"/>
-      <rect x="0" width="39" y="190.4" height="6.8" style="mml-gap:0,39" id="structurePipsLS28"/>
-      <rect x="0" width="39" y="197.2" height="6.8" style="mml-gap:0,39" id="structurePipsLS29"/>
-      <rect x="0" width="39" y="204" height="6.8" style="mml-gap:0,39" id="structurePipsLS30"/>
-      <rect x="0" width="39" y="210.8" height="6.8" style="mml-gap:0,39" id="structurePipsLS31"/>
-      <rect x="0" width="39" y="217.6" height="6.8" style="mml-gap:0,39" id="structurePipsLS32"/>
-      <rect x="0" width="39" y="224.4" height="6.8" id="structurePipsLS33"/>
-      <rect x="0" width="39" y="231.2" height="6.8" id="structurePipsLS34"/>
-      <rect x="0" width="39" y="238" height="6.8" id="structurePipsLS35"/>
-      <rect x="0" width="39" y="244.8" height="6.8" id="structurePipsLS36"/>
-      <rect x="0" width="39" y="251.6" height="6.8" id="structurePipsLS37"/>
-      <rect x="0" width="39" y="258.4" height="6.8" id="structurePipsLS38"/>
-      <rect x="0" width="39" y="265.2" height="6.8" id="structurePipsLS39"/>
-      <rect x="0" width="39" y="272" height="6.8" id="structurePipsLS40"/>
-      <rect x="0" width="39" y="278.8" height="6.8" id="structurePipsLS41"/>
-      <rect x="0" width="39" y="285.6" height="6.8" id="structurePipsLS42"/>
-      <rect x="0" width="39" y="292.4" height="6.8" id="structurePipsLS43"/>
-      <rect x="0" width="39" y="299.2" height="6.8" id="structurePipsLS44"/>
-      <rect x="0" width="39" y="306" height="6.8" id="structurePipsLS45"/>
-      <rect x="0" width="39" y="312.8" height="6.8" id="structurePipsLS46"/>
-      <rect x="0" width="39" y="319.6" height="6.8" id="structurePipsLS47"/>
-      <rect x="0" width="39" y="326.4" height="6.8" id="structurePipsLS48"/>
-    </g>
+    <g id="structurePipsRS" transform="translate(491.13,177.88)"
+            style="mml-multisection:true">
+      <g id="structurePipsRS_section01">
+          <rect x="0" width="39" y="0" height="6.8" id="structurePipsRS00"/>
+          <rect x="0" width="39" y="6.8" height="6.8" id="structurePipsRS01"/>
+          <rect x="0" width="39" y="13.6" height="6.8" id="structurePipsRS02"/>
+          <rect x="0" width="39" y="20.4" height="6.8" id="structurePipsRS03"/>
+          <rect x="0" width="39" y="27.2" height="6.8" id="structurePipsRS04"/>
+          <rect x="0" width="39" y="34.0" height="6.8" id="structurePipsRS05"/>
+          <rect x="0" width="39" y="40.8" height="6.8" id="structurePipsRS06"/>
+          <rect x="0" width="39" y="47.6" height="6.8" id="structurePipsRS07"/>
+          <rect x="0" width="39" y="54.4" height="6.8" id="structurePipsRS08"/>
+          <rect x="0" width="39" y="61.2" height="6.8" id="structurePipsRS09"/>
+          <rect x="0" width="39" y="68" height="6.8" id="structurePipsRS10"/>
+          <rect x="0" width="39" y="74.8" height="6.8" id="structurePipsRS11"/>
+          <rect x="0" width="39" y="81.6" height="6.8" id="structurePipsRS12"/>
+          <rect x="0" width="39" y="88.4" height="6.8" id="structurePipsRS13"/>
+          <rect x="0" width="39" y="95.2" height="6.8" id="structurePipsRS14"/>
+          <rect x="0" width="39" y="102" height="6.8" id="structurePipsRS15"/>
+      </g><g id="structurePipsRS_section02">
+          <rect x="0" width="39" y="224.4" height="6.8" id="structurePipsRS33"/>
+          <rect x="0" width="39" y="231.2" height="6.8" id="structurePipsRS34"/>
+          <rect x="0" width="39" y="238" height="6.8" id="structurePipsRS35"/>
+          <rect x="0" width="39" y="244.8" height="6.8" id="structurePipsRS36"/>
+          <rect x="0" width="39" y="251.6" height="6.8" id="structurePipsRS37"/>
+          <rect x="0" width="39" y="258.4" height="6.8" id="structurePipsRS38"/>
+          <rect x="0" width="39" y="265.2" height="6.8" id="structurePipsRS39"/>
+          <rect x="0" width="39" y="272" height="6.8" id="structurePipsRS40"/>
+          <rect x="0" width="39" y="278.8" height="6.8" id="structurePipsRS41"/>
+          <rect x="0" width="39" y="285.6" height="6.8" id="structurePipsRS42"/>
+          <rect x="0" width="39" y="292.4" height="6.8" id="structurePipsRS43"/>
+          <rect x="0" width="39" y="299.2" height="6.8" id="structurePipsRS44"/>
+          <rect x="0" width="39" y="306" height="6.8" id="structurePipsRS45"/>
+          <rect x="0" width="39" y="312.8" height="6.8" id="structurePipsRS46"/>
+          <rect x="0" width="39" y="319.6" height="6.8" id="structurePipsRS47"/>
+          <rect x="0" width="39" y="326.4" height="6.8" id="structurePipsRS48"/>
+    </g></g>
+    <g id="structurePipsLS" transform="matrix(-1,0,0,1,486.6,177.88)"
+            style="mml-multisection:true">
+      <g id="structurePipsLS_section01">
+          <rect x="0" width="39" y="0" height="6.8" id="structurePipsLS00"/>
+          <rect x="0" width="39" y="6.8" height="6.8" id="structurePipsLS01"/>
+          <rect x="0" width="39" y="13.6" height="6.8" id="structurePipsLS02"/>
+          <rect x="0" width="39" y="20.4" height="6.8" id="structurePipsLS03"/>
+          <rect x="0" width="39" y="27.2" height="6.8" id="structurePipsLS04"/>
+          <rect x="0" width="39" y="34.0" height="6.8" id="structurePipsLS05"/>
+          <rect x="0" width="39" y="40.8" height="6.8" id="structurePipsLS06"/>
+          <rect x="0" width="39" y="47.6" height="6.8" id="structurePipsLS07"/>
+          <rect x="0" width="39" y="54.4" height="6.8" id="structurePipsLS08"/>
+          <rect x="0" width="39" y="61.2" height="6.8" id="structurePipsLS09"/>
+          <rect x="0" width="39" y="68" height="6.8" id="structurePipsLS10"/>
+          <rect x="0" width="39" y="74.8" height="6.8" id="structurePipsLS11"/>
+          <rect x="0" width="39" y="81.6" height="6.8" id="structurePipsLS12"/>
+          <rect x="0" width="39" y="88.4" height="6.8" id="structurePipsLS13"/>
+          <rect x="0" width="39" y="95.2" height="6.8" id="structurePipsLS14"/>
+          <rect x="0" width="39" y="102" height="6.8" id="structurePipsLS15"/>
+      </g><g id="structurePipsLS_section02">
+          <rect x="0" width="39" y="224.4" height="6.8" id="structurePipsLS33"/>
+          <rect x="0" width="39" y="231.2" height="6.8" id="structurePipsLS34"/>
+          <rect x="0" width="39" y="238" height="6.8" id="structurePipsLS35"/>
+          <rect x="0" width="39" y="244.8" height="6.8" id="structurePipsLS36"/>
+          <rect x="0" width="39" y="251.6" height="6.8" id="structurePipsLS37"/>
+          <rect x="0" width="39" y="258.4" height="6.8" id="structurePipsLS38"/>
+          <rect x="0" width="39" y="265.2" height="6.8" id="structurePipsLS39"/>
+          <rect x="0" width="39" y="272" height="6.8" id="structurePipsLS40"/>
+          <rect x="0" width="39" y="278.8" height="6.8" id="structurePipsLS41"/>
+          <rect x="0" width="39" y="285.6" height="6.8" id="structurePipsLS42"/>
+          <rect x="0" width="39" y="292.4" height="6.8" id="structurePipsLS43"/>
+          <rect x="0" width="39" y="299.2" height="6.8" id="structurePipsLS44"/>
+          <rect x="0" width="39" y="306" height="6.8" id="structurePipsLS45"/>
+          <rect x="0" width="39" y="312.8" height="6.8" id="structurePipsLS46"/>
+          <rect x="0" width="39" y="319.6" height="6.8" id="structurePipsLS47"/>
+          <rect x="0" width="39" y="326.4" height="6.8" id="structurePipsLS48"/>
+    </g></g>
     <g id="structurePipsRR" transform="translate(489.6,517.88)">
       <rect x="-36" width="72" y="0" height="6.8" id="structurePipsRR00"/>
       <rect x="-41.3" width="82.6" y="6.8" height="6.8" id="structurePipsRR01"/>

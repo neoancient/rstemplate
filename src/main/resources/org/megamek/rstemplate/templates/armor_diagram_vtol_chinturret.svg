@@ -1040,7 +1040,8 @@
       <rect x="-23" width="46" y="40.8" height="6.8" id="armorFRRow09"/>
       <rect x="-14.93" width="29.86" y="47.6" height="6.8" id="armorFRRow010"/>
     </g>
-    <g id="armorPipsRS" transform="translate(501.3005,135.434)">
+    <g id="armorPipsRS" transform="translate(501.3005,135.434)"
+            style="mml-multisection:true"><g id="armorPipsRS_section01">           
       <rect x="21.19" width="8.75" y="0" height="6.8" id="armorRSRow00"/>
       <rect x="12.65" width="18.2" y="6.8" height="6.8" id="armorRSRow01"/>
       <rect x="3.25" width="27.59" y="13.6" height="6.8" id="armorRSRow02"/>
@@ -1048,8 +1049,7 @@
       <rect x="0" width="30.96" y="27.2" height="6.8" id="armorRSRow04"/>
       <rect x="0" width="29.96" y="34.0" height="6.8" id="armorRSRow05"/>
       <rect x="0" width="29.91" y="39.6" height="6.8" id="armorRSRow06"/>
-      <rect x="0" width="29.5" y="46.8" height="6.8" style="mml-gap:0,29.5" id="armorRSRow07"/>
-      <rect x="0" width="29.5" y="54.4" height="6.8" style="mml-gap:0,29.5" id="armorRSRow08"/>
+      </g><g id="armorPipsRS_section02">
       <rect x="0" width="26.68" y="61.2" height="6.8" id="armorRSRow09"/>
       <rect x="0" width="25.38" y="68" height="6.8" id="armorRSRow10"/>
       <rect x="0" width="23.74" y="74.8" height="6.8" id="armorRSRow11"/>
@@ -1057,8 +1057,9 @@
       <rect x="0" width="20.88" y="88.4" height="6.8" id="armorRSRow13"/>
       <rect x="0" width="18.68" y="95.2" height="6.8" id="armorRSRow14"/>
       <rect x="0" width="16.5" y="102" height="6.8" id="armorRSRow15"/>
-    </g>
-    <g id="armorPipsLS" transform="matrix(-1,0,0,1,473.6595,135.434)">
+    </g></g>
+    <g id="armorPipsLS" transform="matrix(-1,0,0,1,473.6595,135.434)"
+            style="mml-multisection:true"><g id="armorPipsLS_section01">
       <rect x="21.19" width="8.75" y="0" height="6.8" id="armorLSRow00"/>
       <rect x="12.65" width="18.2" y="6.8" height="6.8" id="armorLSRow01"/>
       <rect x="3.25" width="27.59" y="13.6" height="6.8" id="armorLSRow02"/>
@@ -1066,8 +1067,7 @@
       <rect x="0" width="30.96" y="27.2" height="6.8" id="armorLSRow04"/>
       <rect x="0" width="29.96" y="34.0" height="6.8" id="armorLSRow05"/>
       <rect x="0" width="29.91" y="39.6" height="6.8" id="armorLSRow06"/>
-      <rect x="0" width="29.5" y="46.8" height="6.8" style="mml-gap:0,29.5" id="armorLSRow07"/>
-      <rect x="0" width="29.5" y="54.4" height="6.8" style="mml-gap:0,29.5" id="armorLSRow08"/>
+      </g><g id="armorPipsLS_section02">
       <rect x="0" width="26.68" y="61.2" height="6.8" id="armorLSRow09"/>
       <rect x="0" width="25.38" y="68" height="6.8" id="armorLSRow10"/>
       <rect x="0" width="23.74" y="74.8" height="6.8" id="armorLSRow11"/>
@@ -1075,7 +1075,7 @@
       <rect x="0" width="20.88" y="88.4" height="6.8" id="armorLSRow13"/>
       <rect x="0" width="18.68" y="95.2" height="6.8" id="armorLSRow14"/>
       <rect x="0" width="16.5" y="102" height="6.8" id="armorLSRow15"/>
-    </g>
+    </g></g>
     <g id="armorPipsRR" transform="translate(487.8295,280.58)">
       <rect x="-7.3" width="14.6" y="0" height="6.3" id="armorRRRow00"/>
       <rect x="-7.11" width="14.22" y="6.3" height="6.3" id="armorRRRow01"/>
