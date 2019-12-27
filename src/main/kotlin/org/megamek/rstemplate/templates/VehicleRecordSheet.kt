@@ -414,6 +414,30 @@ class NavalNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val turretCount = 0
 }
 
+class NavalDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "naval_dualturret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_dualturret.svg"
+    override val turretCount = 2
+}
+
+class SHNavalNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "naval_noturret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_naval_noturret.svg"
+    override val turretCount = 0
+}
+
+class SHNavalTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "naval_turret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_naval_turret.svg"
+    override val turretCount = 1
+}
+
+class SHNavalDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "naval_dualturret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_dualturret.svg"
+    override val turretCount = 2
+}
+
 class SubmarineTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
@@ -427,3 +451,32 @@ class SubmarineNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) 
     override val turretCount = 0
     override fun isSubmarine() = true
 }
+
+class SubmarineDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "submarine_dualturret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_naval_dualturret.svg"
+    override val turretCount = 2
+    override fun isSubmarine() = true
+}
+
+class SHSubmarineNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "submarine_noturret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_naval_noturret.svg"
+    override val turretCount = 0
+    override fun isSubmarine() = true
+}
+
+class SHSubmarineTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "submarine_turret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_naval_turret.svg"
+    override val turretCount = 1
+    override fun isSubmarine() = true
+}
+
+class SHSubmarineDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
+    override val fileName = "submarine_dualturret_superheavy.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_naval_dualturret.svg"
+    override val turretCount = 2
+    override fun isSubmarine() = true
+}
+
