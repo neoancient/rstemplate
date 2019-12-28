@@ -434,7 +434,7 @@ class SHNavalTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
 
 class SHNavalDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_dualturret_superheavy.svg"
-    override val armorDiagramFileName = "armor_diagram_naval_dualturret.svg"
+    override val armorDiagramFileName = "armor_diagram_sh_naval_dualturret.svg"
     override val turretCount = 2
 }
 

@@ -33,6 +33,9 @@ abstract class VeeMotiveDamageTable(private val sheet: RecordSheet) {
                 listOf("12", bundle.getString("motiveMajorDamage.$unitType"))
             ), listOf(0.15, 0.27), listOf(bundle.getString("2d6Roll"), bundle.getString("effect")),
             SVGConstants.SVG_START_VALUE, true, SVGConstants.SVG_MIDDLE_VALUE, g)
+        if (narrow) {
+            ypos -= lineHeight * 0.5
+        }
         val tableHeight = sheet.createTable(0.0, ypos + lineHeight, inner.width * 0.5, FONT_SIZE_VSMALL,
             listOf(
                 listOf(bundle.getString("hitFromRear"), "+1"),
