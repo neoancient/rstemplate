@@ -329,6 +329,27 @@ class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
     override val turretCount = 1
 }
 
+class WiGENoTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "wige_noturret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_wige_noturret.svg"
+    override val turretCount = 0
+    override fun fullPage() = false
+}
+
+class WiGESingleTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "wige_turret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_wige_turret.svg"
+    override val turretCount = 1
+    override fun fullPage() = false
+}
+
+class WiGEDualTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
+    override val fileName = "wige_dualturret_standard.svg"
+    override val armorDiagramFileName = "armor_diagram_wige_dualturret.svg"
+    override val turretCount = 2
+    override fun fullPage() = false
+}
+
 abstract class BaseNavalRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override fun fullPage() = true
     open fun isSubmarine() = false
