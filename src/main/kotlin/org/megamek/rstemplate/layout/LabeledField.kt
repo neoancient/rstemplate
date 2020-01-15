@@ -48,7 +48,7 @@ class LabeledField(val labelText: String, val id: String,
         val xpos = fieldX ?: x + sheet.calcTextLength("${labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
         sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE,
             SVGConstants.SVG_NORMAL_VALUE, fill, fieldAnchor, id,
-            width = maxWidth?.minus(xpos), hidden = hidden, parent = parent)
+            width = maxWidth?.minus(xpos - x), hidden = hidden, parent = parent)
         if (lineWidth != null) {
             sheet.addHorizontalLine(xpos, y + 1.0, lineWidth, 0.72, fill,
                 id = blankId ?: "blank$id", hidden = hidden, parent = parent)

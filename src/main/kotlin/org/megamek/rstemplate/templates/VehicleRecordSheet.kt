@@ -78,7 +78,7 @@ abstract class VehicleRecordSheet(size: PaperSize): RecordSheet(size) {
             LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
             LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
         ), internal.x + padding + internal.width * 0.5, ypos, fontSize,
-            FILL_DARK_GREY, parent = g)
+            FILL_DARK_GREY, maxWidth = internal.width * 0.5 - padding * 2, parent = g)
         ypos += lineHeight * 3
         addFieldSet(listOf(
             LabeledField(bundle.getString("movementType"), "movementType"),

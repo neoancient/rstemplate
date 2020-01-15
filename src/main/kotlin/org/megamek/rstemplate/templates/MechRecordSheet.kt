@@ -61,7 +61,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLDER_VALUE, parent = g)
+        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            maxWidth = internal.width, parent = g)
         ypos += lineHeight
         ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
         addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
@@ -103,7 +104,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
             LabeledField(bundle.getString("rulesLevel"), "rulesLevel","Standard"),
             LabeledField(bundle.getString("role"), "role", labelId = "labelRole")
-        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, parent = parent)
+        ), x + width * 0.5, y, fontSize, FILL_DARK_GREY, maxWidth = width * 0.5 - padding, parent = parent)
         return lineHeight * 4
     }
 
@@ -177,10 +178,10 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         }
         addTextElement(chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
             5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
-            parent = g)
+            width = chartBounds.x - x - padding, parent = g)
         addTextElement(chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
             5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
-            parent = g)
+            width = chartBounds.x - x - padding, parent = g)
         parent.appendChild(g)
         return height
     }
