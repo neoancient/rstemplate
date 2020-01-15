@@ -255,7 +255,7 @@
      id="armorPips"><g
        id="armorPipsHD"
        fill="none"
-       transform="translate(474.4,74.44)"><rect
+       transform="translate(473.2,74.44)"><rect
          x="0"
          y="5.3272"
          width="24.8"
@@ -273,7 +273,7 @@
          id="armorHDRow02" /></g><g
        id="armorPipsHD_SH"
        fill="none"
-       transform="translate(474.45,68.1505)"><rect
+       transform="translate(473.25,68.1505)"><rect
          x="0"
          y="-0.8244"
          width="24.8"
@@ -296,7 +296,7 @@
          id="armorHDRow03" /></g><g
        id="armorPipsCT"
        fill="none"
-       transform="translate(463.13,102.5541)"><rect
+       transform="translate(463.03,102.5541)"><rect
          x="0"
          y="0"
          width="44.9"
@@ -359,7 +359,7 @@
          id="armorCTRow11" /></g><g
        id="armorPipsRT"
        fill="none"
-       transform="translate(509.91,61.54)"><rect
+       transform="translate(509.81,61.54)"><rect
          x="0"
          y="0"
          width="46.2"
@@ -427,7 +427,7 @@
          id="armorRTRow12" /></g><g
        id="armorPipsLT"
        fill="none"
-       transform="matrix(-1, 0, 0, 1,460.8,61.54)"><rect
+       transform="matrix(-1, 0, 0, 1,461.1,61.54)"><rect
          x="0"
          y="0"
          width="46.2"
@@ -987,7 +987,7 @@
          id="armorRLLRow22" /></g><g
        id="armorPipsCTR"
        fill="none"
-       transform="translate(471.04,302.83)"><rect
+       transform="translate(470.84,302.83)"><rect
          x="0"
          y="0"
          width="29.14"

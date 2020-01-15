@@ -62,7 +62,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
         addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            maxWidth = internal.width, parent = g)
+            maxWidth = internal.width - internal.x - padding, parent = g)
         ypos += lineHeight
         ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
         addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)

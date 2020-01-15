@@ -750,7 +750,7 @@
          y="0"
          id="tspan60353">Right Arm</tspan></text></g></g>
 <g
-     id="armorPips" transform="translate(-391.12064,-19.834069)"><g
+     id="armorPips" transform="translate(-391.72064,-19.834069)"><g
        id="armorPipsHD"
        fill="none"
        transform="translate(475.8385,68.1505)"><rect
@@ -915,7 +915,7 @@
          id="armorRTRow05" /><rect
          x="2.8"
          y="31.9632"
-         width="20.9"
+         width="29.3"
          height="6.15152"
          id="armorRTRow06" /><rect
          x="2.8"
@@ -998,7 +998,7 @@
          id="armorLTRow05" /><rect
          x="2.8"
          y="31.9632"
-         width="20.9"
+         width="29.3"
          height="6.15152"
          id="armorLTRow06" /><rect
          x="2.8"
@@ -1430,7 +1430,7 @@
          id="armorLLRow20" /></g><g
        id="armorPipsCTR"
        fill="none"
-       transform="translate(464.61,297.1276)"><rect
+       transform="translate(465.01,297.1276)"><rect
          x="7.56"
          y="0"
          width="25.84"
@@ -1493,7 +1493,7 @@
          id="armorCTRRow11" /></g><g
        id="armorPipsRTR"
        fill="none"
-       transform="translate(500.153,306.73)"><rect
+       transform="translate(500.553,306.73)"><rect
          x="0"
          y="0"
          width="30.65"
@@ -1531,7 +1531,7 @@
          id="armorRTRRow06" /></g><g
        id="armorPipsLTR"
        fill="none"
-       transform="matrix(-1,0,0,1,470.027,307.2372)"><rect
+       transform="matrix(-1,0,0,1,470.427,307.2372)"><rect
          x="0"
          y="0"
          width="30.65"
