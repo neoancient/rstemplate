@@ -17,11 +17,13 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     if (!File(dir).exists()) {
         File(dir).mkdir()
     }
+    // Mechs
     outputRS(BipedMechRecordSheet(size), dir)
     outputRS(QuadMechRecordSheet(size), dir)
     outputRS(TripodMechRecordSheet(size), dir)
     outputRS(LAMRecordSheet(size), dir)
     outputRS(QuadVeeRecordSheet(size), dir)
+    // Vehicles
     outputRS(NoTurretVehicleRecordSheet(size), dir)
     outputRS(SingleTurretVehicleRecordSheet(size), dir)
     outputRS(DualTurretVehicleRecordSheet(size), dir)
@@ -47,6 +49,8 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     outputRS(SHSubmarineDualTurretRecordSheet(size), dir)
     outputRS(TankTables(size), dir)
     outputRS(VTOLTables(size), dir)
+    // Aerospace
+    outputRS(ASFRecordSheet(size), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
