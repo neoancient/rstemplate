@@ -22,9 +22,9 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
     val critDamageCell = Cell(LEFT_MARGIN.toDouble(), fluffCell.bottomY() + padding,
         eqTableCell.width, height() * 0.12)
     val velocityCell = Cell(LEFT_MARGIN.toDouble(), critDamageCell.bottomY() + padding,
-        width() * 2.0 / 3.0, height() - critDamageCell.bottomY() - footerHeight)
+        width() * 2.0 / 3.0, height() * 0.23 - footerHeight - padding)
     val pilotCell = Cell(critDamageCell.rightX() + padding, critDamageCell.y,
-        velocityCell.width - critDamageCell.width - padding, critDamageCell.height)
+        velocityCell.width - critDamageCell.width - padding, critDamageCell.height + tabBevelY)
     val heatScaleCell = Cell(armorCell.rightX() - 20, TOP_MARGIN + (height() - footerHeight) / 2.0,
         20.0, (height() - footerHeight) / 2.0)
     val heatCell = Cell(velocityCell.rightX() + padding, tableCell.y,
@@ -35,6 +35,8 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
     final override fun height() = super.height()
     abstract val dataPanelTitle: String
     abstract val armorDiagramFileName: String
+    abstract val fighter: Boolean
+    abstract val atmospheric: Boolean
 
     override fun build() {
         addEquipmentTable(eqTableCell)
@@ -42,8 +44,12 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         addArmorDiagram(armorCell)
         addCritPanel(critDamageCell)
         addPilotPanel(pilotCell)
+        addVelocityPanel(velocityCell)
         addHeatPanel(heatCell)
         addHeatScale(heatScaleCell)
+        if (fighter) {
+            addBombsPanel()
+        }
     }
 
     fun addEquipmentTable(rect: Cell) {
@@ -52,8 +58,8 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
-            dataPanelTitle, true,true,
-            false, parent = g)
+            dataPanelTitle, true,true,false,
+            textBelow = bundle.getString("notes.title"), parent = g)
         var ypos = internal.y
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
@@ -84,7 +90,8 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         val g = createTranslatedGroup(rect.x, rect.y)
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "notes")
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
-            bundle.getString("notes.title"), parent = g)
+            bundle.getString("notes.title"), bottomTab = true,
+            textBelow = bundle.getString("criticalDamage.title"), parent = g)
         document.documentElement.appendChild(g)
         val fluffCell = rect.inset(
             padding,
@@ -123,20 +130,204 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         val label = RSLabel(this, 0.0, logoHeight + titleHeight,
             bundle.getString("armorPanel.title"), FONT_SIZE_FREE_LABEL)
         g.appendChild(label.draw())
-        embedImage(0.0, logoHeight - 20, rect.width - heatScaleCell.width,
-            rect.height - logoHeight + 20,
+        embedImage(0.0, logoHeight * 0.5, rect.width - heatScaleCell.width,
+            rect.height - logoHeight * 0.5,
             armorDiagramFileName, ImageAnchor.CENTER, g)
         embedImage(rect.width - 50.0 - heatScaleCell.width - padding, rect.height - 30.0, 50.0, 30.0,
             CGL_LOGO, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g)
+        if (!atmospheric) {
+            addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), g)
+        }
         document.documentElement.appendChild(g)
     }
 
     fun addCritPanel(rect: Cell) {
-
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("criticalDamage.title"), bottomTab = true,
+            textBelow = bundle.getString("velocityRecord.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val lineHeight = inner.height / 4.0
+        var ypos = inner.y + lineHeight * 0.5
+        g.appendChild(DamageCheckBox(bundle.getString("avionics"), listOf("+1", "+2", "+5"))
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
+        g.appendChild(DamageCheckBox(bundle.getString("engine"), listOf("2", "4", "D"))
+            .draw(this, inner.x + inner.width * 0.5, ypos,
+                fontSize, width = inner.width * 0.45))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("fcs"), listOf("+2", "+4", "D"))
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
+        g.appendChild(DamageCheckBox(bundle.getString("gear"), listOf("+5"))
+            .draw(this, inner.x + inner.width * 0.5, ypos,
+                fontSize, width = inner.width * 0.45))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("sensors"), listOf("+1", "+2", "+5"))
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
+        g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"))
+            .draw(this, inner.x + inner.width * 0.5, ypos,
+                fontSize, width = inner.width * 0.45))
+        document.documentElement.appendChild(g)
     }
 
     fun addPilotPanel(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("pilotPanel.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val fontWeight = SVGConstants.SVG_BOLD_VALUE
+        val lineHeight = calcFontHeight(fontSize)
+        var ypos = inner.y + lineHeight * 1.5
+        addField(bundle.getString("name"), "pilotName0",
+            padding, ypos, fontSize,
+            blankId = "blankCrewName0",
+            blankWidth = inner.width - padding * 2
+                    - calcTextLength("${bundle.getString("name")}_",
+                fontSize, fontWeight),
+            labelFixedWidth = false, parent = g)
+        ypos += lineHeight * 1.5
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill0",
+            padding,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = inner.width * 0.32,
+            blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0",
+            blankWidth = inner.width * 0.13, parent = g)
+        addField(bundle.getString("pilotingSkill"), "pilotingSkill0", inner.width * 0.5,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = inner.width * 0.32,
+            blankId = "blankPilotingSkill0", labelId = "pilotingSkillText0",
+            blankWidth = inner.width * 0.18 - padding, parent = g)
+        ypos += lineHeight
+        addPilotDamageTrack(0.0, ypos, inner.width, parent = g)
+        document.documentElement.appendChild(g)
+    }
 
+    fun addPilotDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
+                           parent: Element): Double {
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        val chartBounds = Cell(x + width * 0.35, y,
+            width * 0.65 - padding,30.0)
+        val outline = drawPilotDamageOutline(chartBounds.x, chartBounds.y, chartBounds.width, chartBounds.height)
+        g.appendChild(outline)
+        val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${chartBounds.x.truncate()},${(chartBounds.y + chartBounds.height / 3.0).truncate()}"
+                    + " h ${chartBounds.width.truncate()}"
+                    + "M ${chartBounds.x.truncate()},${(chartBounds.y + chartBounds.height * 2.0 / 3.0).truncate()}"
+                    + " h ${(chartBounds.width * 5.0 / 6.0).truncate()}"
+                    + (1..5).map {
+                " M ${(chartBounds.x + it * chartBounds.width / 6.0).truncate()},${chartBounds.y.truncate()} l 0,${chartBounds.height.truncate()}"
+            }.joinToString(" "))
+        grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
+            FILL_DARK_GREY
+        )
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        g.appendChild(grid)
+        val startx = chartBounds.x - chartBounds.width / 12.0
+        val starty = chartBounds.y + calcFontHeight(5.8f)
+        val cons = listOf("3", "5", "7", "10", "11", bundle.getString("dead"))
+        for (i in 1..6) {
+            addTextElement(startx + i * chartBounds.width / 6.0, starty,
+                i.toString(), 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            addTextElement(startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 3.0,
+                cons[i - 1], 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, width = chartBounds.width / 6.0 - 4.0, parent = g)
+            if (i < 6) {
+                addTextElement(
+                    startx + i * chartBounds.width / 6.0, starty + chartBounds.height * 2.0 / 3.0,
+                    "+$i", 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                    anchor = SVGConstants.SVG_MIDDLE_VALUE, width = chartBounds.width / 6.0 - 4.0, parent = g
+                )
+            }
+        }
+        addTextElement(chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            width = chartBounds.x - x - padding, parent = g)
+        addTextElement(chartBounds.x - padding, starty + chartBounds.height / 3.0, bundle.getString("consciousnessNum"),
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            width = chartBounds.x - x - padding, parent = g)
+        addTextElement(chartBounds.x - padding, starty + chartBounds.height * 2.0 / 3.0, bundle.getString("modifier"),
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            width = chartBounds.x - x - padding, parent = g)
+        parent.appendChild(g)
+        return height
+    }
+
+    fun drawPilotDamageOutline(x: Double, y: Double, width: Double, height: Double): Element {
+        val outline = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        outline.setAttributeNS(null, SVGConstants.CSS_FILL_PROPERTY, SVGConstants.SVG_NONE_VALUE)
+        outline.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, FILL_DARK_GREY)
+        outline.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "1")
+        outline.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        val radius = 1.015
+        val control = 0.56
+        outline.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${x.truncate()},${(y + radius).truncate()}"
+                    + " c 0,${(-control).truncate()} ${(radius - control).truncate()},${(-radius).truncate()} ${radius.truncate()},${(-radius).truncate()}"
+                    + " h ${(width - radius * 2).truncate()} c ${control.truncate()},0 ${radius.truncate()},${(radius - control).truncate()}, ${radius.truncate()},${radius.truncate()}"
+                    + " v ${(height * 2.0 / 3.0 - radius * 2).truncate()} c 0,${control.truncate()} ${(control - radius).truncate()},${radius.truncate()}, ${(-radius).truncate()},${radius.truncate()}"
+                    + " h -${width / 6.0 - radius} v ${(height / 3.0 - radius).truncate()} c 0,${control.truncate()} ${(control - radius).truncate()},${radius.truncate()}, ${(-radius).truncate()},${radius.truncate()}"
+                    + " h -${(width * 5.0 / 6.0 - radius * 2).truncate()} c ${(-control).truncate()},0 ${(-radius).truncate()},${(control - radius).truncate()}, ${(-radius).truncate()},${(-radius).truncate()}"
+                    + "Z"
+        )
+        return outline
+    }
+
+    fun addVelocityPanel(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width, rect.height,
+            bundle.getString("velocityRecord.title"), true, false,
+            parent = g)
+        addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.1,
+            inner.width - padding * 2, inner.height * 0.3, (1..10).toList(), g)
+        addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.55,
+            inner.width - padding * 2, inner.height * 0.3, (11..20).toList(), g)
+        document.documentElement.appendChild(g)
+    }
+
+    private fun addVelocityTrack(x: Double, y: Double,
+                                  width: Double, height: Double, range: List<Int>, parent: Element) {
+        val outline = RoundedBorder(x, y, width, height,
+            1.315, 0.726, 1.0).draw(document)
+        parent.appendChild(outline)
+        val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        val colOffset = x + width * 0.2
+        val colWidth = (width - colOffset) / range.size
+        grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            (1..4).map {("M ${x.truncate()},${(y + height * 0.2 * it).truncate()}"
+                    + " h${width.truncate()}")}.joinToString(" ")
+                    + (0 until range.size).map {
+                " M ${(colOffset + it * colWidth).truncate()},${y.truncate()} v${height.truncate()}"
+            }.joinToString(" "))
+        grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
+            FILL_DARK_GREY
+        )
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        parent.appendChild(grid)
+        val fontSize = FONT_SIZE_MEDIUM
+        val startX = colOffset + colWidth * 0.5
+        val startY = y + (height - calcFontHeight(fontSize)) * 0.5 - 1 - height * 0.2
+        addTextElement(x + padding, startY, bundle.getString("turnNum"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        addTextElement(x + padding, height * 0.2 + startY, bundle.getString("thrustRecord"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        addTextElement(x + padding, height * 0.4 + startY, bundle.getString("velocity"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        addTextElement(x + padding, height * 0.6 + startY, bundle.getString("effectiveVelocity"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        addTextElement(x + padding, height * 0.8 + startY, bundle.getString("altitude"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        for (i in 0 until range.size) {
+            addTextElement(startX + i * colWidth, startY, range[i].toString(), fontSize,
+                SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+                parent = parent)
+        }
     }
 
     fun addHeatPanel(rect: Cell) {
@@ -175,11 +366,45 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         5 -> java.lang.String.format(bundle.getString("heat.randomMovement"), 5)
         else -> null
     }
+
+    fun addBombsPanel() {
+        val label = RSLabel(this, 0.0, 0.0,
+            bundle.getString("bombsPanel.title"), FONT_SIZE_FREE_LABEL)
+        val g = createTranslatedGroup(LEFT_MARGIN + width() - label.rectWidth, TOP_MARGIN.toDouble())
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores")
+        g.appendChild(label.draw())
+        // Half the width of the boxes should be 50, but for some reason I haven't been able to figure out,
+        // 46 is what is needed to center it.
+        val startX = label.rectWidth * 0.5 - 46
+        var ypos = label.height() + padding
+        for (r in 0..3) {
+            for (c in 0..4) {
+                val box = RoundedBorder(startX + c * 20.0, ypos, 18.0, 18.0,
+                    4.3, 2.375, 0.966, FILL_DARK_GREY)
+                g.appendChild(box.draw(document))
+            }
+            ypos += 20.0
+        }
+        val lineHeight = calcFontHeight(FONT_SIZE_VSMALL)
+        ypos += lineHeight
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("key"),
+            fontSize = FONT_SIZE_VSMALL, fontWeight = SVGConstants.SVG_BOLD_VALUE, parent = g)
+        ypos += lineHeight
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("highExplosive"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        ypos += lineHeight
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("laser"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        ypos += lineHeight
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("cluster"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        ypos += lineHeight
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("rocket"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        document.documentElement.appendChild(g)
+    }
 }
 
 class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "fighter_aerospace_default.svg"
     override val armorDiagramFileName = "armor_diagram_asf.svg"
     override val dataPanelTitle = bundle.getString("fighterData")
-
+    override val atmospheric = false
+    override val fighter = true
 }

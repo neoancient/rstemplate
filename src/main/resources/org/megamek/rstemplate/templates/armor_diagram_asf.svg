@@ -813,9 +813,10 @@
     </g>
   </g>
   <g fill="none" id="structurePips">
-    <g id="siPips" transform="translate(146.835,224.18)">
-      <rect x="-32" width="64" y="0" height="6.8" id="structurePipsFR00"/>
-      <rect x="-32" width="64" y="6.8" height="6.8" id="structurePipsFR01"/>
+    <g id="siPips" transform="translate(146.835,222.38)">
+      <rect x="-32" width="64" y="0" height="5.6" id="structurePipsFR00"/>
+      <rect x="-32" width="64" y="5.6" height="5.6" id="structurePipsFR01"/>
+      <rect x="-32" width="64" y="11.2" height="5.6" id="structurePipsFR02"/>
     </g>
   </g>
 </svg>

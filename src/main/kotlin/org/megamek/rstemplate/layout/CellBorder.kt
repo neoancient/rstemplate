@@ -25,7 +25,7 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
                  val topTab: Boolean = true,
                  val bottomTab: Boolean = false,
                  val bevelTopRight: Boolean = true, val bevelBottomRight: Boolean = true,
-                 val bevelBottomLeft: Boolean = true) {
+                 val bevelBottomLeft: Boolean = true, val labelWidthBelow: Double? = null) {
 
     fun draw(doc: Document): Element {
         val path = doc.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
@@ -65,8 +65,11 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
         if (bottomTab) {
             sj.add(absLineTo(width, height))
             sj.add(relLineTo(-tabBevelX, tabBevelY))
-
-            sj.add(absLineTo(width * 0.5, height + tabBevelY))
+            if (labelWidthBelow != null) {
+                sj.add(absLineTo(labelWidthBelow + tabBevelX * 2 + padding, height + tabBevelY))
+            } else {
+                sj.add(absLineTo(width * 0.5, height + tabBevelY))
+            }
             sj.add(relLineTo(-tabBevelX, -tabBevelY))
         } else if (bevelBottomRight) {
             sj.add(absLineTo(width, height - bevelY))

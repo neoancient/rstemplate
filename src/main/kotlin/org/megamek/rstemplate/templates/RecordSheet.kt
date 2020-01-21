@@ -290,12 +290,14 @@ abstract class RecordSheet(val size: PaperSize) {
      * @param bevelTopRight Whether to bevel the top right corner
      * @param bevelBottomLeft Whether to bevel the bottom left corner
      * @param bevelBottomRight Whether to bevel the bottom right corner; ignored if {@code bottomTab} is true
+     * @param textBelow The text in the top tab of the panel below this one, if any. Used to size the
+     *                  bottom tab. If there is no bottom tab, this is ignored
      * @return The area inside the border
      */
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
                   topTab: Boolean = true, bottomTab: Boolean = false,
                   bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
-                  bevelBottomLeft: Boolean = true,
+                  bevelBottomLeft: Boolean = true, textBelow: String? = null,
                   parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (x != 0.0 && y != 0.0) {
@@ -305,12 +307,18 @@ abstract class RecordSheet(val size: PaperSize) {
 
         val label = RSLabel(this,2.5, 3.0, title,
             FONT_SIZE_TAB_LABEL, width = if (topTab) null else width - 5.0 - bevelX * 2)
+        val labelWidthBelow = if (textBelow != null) {
+            val lbl = RSLabel(this, 2.5, 3.0, textBelow, FONT_SIZE_TAB_LABEL, width = null)
+            lbl.rectWidth + 4.0
+        } else {
+            null
+        }
         val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
             label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
-            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
         val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932,
-            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft)
+            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
