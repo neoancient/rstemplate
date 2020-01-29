@@ -383,30 +383,23 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         val g = createTranslatedGroup(LEFT_MARGIN + width() - label.rectWidth, TOP_MARGIN.toDouble())
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores")
         g.appendChild(label.draw())
-        // Half the width of the boxes should be 50, but for some reason I haven't been able to figure out,
-        // 46 is what is needed to center it.
-        val startX = label.rectWidth * 0.5 - 46
-        var ypos = label.height() + padding
-        for (r in 0..3) {
-            for (c in 0..4) {
-                val box = RoundedBorder(startX + c * 20.0, ypos, 18.0, 18.0,
-                    4.3, 2.375, 0.966, FILL_DARK_GREY)
-                g.appendChild(box.draw(document))
-            }
-            ypos += 20.0
-        }
-        val lineHeight = calcFontHeight(FONT_SIZE_VSMALL)
-        ypos += lineHeight
+        addRect(label.rectMargin, label.height() + padding, label.rectWidth, label.rectWidth * 0.8,
+            id = "bomb_boxes", parent = g);
+        val keyGroup = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        keyGroup.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores_key")
+        val lineHeight = calcFontHeight(FONT_SIZE_VSMALL).toDouble()
+        var ypos = lineHeight
         addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("key"),
-            fontSize = FONT_SIZE_VSMALL, fontWeight = SVGConstants.SVG_BOLD_VALUE, parent = g)
+            fontSize = FONT_SIZE_VSMALL, fontWeight = SVGConstants.SVG_BOLD_VALUE, parent = keyGroup)
         ypos += lineHeight
-        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("highExplosive"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("highExplosive"), fontSize = FONT_SIZE_VSMALL, parent = keyGroup)
         ypos += lineHeight
-        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("laser"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("laser"), fontSize = FONT_SIZE_VSMALL, parent = keyGroup)
         ypos += lineHeight
-        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("cluster"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("cluster"), fontSize = FONT_SIZE_VSMALL, parent = keyGroup)
         ypos += lineHeight
-        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("rocket"), fontSize = FONT_SIZE_VSMALL, parent = g)
+        addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("rocket"), fontSize = FONT_SIZE_VSMALL, parent = keyGroup)
+        g.appendChild(keyGroup)
         document.documentElement.appendChild(g)
     }
 
