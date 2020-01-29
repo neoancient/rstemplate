@@ -686,7 +686,7 @@
            id="tspan7804">Integrity:</tspan><tspan
            x="0"
            y="18.5455208"
-           id="text_SI"></tspan></text>
+           id="textSI"></tspan></text>
 <text
          transform="matrix(1,0,0,-1,317,642)"
          style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.72730017px;;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" text-anchor="middle"
@@ -699,7 +699,7 @@
            id="tspan3128">Threshold (Total Armor)</tspan><tspan
            x="0"
            y="18.545521"
-           id="text_armorNOS"> ( )</tspan></text><text
+           id="textArmor_NOS"> ( )</tspan></text><text
          transform="matrix(1,0,0,-1,500.32,481.8905)"
          style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.72730017px;;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" text-anchor="middle"
          id="text3140"><tspan
@@ -714,7 +714,7 @@
            id="tspan3172">(Total Armor)</tspan><tspan
            x="0"
            y="26.079638"
-           id="text_armorRW"> ( )</tspan></text><text
+           id="textArmor_RWG"> ( )</tspan></text><text
          transform="matrix(1,0,0,-1,404.92,306.6573)"
          style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.72730017px;;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" text-anchor="middle"
          id="text3158"><tspan
@@ -729,7 +729,7 @@
            id="tspan3154">(Total Armor)</tspan><tspan
            x="0"
            y="27.818279"
-           id="text_armorAFT"> ( )</tspan></text><text
+           id="textArmor_AFT"> ( )</tspan></text><text
          transform="matrix(1,0,0,-1,305.93,481.8905)"
          style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.72730017px;;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" text-anchor="middle"
          id="text3176"><tspan
@@ -744,7 +744,7 @@
            id="tspan3172">(Total Armor)</tspan><tspan
            x="0"
            y="26.079638"
-           id="text_armorLW"> ( )</tspan></text>
+           id="textArmor_LWG"> ( )</tspan></text>
 <text
    transform="matrix(1,0,0,-1,401.9674,710.5148)"
    style="font-size:7.74px;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:1.25;font-family:Eurostile;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -764,47 +764,47 @@
       <rect x="-59.15" width="118.3" y="68.0" height="6.8" id="armorNOSRow10"/>
       <rect x="-41.85" width="83.7" y="74.8" height="6.8" id="armorNOSRow11"/>
     </g>
-    <g id="armorPipsRW" transform="translate(184.45,245.134)">
-      <rect x="0" width="6.8" y="0" height="6.8" id="armorRWRow00"/>
-      <rect x="0" width="8.73" y="6.8" height="6.8" id="armorRWRow01"/>
-      <rect x="0" width="11.25" y="13.6" height="6.8" id="armorRWRow02"/>
-      <rect x="-3.2" width="18.08" y="20.4" height="6.8" id="armorRWRow03"/>
-      <rect x="-3.2" width="21.8" y="27.2" height="6.8" id="armorRWRow04"/>
-      <rect x="-3.2" width="26.43" y="34.0" height="6.8" id="armorRWRow05"/>
-      <rect x="-3.2" width="32.15" y="40.8" height="6.8" id="armorRWRow06"/>
-      <rect x="2.6" width="36.37" y="47.6" height="6.8" id="armorRWRow07"/>
-      <rect x="4.45" width="43.6" y="54.4" height="6.8" id="armorRWRow08"/>
-      <rect x="6.3" width="58.05" y="61.2" height="6.8" id="armorRWRow09"/>
-      <rect x="8.15" width="90.7" y="68" height="6.8" id="armorRWRow10"/>
-      <rect x="10" width="93.31" y="74.8" height="6.8" id="armorRWRow11"/>
-      <rect x="11.85" width="93.12" y="81.6" height="6.8" id="armorRWRow12"/>
-      <rect x="13.7" width="89.73" y="88.4" height="6.8" id="armorRWRow13"/>
-      <rect x="15.55" width="87.42" y="95.2" height="6.8" id="armorRWRow14"/>
-      <rect x="17.4" width="83.7" y="102" height="6.8" id="armorRWRow15"/>
-      <rect x="19.25" width="75.89" y="108.8" height="6.8" id="armorRWRow16"/>
-      <rect x="20.52" width="258.27" y="115.6" height="6.8" id="armorRWRow17"/>
-      <rect x="20.58" width="34.16" y="122.4" height="6.8" id="armorRWRow18"/>
+    <g id="armorPipsRWG" transform="translate(184.45,245.134)">
+      <rect x="0" width="6.8" y="0" height="6.8" id="armorRWGRow00"/>
+      <rect x="0" width="8.73" y="6.8" height="6.8" id="armorRWGRow01"/>
+      <rect x="0" width="11.25" y="13.6" height="6.8" id="armorRWGRow02"/>
+      <rect x="-3.2" width="18.08" y="20.4" height="6.8" id="armorRWGRow03"/>
+      <rect x="-3.2" width="21.8" y="27.2" height="6.8" id="armorRWGRow04"/>
+      <rect x="-3.2" width="26.43" y="34.0" height="6.8" id="armorRWGRow05"/>
+      <rect x="-3.2" width="32.15" y="40.8" height="6.8" id="armorRWGRow06"/>
+      <rect x="2.6" width="36.37" y="47.6" height="6.8" id="armorRWGRow07"/>
+      <rect x="4.45" width="43.6" y="54.4" height="6.8" id="armorRWGRow08"/>
+      <rect x="6.3" width="58.05" y="61.2" height="6.8" id="armorRWGRow09"/>
+      <rect x="8.15" width="90.7" y="68" height="6.8" id="armorRWGRow10"/>
+      <rect x="10" width="93.31" y="74.8" height="6.8" id="armorRWGRow11"/>
+      <rect x="11.85" width="93.12" y="81.6" height="6.8" id="armorRWGRow12"/>
+      <rect x="13.7" width="89.73" y="88.4" height="6.8" id="armorRWGRow13"/>
+      <rect x="15.55" width="87.42" y="95.2" height="6.8" id="armorRWGRow14"/>
+      <rect x="17.4" width="83.7" y="102" height="6.8" id="armorRWGRow15"/>
+      <rect x="19.25" width="75.89" y="108.8" height="6.8" id="armorRWGRow16"/>
+      <rect x="20.52" width="258.27" y="115.6" height="6.8" id="armorRWGRow17"/>
+      <rect x="20.58" width="34.16" y="122.4" height="6.8" id="armorRWGRow18"/>
     </g>
-    <g id="armorPipsLW" transform="matrix(-1,0,0,1,109.22,245.134)">
-      <rect x="0" width="6.8" y="0" height="6.8" id="armorLWRow00"/>
-      <rect x="0" width="8.73" y="6.8" height="6.8" id="armorLWRow01"/>
-      <rect x="0" width="11.25" y="13.6" height="6.8" id="armorLWRow02"/>
-      <rect x="-3.2" width="18.08" y="20.4" height="6.8" id="armorLWRow03"/>
-      <rect x="-3.2" width="21.8" y="27.2" height="6.8" id="armorLWRow04"/>
-      <rect x="-3.2" width="26.43" y="34.0" height="6.8" id="armorLWRow05"/>
-      <rect x="-3.2" width="32.15" y="40.8" height="6.8" id="armorLWRow06"/>
-      <rect x="2.6" width="36.37" y="47.6" height="6.8" id="armorLWRow07"/>
-      <rect x="4.45" width="43.6" y="54.4" height="6.8" id="armorLWRow08"/>
-      <rect x="6.3" width="58.05" y="61.2" height="6.8" id="armorLWRow09"/>
-      <rect x="8.15" width="90.7" y="68" height="6.8" id="armorLWRow10"/>
-      <rect x="10" width="93.31" y="74.8" height="6.8" id="armorLWRow11"/>
-      <rect x="11.85" width="93.12" y="81.6" height="6.8" id="armorLWRow12"/>
-      <rect x="13.7" width="89.73" y="88.4" height="6.8" id="armorLWRow13"/>
-      <rect x="15.55" width="87.42" y="95.2" height="6.8" id="armorLWRow14"/>
-      <rect x="17.4" width="83.7" y="102" height="6.8" id="armorLWRow15"/>
-      <rect x="19.25" width="75.89" y="108.8" height="6.8" id="armorLWRow16"/>
-      <rect x="20.52" width="258.27" y="115.6" height="6.8" id="armorLWRow17"/>
-      <rect x="20.58" width="34.16" y="122.4" height="6.8" id="armorLWRow18"/>
+    <g id="armorPipsLWG" transform="matrix(-1,0,0,1,109.22,245.134)">
+      <rect x="0" width="6.8" y="0" height="6.8" id="armorLWGRow00"/>
+      <rect x="0" width="8.73" y="6.8" height="6.8" id="armorLWGRow01"/>
+      <rect x="0" width="11.25" y="13.6" height="6.8" id="armorLWGRow02"/>
+      <rect x="-3.2" width="18.08" y="20.4" height="6.8" id="armorLWGRow03"/>
+      <rect x="-3.2" width="21.8" y="27.2" height="6.8" id="armorLWGRow04"/>
+      <rect x="-3.2" width="26.43" y="34.0" height="6.8" id="armorLWGRow05"/>
+      <rect x="-3.2" width="32.15" y="40.8" height="6.8" id="armorLWGRow06"/>
+      <rect x="2.6" width="36.37" y="47.6" height="6.8" id="armorLWGRow07"/>
+      <rect x="4.45" width="43.6" y="54.4" height="6.8" id="armorLWGRow08"/>
+      <rect x="6.3" width="58.05" y="61.2" height="6.8" id="armorLWGRow09"/>
+      <rect x="8.15" width="90.7" y="68" height="6.8" id="armorLWGRow10"/>
+      <rect x="10" width="93.31" y="74.8" height="6.8" id="armorLWGRow11"/>
+      <rect x="11.85" width="93.12" y="81.6" height="6.8" id="armorLWGRow12"/>
+      <rect x="13.7" width="89.73" y="88.4" height="6.8" id="armorLWGRow13"/>
+      <rect x="15.55" width="87.42" y="95.2" height="6.8" id="armorLWGRow14"/>
+      <rect x="17.4" width="83.7" y="102" height="6.8" id="armorLWGRow15"/>
+      <rect x="19.25" width="75.89" y="108.8" height="6.8" id="armorLWGRow16"/>
+      <rect x="20.52" width="258.27" y="115.6" height="6.8" id="armorLWGRow17"/>
+      <rect x="20.58" width="34.16" y="122.4" height="6.8" id="armorLWGRow18"/>
     </g>
     <g id="armorPipsAFT" transform="translate(146.835,248.18)">
       <rect x="-36.2" width="72.4" y="0" height="6.8" id="armorAFTRow00"/>

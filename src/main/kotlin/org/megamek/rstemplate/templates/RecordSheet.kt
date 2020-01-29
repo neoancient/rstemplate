@@ -655,8 +655,9 @@ abstract class RecordSheet(val size: PaperSize) {
                     values: List<List<String>>, colOffsets: List<Double>,
                     headers: List<String>? = null, anchor: String = SVGConstants.SVG_MIDDLE_VALUE,
                     firstColBold: Boolean = true, firstColAnchor: String? = null,
+                    lineHeight: Double? = null,
                     parent: Element = document.documentElement): Double {
-        val lineHeight = calcFontHeight(fontSize)
+        val useLineHeight = lineHeight ?: calcFontHeight(fontSize).toDouble()
         var ypos = 0.0
         val g = createTranslatedGroup(x, y)
         if (headers != null) {
@@ -670,7 +671,7 @@ abstract class RecordSheet(val size: PaperSize) {
                 }
             }
             g.appendChild(text)
-            ypos += lineHeight
+            ypos += useLineHeight
         }
         val rowYPos = ArrayList<Double>()
         val text = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
@@ -687,11 +688,11 @@ abstract class RecordSheet(val size: PaperSize) {
                 val lines = cell.value.split("\n".toRegex())
                 for (line in lines.withIndex()) {
                     text.appendChild(createTspan(width * colOffsets[cell.index],
-                        ypos + lineHeight * line.index, line.value))
+                        ypos + useLineHeight * line.index, line.value))
                 }
                 lineCount = Integer.max(lineCount, lines.size)
             }
-            ypos += lineHeight * lineCount
+            ypos += useLineHeight * lineCount
         }
         if (firstColBold) {
             val colX = width * colOffsets[0]
@@ -700,7 +701,7 @@ abstract class RecordSheet(val size: PaperSize) {
                 formatStyle(fontSize, SVGConstants.SVG_BOLD_VALUE))
             colText.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, firstColAnchor ?: anchor)
             if (headers != null && firstColAnchor != null) {
-                colText.appendChild(createTspan(colX, rowYPos[0] - lineHeight, headers[0]))
+                colText.appendChild(createTspan(colX, rowYPos[0] - useLineHeight, headers[0]))
             }
             for (row in values.withIndex()) {
                 colText.appendChild(createTspan(colX, rowYPos[row.index], row.value[0]))

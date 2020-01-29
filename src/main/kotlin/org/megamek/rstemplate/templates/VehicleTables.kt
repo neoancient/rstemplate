@@ -124,7 +124,7 @@ class VTOLTables(size: PaperSize): VehicleTables(size) {
             listOf("4+", bundle.getString("none"))),
             listOf(0.17, 0.7),
             listOf(bundle.getString("differenceInLevels"), bundle.getString("attackTypes")),
-            SVGConstants.SVG_MIDDLE_VALUE, true, SVGConstants.SVG_MIDDLE_VALUE, g)
+            SVGConstants.SVG_MIDDLE_VALUE, true, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         document.documentElement.appendChild(g)
     }
 }

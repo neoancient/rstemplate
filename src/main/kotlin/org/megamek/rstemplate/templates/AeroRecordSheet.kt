@@ -29,6 +29,10 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         20.0, (height() - footerHeight) / 2.0)
     val heatCell = Cell(velocityCell.rightX() + padding, tableCell.y,
         width() - velocityCell.width - heatScaleCell.width - padding, height() - armorCell.height - footerHeight - padding)
+    val groundMovementCell = Cell(heatCell.x, heatCell.y,
+        width() - velocityCell.width - padding, heatCell.height * 0.65)
+    val fighterReturnCell = Cell(heatCell.x, groundMovementCell.bottomY() + padding,
+        groundMovementCell.width, heatCell.height - groundMovementCell.height - padding)
 
     protected val bundle = ResourceBundle.getBundle(AeroRecordSheet::class.java.name)
 
@@ -37,6 +41,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
     abstract val armorDiagramFileName: String
     abstract val fighter: Boolean
     abstract val atmospheric: Boolean
+    abstract val tracksHeat: Boolean
 
     override fun build() {
         addEquipmentTable(eqTableCell)
@@ -45,8 +50,13 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         addCritPanel(critDamageCell)
         addPilotPanel(pilotCell)
         addVelocityPanel(velocityCell)
-        addHeatPanel(heatCell)
-        addHeatScale(heatScaleCell)
+        if (tracksHeat) {
+            addHeatPanel(heatCell)
+            addHeatScale(heatScaleCell)
+        } else if (fighter) {
+            addGroundMovementTable(groundMovementCell)
+            addFighterReturnTable(fighterReturnCell)
+        }
         if (fighter) {
             addBombsPanel()
         }
@@ -330,7 +340,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         }
     }
 
-    fun addHeatPanel(rect: Cell) {
+    open fun addHeatPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("heatPanel.title"), parent = g)
@@ -338,7 +348,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addHeatScale(rect: Cell) {
+    open fun addHeatScale(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         g.appendChild(createHeatScale(rect.height - padding))
         document.documentElement.appendChild(g)
@@ -399,6 +409,70 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("rocket"), fontSize = FONT_SIZE_VSMALL, parent = g)
         document.documentElement.appendChild(g)
     }
+
+    fun addGroundMovementTable(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width, rect.height,
+            bundle.getString("groundMovementTable.title"), topTab = false, bottomTab = false,
+            parent = g)
+        val lineHeight = inner.height / 20
+        var ypos = inner.y + lineHeight
+        addTextElement(inner.width * 0.5, ypos, bundle.getString("groundMovementTable.minStraightMovement"),
+            FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+            parent = g)
+        ypos += lineHeight
+        addTextElement(inner.width * 0.5, ypos, bundle.getString("groundMovementTable.inHexes"),
+            FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+            parent = g)
+        ypos += lineHeight * 1.2
+        addTextElement(inner.width * 0.75, ypos, bundle.getString("groundMovementTable.smallCraftFixed"),
+            FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+            parent = g)
+        ypos += lineHeight
+        ypos += createTable(0.0, ypos, inner.width, FONT_SIZE_VSMALL,
+            listOf(
+                listOf("1", "8", "8"),
+                listOf("2", "12", "14"),
+                listOf("3", "16", "20"),
+                listOf("4", "20", "26"),
+                listOf("5", "24", "32"),
+                listOf("6", "28", "38"),
+                listOf("7", "32", "44"),
+                listOf("8", "36", "50"),
+                listOf("9", "40", "56"),
+                listOf("10", "44", "62"),
+                listOf("11", "48", "68"),
+                listOf("12", "52", "74")
+            ), listOf(0.15, 0.4, 0.75),
+            listOf(bundle.getString("groundMovementTable.velocity"),
+                bundle.getString("groundMovementTable.fighter"),
+                bundle.getString("groundMovementTable.wingSupportVehicle")),
+            lineHeight = lineHeight, parent = g)
+        addTextElement(inner.width * 0.5, ypos + lineHeight, bundle.getString("groundMovementTable.footnote"),
+            FONT_SIZE_VSMALL, SVGConstants.SVG_NORMAL_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+            parent = g)
+        document.documentElement.appendChild(g)
+    }
+
+    fun addFighterReturnTable(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width, rect.height,
+            bundle.getString("fighterReturnTable.title"), topTab = false, bottomTab = false,
+            parent = g)
+        val lineHeight = inner.height / 7
+        var ypos = inner.y + lineHeight * 1.5
+        ypos += createTable(0.0, ypos, inner.width, FONT_SIZE_VSMALL,
+            listOf(
+                listOf("1-4", "3"),
+                listOf("5-8", "2"),
+                listOf("9-12", "1"),
+                listOf("13+", "0")
+            ), listOf(0.23, 0.7),
+            listOf(bundle.getString("fighterReturnTable.safeThrust"),
+                bundle.getString("fighterReturnTable.turnsBeforeReturn")),
+            lineHeight = lineHeight, parent = g)
+        document.documentElement.appendChild(g)
+    }
 }
 
 class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
@@ -407,4 +481,14 @@ class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val dataPanelTitle = bundle.getString("fighterData")
     override val atmospheric = false
     override val fighter = true
+    override val tracksHeat = true
+}
+
+class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+    override val fileName = "fighter_conventional_default.svg"
+    override val armorDiagramFileName = "armor_diagram_convfighter.svg"
+    override val dataPanelTitle = bundle.getString("fighterData")
+    override val atmospheric = true
+    override val fighter = true
+    override val tracksHeat = false
 }

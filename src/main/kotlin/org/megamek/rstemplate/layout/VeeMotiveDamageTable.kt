@@ -32,7 +32,7 @@ abstract class VeeMotiveDamageTable(private val sheet: RecordSheet) {
                 listOf("10-11", bundle.getString("motiveHeavyDamage.$unitType")),
                 listOf("12", bundle.getString("motiveMajorDamage.$unitType"))
             ), listOf(0.15, 0.27), listOf(bundle.getString("2d6Roll"), bundle.getString("effect")),
-            SVGConstants.SVG_START_VALUE, true, SVGConstants.SVG_MIDDLE_VALUE, g)
+            SVGConstants.SVG_START_VALUE, true, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         if (narrow) {
             ypos -= lineHeight * 0.5
         }
