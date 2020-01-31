@@ -505,7 +505,7 @@
            y="37.091"
            id="textArmor_LS"> ( )</tspan></text></g>
    <g fill="none" id="armorPips">
-    <g id="armorPipsNOS" transform="translate(147.613,28.1)">
+    <g id="armorPipsNOS" transform="translate(148.105,28.1)">
       <rect x="-13.7" width="27.4" y="0" height="6.8" id="armorNOSRow00"/>
       <rect x="-16.3" width="32.6" y="6.8" height="6.8" id="armorNOSRow01"/>
       <rect x="-22.9" width="45.8" y="15.6" height="6.8" id="armorNOSRow02"/>
@@ -524,7 +524,7 @@
       <rect x="-61" width="122" y="101.8" height="6.8" id="armorNOSRow15"/>
       <rect x="-65.1" width="130.2" y="108.6" height="6.8" id="armorNOSRow16"/>
     </g>
-    <g id="armorPipsRS" transform="translate(187.328,160)">
+    <g id="armorPipsRS" transform="translate(187.82,160)">
       <rect x="0" width="40" y="0" height="6.8" id="armorRSRow00"/>
       <rect x="0" width="40" y="6.8" height="6.8" id="armorRSRow01"/>
       <rect x="0" width="40" y="15.6" height="6.8" id="armorRSRow02"/>
@@ -555,7 +555,7 @@
       <rect x="0" width="72.9" y="183.6" height="6.8" id="armorRSRow27"/>
       <rect x="0" width="62.5" y="190.4" height="6.8" id="armorRSRow28"/>
     </g>
-    <g id="armorPipsLS" transform="matrix(-1,0,0,1,107.598,161.5)">
+    <g id="armorPipsLS" transform="matrix(-1,0,0,1,108.09,161.5)">
       <rect x="0" width="40" y="0" height="6.8" id="armorLSRow00"/>
       <rect x="0" width="40" y="6.8" height="6.8" id="armorLSRow01"/>
       <rect x="0" width="40" y="15.6" height="6.8" id="armorLSRow02"/>
@@ -586,13 +586,13 @@
       <rect x="0" width="72.9" y="183.6" height="6.8" id="armorLSRow27"/>
       <rect x="0" width="62.5" y="190.4" height="6.8" id="armorLSRow28"/>
     </g>
-    <g id="armorPipsAFT" transform="translate(147.613,224.08)">
+    <g id="armorPipsAFT" transform="translate(148.105,224.08)">
       <rect x="-33" width="66" y="0" height="6.8" id="armorAFTRow00"/>
       <rect x="-33" width="66" y="122.4" height="6.8" id="armorAFTRow01"/>
     </g>
   </g>
   <g fill="none" id="structurePips">
-    <g id="siPips" transform="translate(147.613,196)">
+    <g id="siPips" transform="translate(148.105,196)">
       <rect x="-32" width="64" y="0" height="5.6" id="structurePipsFR00"/>
       <rect x="-32" width="64" y="5.6" height="5.6" id="structurePipsFR01"/>
       <rect x="-32" width="64" y="11.2" height="5.6" id="structurePipsFR02"/>
