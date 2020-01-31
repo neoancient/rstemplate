@@ -124,8 +124,8 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         addFieldSet(listOf(
             LabeledField(bundle.getString("safeThrust"), "mpWalk", "0"),
             LabeledField(bundle.getString("maxThrust"), "mpRun", "0")
-        ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 70.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        ), x + calcTextLength("_", fontSize), y + lineHeight, fontSize, FILL_DARK_GREY,
+            70.0, SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
