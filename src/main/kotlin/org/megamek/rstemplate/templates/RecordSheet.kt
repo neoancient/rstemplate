@@ -497,19 +497,19 @@ abstract class RecordSheet(val size: PaperSize) {
         addTextElement(rect.width * 0.75, rect.height * 0.5 - hexDY - 3.0, "A",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "B",
+        addTextElement(rect.width * 0.75 + hexRadius + 0.5, rect.height * 0.5 - hexDY * 0.5 - 0.5, "B",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 + hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "C",
+        addTextElement(rect.width * 0.75 + hexRadius + 0.5, rect.height * 0.5 + hexDY * 0.5 + 5.5, "C",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75, rect.height * 0.5 + hexDY + lineHeight - 1.0, "D",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 + hexDY * 0.5 + 5.0, "E",
+        addTextElement(rect.width * 0.75 - hexRadius - 0.5, rect.height * 0.5 + hexDY * 0.5 + 5.5, "E",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 - hexRadius, rect.height * 0.5 - hexDY * 0.5 - 1.0, "F",
+        addTextElement(rect.width * 0.75 - hexRadius - 0.5, rect.height * 0.5 - hexDY * 0.5 - 0.5, "F",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
 
