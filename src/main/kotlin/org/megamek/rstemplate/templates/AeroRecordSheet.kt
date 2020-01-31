@@ -137,14 +137,42 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
 
     fun addArmorDiagram(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        val label = RSLabel(this, 0.0, logoHeight + titleHeight,
-            bundle.getString("armorPanel.title"), FONT_SIZE_FREE_LABEL)
-        g.appendChild(label.draw())
-        embedImage(0.0, logoHeight * 0.5, rect.width - heatScaleCell.width,
-            rect.height - logoHeight * 0.5,
-            armorDiagramFileName, ImageAnchor.CENTER, g)
-        embedImage(rect.width - 50.0 - heatScaleCell.width - padding, rect.height - 30.0, 50.0, 30.0,
-            CGL_LOGO, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g)
+        if (fighter) {
+            val label = RSLabel(
+                this, 0.0, logoHeight + titleHeight,
+                bundle.getString("armorPanel.title"), FONT_SIZE_FREE_LABEL
+            )
+            g.appendChild(label.draw())
+            embedImage(
+                0.0, logoHeight * 0.5, rect.width - heatScaleCell.width,
+                rect.height - logoHeight * 0.5,
+                armorDiagramFileName, ImageAnchor.CENTER, g
+            )
+            embedImage(
+                rect.width - 50.0 - heatScaleCell.width - padding, rect.height - 30.0, 50.0, 30.0,
+                CGL_LOGO, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g
+            )
+        } else {
+            val label = RSLabel(
+                this, rect.width, 0.0,
+                bundle.getString("armorPanel.title"), FONT_SIZE_FREE_LABEL,
+                right = true
+            )
+            g.appendChild(label.draw())
+            val labelCenterX = rect.width - (label.rectWidth + label.taperWidth) * 0.5
+            addTextElement(labelCenterX,label.height() + calcFontHeight(FONT_SIZE_SMALL),
+                bundle.getString("standardScale"), FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            embedImage(
+                0.0, logoHeight * 0.5, rect.width - heatScaleCell.width,
+                rect.height - logoHeight * 0.5 - padding,
+                armorDiagramFileName, ImageAnchor.CENTER, g
+            )
+            embedImage(
+                labelCenterX - 25.0,label.height() + 30, 50.0, 30.0,
+                CGL_LOGO, parent = g
+            )
+        }
         if (!atmospheric) {
             addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), g)
         }
@@ -484,4 +512,13 @@ class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val atmospheric = true
     override val fighter = true
     override val tracksHeat = false
+}
+
+class AerodyneSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+    override val fileName = "smallcraft_aerodyne_default.svg"
+    override val armorDiagramFileName = "armor_diagram_smallcraft_aerodyne.svg"
+    override val dataPanelTitle = bundle.getString("craftData")
+    override val atmospheric = false
+    override val fighter = false
+    override val tracksHeat = true
 }

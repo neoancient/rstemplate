@@ -16,11 +16,12 @@ import java.lang.Double.min
  * @param bgColor  The background color of the label
  * @param fgColor  The foreground (text) color of the label
  * @param center   If true, the center of the label will be at the x position
+ * @param right    If true, the label will be right justified. If center is also true, this is ignored.
  */
 class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: String,
                val fontSize: Float, val bgColor: String = FILL_BLACK,
                val fgColor: String = FILL_WHITE, val center: Boolean = false,
-               val width: Double? = null) {
+               val right: Boolean = false, val width: Double? = null) {
 
     val textHeight = sheet.calcFontHeight(fontSize) * 0.625
     val textWidth = sheet.calcTextLength(text, fontSize, SVGConstants.SVG_BOLD_VALUE)
@@ -33,6 +34,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
     fun draw(): Element {
         val xpos = if (center) {
             x - taperWidth - rectWidth * 0.5
+        } else if (right) {
+            x - taperWidth - rectWidth
         } else {
             x
         }
