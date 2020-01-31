@@ -10,20 +10,23 @@ const val padding = 3.0
 /**
  * Displays a label followed by a square box with rounded corners, optionally containing text.
  */
-class DamageCheckBox(private val label: String, private val text: List<String>? = null,
-                     private val boxCount: Int) {
+class DamageCheckBox(private val label: String, private val text: List<String>?,
+                     private val boxCount: Int, private val boxHeight: Double?) {
 
-    constructor(label: String, text: String? = null, boxCount: Int = 1):
-            this(label, if (text == null) text else listOf(text), boxCount)
+    constructor(label: String, boxCount: Int = 1, boxHeight: Double? = null):
+            this(label, null, boxCount, boxHeight)
 
-    constructor(label: String, text: List<String>):
-            this(label, text, text.size)
+    constructor(label: String, text: String, boxHeight: Double? = null):
+            this(label, listOf(text), 1, boxHeight)
+
+    constructor(label: String, text: List<String>, boxHeight: Double? = null):
+            this(label, text, text.size, boxHeight)
 
     fun draw(sheet: RecordSheet, x: Double = 0.0, y: Double = 0.0, fontSize: Float, width: Double? = null,
              offset: Double? = null, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE, fill: String = FILL_DARK_GREY
     ): Element {
         val g = sheet.createTranslatedGroup(x, y)
-        val boxSize = sheet.calcFontHeight(fontSize).toDouble()
+        val boxSize = boxHeight ?: sheet.calcFontHeight(fontSize).toDouble()
         val textLength = offset ?: width?.minus((boxSize + padding) * boxCount)
             ?: sheet.calcTextLength("${label}_", fontSize, fontWeight)
         sheet.addTextElement(0.0, boxSize * 0.9, label, fontSize, fontWeight,

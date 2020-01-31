@@ -10,31 +10,31 @@ import java.util.*
  */
 abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
 
-    val eqTableCell = Cell(
+    private val eqTableCell = Cell(
         LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
         width() * 0.4, height() * 0.5 - logoHeight - titleHeight)
-    val armorCell = Cell(eqTableCell.rightX() + padding, TOP_MARGIN.toDouble(),
+    private val armorCell = Cell(eqTableCell.rightX() + padding, TOP_MARGIN.toDouble(),
         width() * 0.6 - padding, height() * 0.65 - padding)
-    val fluffCell = Cell(LEFT_MARGIN.toDouble(), eqTableCell.bottomY() + padding,
+    private val fluffCell = Cell(LEFT_MARGIN.toDouble(), eqTableCell.bottomY() + padding,
         eqTableCell.width, armorCell.bottomY() - eqTableCell.bottomY() - padding)
-    val tableCell = Cell(LEFT_MARGIN.toDouble(), armorCell.bottomY() + padding,
+    private val tableCell = Cell(LEFT_MARGIN.toDouble(), armorCell.bottomY() + padding,
         width().toDouble(), height() * 0.35 - footerHeight - padding)
-    val critDamageCell = Cell(LEFT_MARGIN.toDouble(), fluffCell.bottomY() + padding,
+    private val critDamageCell = Cell(LEFT_MARGIN.toDouble(), fluffCell.bottomY() + padding,
         eqTableCell.width, height() * 0.12)
-    val velocityCell = Cell(LEFT_MARGIN.toDouble(), critDamageCell.bottomY() + padding,
+    private val velocityCell = Cell(LEFT_MARGIN.toDouble(), critDamageCell.bottomY() + padding,
         width() * 2.0 / 3.0, height() * 0.23 - footerHeight - padding)
-    val pilotCell = Cell(critDamageCell.rightX() + padding, critDamageCell.y,
+    private val pilotCell = Cell(critDamageCell.rightX() + padding, critDamageCell.y,
         velocityCell.width - critDamageCell.width - padding, critDamageCell.height + tabBevelY)
-    val heatScaleCell = Cell(armorCell.rightX() - 20, TOP_MARGIN + (height() - footerHeight) / 2.0,
+    private val heatScaleCell = Cell(armorCell.rightX() - 20, TOP_MARGIN + (height() - footerHeight) / 2.0,
         20.0, (height() - footerHeight) / 2.0)
-    val heatCell = Cell(velocityCell.rightX() + padding, tableCell.y,
+    private val heatCell = Cell(velocityCell.rightX() + padding, tableCell.y,
         width() - velocityCell.width - heatScaleCell.width - padding, height() - armorCell.height - footerHeight - padding)
-    val groundMovementCell = Cell(heatCell.x, heatCell.y,
+    private val groundMovementCell = Cell(heatCell.x, heatCell.y,
         width() - velocityCell.width - padding, heatCell.height * 0.65)
-    val fighterReturnCell = Cell(heatCell.x, groundMovementCell.bottomY() + padding,
+    private val fighterReturnCell = Cell(heatCell.x, groundMovementCell.bottomY() + padding,
         groundMovementCell.width, heatCell.height - groundMovementCell.height - padding)
 
-    protected val bundle = ResourceBundle.getBundle(AeroRecordSheet::class.java.name)
+    protected val bundle: ResourceBundle = ResourceBundle.getBundle(AeroRecordSheet::class.java.name)
 
     final override fun height() = super.height()
     abstract val dataPanelTitle: String
@@ -62,13 +62,13 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         }
     }
 
-    fun addEquipmentTable(rect: Cell) {
+    private fun addEquipmentTable(rect: Cell) {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE} (${rect.x.truncate()},${rect.y.truncate()})")
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
-            dataPanelTitle, true,true,false,
+            dataPanelTitle, topTab = true, bottomTab = true, bevelTopRight = false,
             textBelow = bundle.getString("notes.title"), parent = g)
         var ypos = internal.y
         val fontSize = 9.67f
@@ -96,7 +96,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addFluffPanel(rect: Cell) {
+    private fun addFluffPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "notes")
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
@@ -135,7 +135,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         return lineHeight * 4
     }
 
-    fun addArmorDiagram(rect: Cell) {
+    private fun addArmorDiagram(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         if (fighter) {
             val label = RSLabel(
@@ -179,7 +179,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addCritPanel(rect: Cell) {
+    private fun addCritPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("criticalDamage.title"), bottomTab = true,
@@ -187,27 +187,34 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         val fontSize = FONT_SIZE_MEDIUM
         val lineHeight = inner.height / 4.0
         var ypos = inner.y + lineHeight * 0.5
-        g.appendChild(DamageCheckBox(bundle.getString("avionics"), listOf("+1", "+2", "+5"))
+        val boxHeight = calcFontHeight(fontSize) * 1.2
+        g.appendChild(DamageCheckBox(bundle.getString("avionics"), listOf("+1", "+2", "+5"),
+            boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
-        g.appendChild(DamageCheckBox(bundle.getString("engine"), listOf("2", "4", "D"))
+        g.appendChild(DamageCheckBox(bundle.getString("engine"), listOf("2", "4", "D"),
+            boxHeight = boxHeight)
             .draw(this, inner.x + inner.width * 0.5, ypos,
                 fontSize, width = inner.width * 0.45))
         ypos += lineHeight
-        g.appendChild(DamageCheckBox(bundle.getString("fcs"), listOf("+2", "+4", "D"))
+        g.appendChild(DamageCheckBox(bundle.getString("fcs"), listOf("+2", "+4", "D"),
+            boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
-        g.appendChild(DamageCheckBox(bundle.getString("gear"), listOf("+5"))
+        g.appendChild(DamageCheckBox(bundle.getString("gear"), listOf("+5"),
+            boxHeight = boxHeight)
             .draw(this, inner.x + inner.width * 0.5, ypos,
                 fontSize, width = inner.width * 0.45))
         ypos += lineHeight
-        g.appendChild(DamageCheckBox(bundle.getString("sensors"), listOf("+1", "+2", "+5"))
+        g.appendChild(DamageCheckBox(bundle.getString("sensors"), listOf("+1", "+2", "+5"),
+            boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
-        g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"))
+        g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"),
+            boxHeight = boxHeight)
             .draw(this, inner.x + inner.width * 0.5, ypos,
                 fontSize, width = inner.width * 0.45))
         document.documentElement.appendChild(g)
     }
 
-    fun addPilotPanel(rect: Cell) {
+    private fun addPilotPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("pilotPanel.title"), parent = g)
@@ -239,8 +246,8 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addPilotDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
-                           parent: Element): Double {
+    private fun addPilotDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
+                                    parent: Element): Double {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         val chartBounds = Cell(x + width * 0.35, y,
             width * 0.65 - padding,30.0)
@@ -252,9 +259,9 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
                     + " h ${chartBounds.width.truncate()}"
                     + "M ${chartBounds.x.truncate()},${(chartBounds.y + chartBounds.height * 2.0 / 3.0).truncate()}"
                     + " h ${(chartBounds.width * 5.0 / 6.0).truncate()}"
-                    + (1..5).map {
+                    + (1..5).joinToString(" ") {
                 " M ${(chartBounds.x + it * chartBounds.width / 6.0).truncate()},${chartBounds.y.truncate()} l 0,${chartBounds.height.truncate()}"
-            }.joinToString(" "))
+            })
         grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
         grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
             FILL_DARK_GREY
@@ -294,7 +301,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         return height
     }
 
-    fun drawPilotDamageOutline(x: Double, y: Double, width: Double, height: Double): Element {
+    private fun drawPilotDamageOutline(x: Double, y: Double, width: Double, height: Double): Element {
         val outline = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         outline.setAttributeNS(null, SVGConstants.CSS_FILL_PROPERTY, SVGConstants.SVG_NONE_VALUE)
         outline.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, FILL_DARK_GREY)
@@ -314,10 +321,10 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         return outline
     }
 
-    fun addVelocityPanel(rect: Cell) {
+    private fun addVelocityPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width, rect.height,
-            bundle.getString("velocityRecord.title"), true, false,
+            bundle.getString("velocityRecord.title"), topTab = true, bottomTab = false,
             parent = g)
         addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.1,
             inner.width - padding * 2, inner.height * 0.3, (1..10).toList(), g)
@@ -335,11 +342,13 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         val colOffset = x + width * 0.2
         val colWidth = (width - colOffset) / range.size
         grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            (1..4).map {("M ${x.truncate()},${(y + height * 0.2 * it).truncate()}"
-                    + " h${width.truncate()}")}.joinToString(" ")
-                    + (0 until range.size).map {
+            (1..4).joinToString(" ") {
+                ("M ${x.truncate()},${(y + height * 0.2 * it).truncate()}"
+                        + " h${width.truncate()}")
+            }
+                    + (range.indices).joinToString(" ") {
                 " M ${(colOffset + it * colWidth).truncate()},${y.truncate()} v${height.truncate()}"
-            }.joinToString(" "))
+            })
         grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
         grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
             FILL_DARK_GREY
@@ -361,7 +370,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
             fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addTextElement(x + padding, height * 0.8 + startY, bundle.getString("altitude"),
             fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
-        for (i in 0 until range.size) {
+        for (i in range.indices) {
             addTextElement(startX + i * colWidth, startY, range[i].toString(), fontSize,
                 SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
                 parent = parent)
@@ -405,14 +414,14 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         else -> null
     }
 
-    fun addBombsPanel() {
+    private fun addBombsPanel() {
         val label = RSLabel(this, 0.0, 0.0,
             bundle.getString("bombsPanel.title"), FONT_SIZE_FREE_LABEL)
         val g = createTranslatedGroup(LEFT_MARGIN + width() - label.rectWidth, TOP_MARGIN.toDouble())
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores")
         g.appendChild(label.draw())
         addRect(label.rectMargin, label.height() + padding, label.rectWidth, label.rectWidth * 0.8,
-            id = "bomb_boxes", parent = g);
+            id = "bomb_boxes", parent = g)
         val keyGroup = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         keyGroup.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores_key")
         val lineHeight = calcFontHeight(FONT_SIZE_VSMALL).toDouble()
@@ -431,7 +440,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addGroundMovementTable(rect: Cell) {
+    private fun addGroundMovementTable(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("groundMovementTable.title"), topTab = false, bottomTab = false,
@@ -475,7 +484,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         document.documentElement.appendChild(g)
     }
 
-    fun addFighterReturnTable(rect: Cell) {
+    private fun addFighterReturnTable(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("fighterReturnTable.title"), topTab = false, bottomTab = false,
@@ -499,7 +508,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
 class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "fighter_aerospace_default.svg"
     override val armorDiagramFileName = "armor_diagram_asf.svg"
-    override val dataPanelTitle = bundle.getString("fighterData")
+    override val dataPanelTitle: String = bundle.getString("fighterData")
     override val atmospheric = false
     override val fighter = true
     override val tracksHeat = true
@@ -508,7 +517,7 @@ class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
 class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "fighter_conventional_default.svg"
     override val armorDiagramFileName = "armor_diagram_convfighter.svg"
-    override val dataPanelTitle = bundle.getString("fighterData")
+    override val dataPanelTitle: String = bundle.getString("fighterData")
     override val atmospheric = true
     override val fighter = true
     override val tracksHeat = false
@@ -517,7 +526,7 @@ class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
 class AerodyneSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "smallcraft_aerodyne_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_aerodyne.svg"
-    override val dataPanelTitle = bundle.getString("craftData")
+    override val dataPanelTitle: String = bundle.getString("craftData")
     override val atmospheric = false
     override val fighter = false
     override val tracksHeat = true
