@@ -531,3 +531,13 @@ class AerodyneSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fighter = false
     override val tracksHeat = true
 }
+
+
+class SpheroidSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+    override val fileName = "smallcraft_spheroid_default.svg"
+    override val armorDiagramFileName = "armor_diagram_smallcraft_spheroid.svg"
+    override val dataPanelTitle: String = bundle.getString("craftData")
+    override val atmospheric = false
+    override val fighter = false
+    override val tracksHeat = true
+}
