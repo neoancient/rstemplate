@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Base class for aerospace record sheets
  */
-abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
+abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
 
     private val eqTableCell = Cell(
         LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
@@ -150,7 +150,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
             )
             embedImage(
                 rect.width - 50.0 - heatScaleCell.width - padding, rect.height - 30.0, 50.0, 30.0,
-                CGL_LOGO, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g
+                if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g
             )
         } else {
             val label = RSLabel(
@@ -170,7 +170,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
             )
             embedImage(
                 labelCenterX - 25.0,label.height() + 30, 50.0, 30.0,
-                CGL_LOGO, parent = g
+                if (color) CGL_LOGO else CGL_LOGO_BW, parent = g
             )
         }
         if (!atmospheric) {
@@ -505,7 +505,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
     }
 }
 
-class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "fighter_aerospace_default.svg"
     override val armorDiagramFileName = "armor_diagram_asf.svg"
     override val dataPanelTitle: String = bundle.getString("fighterData")
@@ -514,7 +514,7 @@ class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val tracksHeat = true
 }
 
-class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "fighter_conventional_default.svg"
     override val armorDiagramFileName = "armor_diagram_convfighter.svg"
     override val dataPanelTitle: String = bundle.getString("fighterData")
@@ -523,7 +523,7 @@ class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val tracksHeat = false
 }
 
-class AerodyneSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "smallcraft_aerodyne_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_aerodyne.svg"
     override val dataPanelTitle: String = bundle.getString("craftData")
@@ -533,7 +533,7 @@ class AerodyneSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
 }
 
 
-class SpheroidSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "smallcraft_spheroid_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_spheroid.svg"
     override val dataPanelTitle: String = bundle.getString("craftData")

@@ -11,7 +11,7 @@ import java.util.*
  * Base class for Mech record sheets
  */
 
-abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
+abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(size, color) {
     val eqTableCell = Cell(
         LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
         width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
@@ -348,7 +348,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         embedImage(x, y, width * 0.5 - padding, height,
-            CGL_LOGO, ImageAnchor.RIGHT, parent)
+            if (color) CGL_LOGO else CGL_LOGO_BW, ImageAnchor.RIGHT, parent)
     }
 
     /**
@@ -409,14 +409,14 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     }
 }
 
-class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+class BipedMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_biped_default.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
     override val armorDiagramFileName = "armor_diagram_biped.svg"
     override val isDiagramFileName = "internal_diagram_biped.svg"
 }
 
-class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+class QuadMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_quad_default.svg"
     override val damageTransferFileName = "damage_transfer_quad.svg"
     override fun isQuad() = true
@@ -424,7 +424,7 @@ class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val isDiagramFileName = "internal_diagram_quad.svg"
 }
 
-class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_tripod_default.svg"
     override val damageTransferFileName = "damage_transfer_tripod.svg"
     override val armorDiagramFileName = "armor_diagram_tripod.svg"
@@ -457,7 +457,7 @@ class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     }
 }
 
-class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_biped_lam.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
     override val armorDiagramFileName = "armor_diagram_biped.svg"
@@ -665,7 +665,7 @@ class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     }
 }
 
-class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
+class QuadVeeRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_quadvee.svg"
     override val damageTransferFileName = "damage_transfer_quadvee.svg"
     override val armorDiagramFileName = "armor_diagram_quadvee.svg"

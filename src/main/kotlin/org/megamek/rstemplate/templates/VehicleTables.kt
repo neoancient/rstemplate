@@ -10,7 +10,7 @@ import java.util.*
  * vehicle record sheet
  */
 
-abstract class VehicleTables(size: PaperSize): RecordSheet(size) {
+abstract class VehicleTables(size: PaperSize, color: Boolean): RecordSheet(size, color) {
     private val hitLocation = Cell(LEFT_MARGIN.toDouble(), padding,
         width() * 0.57, (height() - footerHeight) * 0.6 - padding)
     val motiveDamage = Cell(hitLocation.rightX() + padding, hitLocation.y,
@@ -38,14 +38,14 @@ abstract class VehicleTables(size: PaperSize): RecordSheet(size) {
     }
 }
 
-class TankTables(size: PaperSize): VehicleTables(size) {
+class TankTables(size: PaperSize, color: Boolean): VehicleTables(size, color) {
     override val fileName = "tables_tank.svg"
     override val unitType = "tank"
     override val hitLocationTable = TankHitLocationTable(this)
     override val criticalHitTable = TankCriticalHitTable(this)
 }
 
-class VTOLTables(size: PaperSize): VehicleTables(size) {
+class VTOLTables(size: PaperSize, color: Boolean): VehicleTables(size, color) {
     val elevation = Cell(motiveDamage.x, motiveDamage.y,
         motiveDamage.width, motiveDamage.height * 0.6 - padding)
     val physicals = Cell(motiveDamage.x, elevation.height + padding,

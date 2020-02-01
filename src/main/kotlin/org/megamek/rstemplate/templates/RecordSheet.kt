@@ -48,14 +48,16 @@ const val FONT_SIZE_MEDIUM = 6.76f
 const val FONT_SIZE_SMALL = 6.2f
 const val FONT_SIZE_VSMALL = 5.7f
 const val BT_LOGO = "btlogo.svg"
+const val BT_LOGO_BW = "btlogo_bw.svg"
 const val CGL_LOGO = "cgllogo.svg"
+const val CGL_LOGO_BW = "cgllogo_bw.svg"
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 val crewSizeId = listOf("Single", "Dual", "Triple")
 fun Double.truncate() = format("%.3f", this)
 fun Float.truncate() = format("%.3f", this)
 
-abstract class RecordSheet(val size: PaperSize) {
+abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
     abstract val fileName: String
 
     val document = generate()
@@ -203,7 +205,7 @@ abstract class RecordSheet(val size: PaperSize) {
     open fun addLogo() = if (showLogo()) {
         embedImage(
             LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
-            width() * 0.67 - padding, null, BT_LOGO
+            width() * 0.67 - padding, null, if (color) BT_LOGO else BT_LOGO_BW
         )[1]
     } else {
         0.0
@@ -550,9 +552,11 @@ abstract class RecordSheet(val size: PaperSize) {
             4.7f, anchor = SVGConstants.SVG_MIDDLE_VALUE, width = 1.5 * boxHeight, parent = g)
         ypos += boxHeight * 2 + padding
         for (i in 30 downTo 0) {
-            addRect(0.0, ypos, boxWidth, boxHeight, fill = if (i < 10) {
-                // gradient green -> yellow
-                format("#%xffcc", 0xcc + i * (0xff - 0xcc) / 10)
+            addRect(0.0, ypos, boxWidth, boxHeight, fill = if (!color) {
+                "#ffffff"
+            } else if (i < 10) {
+                    // gradient green -> yellow
+                    format("#%xffcc", 0xcc + i * (0xff - 0xcc) / 10)
             } else {
                 // gradient yellow -> red
                 format("#ff%xcc", 0xff - (i - 10) * (0xff - 0xcc) / 20)
