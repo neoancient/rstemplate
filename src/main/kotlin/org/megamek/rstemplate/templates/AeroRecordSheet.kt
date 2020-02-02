@@ -49,6 +49,8 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     abstract val atmospheric: Boolean
     abstract val tracksHeat: Boolean
     abstract val largeCraft: Boolean
+    abstract val capitalScale: Boolean
+    abstract val warship: Boolean
 
     override fun build() {
         if (largeCraft) {
@@ -154,6 +156,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
 
     private fun addArmorDiagram(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
+        val rightMargin = if (largeCraft) 0.0 else heatScaleCell.width
         if (fighter) {
             val label = RSLabel(
                 this, 0.0, logoHeight + titleHeight,
@@ -161,12 +164,12 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             )
             g.appendChild(label.draw())
             embedImage(
-                0.0, logoHeight * 0.5, rect.width - heatScaleCell.width,
+                0.0, logoHeight * 0.5, rect.width - rightMargin,
                 rect.height - logoHeight * 0.5,
                 armorDiagramFileName, ImageAnchor.CENTER, g
             )
             embedImage(
-                rect.width - 50.0 - heatScaleCell.width - padding, rect.height - 30.0, 50.0, 30.0,
+                rect.width - 50.0 - rightMargin - padding, rect.height - 30.0, 50.0, 30.0,
                 if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g
             )
         } else {
@@ -178,10 +181,11 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             g.appendChild(label.draw())
             val labelCenterX = rect.width - (label.rectWidth + label.taperWidth) * 0.5
             addTextElement(labelCenterX,label.height() + calcFontHeight(FONT_SIZE_SMALL),
-                bundle.getString("standardScale"), FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+                bundle.getString(if (capitalScale) "capitalScale" else "standardScale"),
+                FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
                 anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
             embedImage(
-                0.0, logoHeight * 0.5, rect.width - heatScaleCell.width,
+                0.0, logoHeight * 0.5, rect.width - rightMargin,
                 rect.height - logoHeight * 0.5 - padding,
                 armorDiagramFileName, ImageAnchor.CENTER, g
             )
@@ -405,7 +409,84 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     }
 
     private fun addLCPilotPanel(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("pilotPanel.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val fontWeight = SVGConstants.SVG_BOLD_VALUE
+        val lineHeight = (inner.height - 20.0) / 7.0
+        var ypos = inner.y + lineHeight * 1.5
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill0",
+            padding,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = inner.width * 0.32,
+            blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0",
+            blankWidth = inner.width * 0.13, parent = g)
+        addField(bundle.getString("pilotingSkill"), "pilotingSkill0", inner.width * 0.5,
+            ypos, fontSize, defaultText = "0",
+            fieldOffset = inner.width * 0.32,
+            blankId = "blankPilotingSkill0", labelId = "pilotingSkillText0",
+            blankWidth = inner.width * 0.18 - padding, parent = g)
+        ypos += lineHeight * 0.75
+        ypos += addCrewDamageTrack(0.0, ypos, inner.width, parent = g) + lineHeight * 1
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("nCrew"), "nCrew", "0"),
+            LabeledField(bundle.getString("nPassengers"), "nPassengers", "0"),
+            LabeledField(bundle.getString("nOther"), "nOther", "0")
+        ), inner.x + padding, ypos, fontSize, fieldOffset = inner.width * 0.35, parent = g)
+        addFieldSet(listOf(
+            LabeledField(bundle.getString("nMarines"), "nMarines", "0"),
+            LabeledField(bundle.getString("nBA"), "nBattleArmor", "0")
+        ), inner.x + inner.width * 0.5, ypos, fontSize, fieldOffset = inner.width * 0.35, parent = g)
+        ypos += lineHeight * 3.2
+        addTextElement(inner.x + inner.width * 0.5, ypos, bundle.getString("lifeBoats"),
+            fontSize, fontWeight, anchor = SVGConstants.SVG_MIDDLE_VALUE, id="lifeBoatsEscapePods",
+            fixedWidth = true, parent = g)
+        document.documentElement.appendChild(g)
+    }
 
+    fun addCrewDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
+                           parent: Element): Double {
+        val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        val chartBounds = Cell(x + width * 0.35, y,
+            width * 0.65 - padding,20.0)
+        val outline = RoundedBorder(chartBounds.x, chartBounds.y, chartBounds.width, chartBounds.height,
+            1.015, 0.56, 1.0).draw(document)
+        g.appendChild(outline)
+        val grid = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M ${chartBounds.x.truncate()},${(chartBounds.y + chartBounds.height / 2.0).truncate()}"
+                    + " l ${chartBounds.width.truncate()},0"
+                    + (1..5).map {
+                " M ${(chartBounds.x + it * chartBounds.width / 6.0).truncate()},${chartBounds.y.truncate()} l 0,${chartBounds.height.truncate()}"
+            }.joinToString(" "))
+        grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        grid.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE,
+            FILL_DARK_GREY
+        )
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, "0.58")
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_MITER_VALUE)
+        grid.setAttributeNS(null, SVGConstants.CSS_STROKE_LINECAP_PROPERTY, SVGConstants.SVG_ROUND_VALUE)
+        g.appendChild(grid)
+        val startx = chartBounds.x - chartBounds.width / 12.0
+        val starty = chartBounds.y + calcFontHeight(5.8f)
+        val mods = listOf("+1", "+2", "+3", "+4", "+5", bundle.getString("incapacitated"))
+        for (i in 1..6) {
+            addTextElement(startx + i * chartBounds.width / 6.0, starty,
+                i.toString(), 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            addTextElement(startx + i * chartBounds.width / 6.0, starty + chartBounds.height / 2.0,
+                mods[i - 1], 5.8f, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, width = chartBounds.width / 6.0 - 4.0, parent = g)
+        }
+        addTextElement(chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            width = chartBounds.x - x - padding, parent = g)
+        addTextElement(chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("modifier"),
+            5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
+            width = chartBounds.x - x - padding, parent = g)
+        parent.appendChild(g)
+        return height
     }
 
     private fun addVelocityPanel(rect: Cell) {
@@ -502,7 +583,46 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     }
 
     private fun addLCHeatPanel(rect: Cell) {
-
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("heatPanel.title"), parent = g)
+        val col1Height = calcFontHeight(FONT_SIZE_VLARGE)
+        addTextElement(inner.x + padding, inner.y + col1Height, bundle.getString("heatSinks"),
+            FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, parent = g)
+        val col1Width = calcTextLength(bundle.getString("heatSinks"), FONT_SIZE_LARGE)
+        addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 2,
+            "0", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="heatSinks",
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 3,
+            "(0)", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="doubleHeatSinks",
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        val lineHeight = inner.height / if (warship) 7 else 6
+        addTextElement(inner.x + inner.width * 0.35, inner.y + col1Height,
+            bundle.getString("heatGenerationPerArc"), FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE,
+            fixedWidth = true, parent = g)
+        if (warship) {
+            addFieldSet(
+                listOf(
+                    LabeledField(bundle.getString("nose"), "noseHeat", "0"),
+                    LabeledField(bundle.getString("foreSides"), "foreSidesHeat", "0/0"),
+                    LabeledField(bundle.getString("broadsides"), "broadsidesHeat", "0/0"),
+                    LabeledField(bundle.getString("aftSides"), "aftSidesHeat", "0/0"),
+                    LabeledField(bundle.getString("aft"), "aftHeat", "0")
+                ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
+                FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
+                fieldOffset = inner.width * 0.55, parent = g)
+        } else {
+            addFieldSet(
+                listOf(
+                    LabeledField(bundle.getString("nose"), "noseHeat", "0"),
+                    LabeledField(bundle.getString("foreSides"), "foreSidesHeat", "0/0"),
+                    LabeledField(bundle.getString("aftSides"), "aftSidesHeat", "0/0"),
+                    LabeledField(bundle.getString("aft"), "aftHeat", "0")
+                ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
+                FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
+                fieldOffset = inner.width * 0.55, parent = g)
+        }
+        document.documentElement.appendChild(g)
     }
 
     private fun addBombsPanel() {
@@ -604,6 +724,8 @@ class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, col
     override val fighter = true
     override val tracksHeat = true
     override val largeCraft = false
+    override val capitalScale = false
+    override val warship = false
 }
 
 class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -614,6 +736,8 @@ class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(s
     override val fighter = true
     override val tracksHeat = false
     override val largeCraft = false
+    override val capitalScale = false
+    override val warship = false
 }
 
 class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -624,6 +748,8 @@ class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val fighter = false
     override val tracksHeat = true
     override val largeCraft = false
+    override val capitalScale = false
+    override val warship = false
 }
 
 class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -634,6 +760,8 @@ class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val fighter = false
     override val tracksHeat = true
     override val largeCraft = false
+    override val capitalScale = false
+    override val warship = false
 }
 
 class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -644,4 +772,6 @@ class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSh
     override val fighter = false
     override val tracksHeat = false
     override val largeCraft = true
+    override val capitalScale = false
+    override val warship = false
 }
