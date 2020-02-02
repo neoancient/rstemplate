@@ -34,6 +34,12 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     private val fighterReturnCell = Cell(heatCell.x, groundMovementCell.bottomY() + padding,
         groundMovementCell.width, heatCell.height - groundMovementCell.height - padding)
 
+    private val largeCraftEqTableCell = Cell(eqTableCell.x, eqTableCell.y, eqTableCell.width,
+        fluffCell.bottomY() - eqTableCell.y)
+    private val largeCraftFluffCell = critDamageCell
+    private val largeCraftCritDamageCell = groundMovementCell
+    private val largeCraftHeatCell = fighterReturnCell
+
     protected val bundle: ResourceBundle = ResourceBundle.getBundle(AeroRecordSheet::class.java.name)
 
     final override fun height() = super.height()
@@ -42,23 +48,34 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     abstract val fighter: Boolean
     abstract val atmospheric: Boolean
     abstract val tracksHeat: Boolean
+    abstract val largeCraft: Boolean
 
     override fun build() {
-        addEquipmentTable(eqTableCell)
-        addFluffPanel(fluffCell)
-        addArmorDiagram(armorCell)
-        addCritPanel(critDamageCell)
-        addPilotPanel(pilotCell)
-        addVelocityPanel(velocityCell)
-        if (tracksHeat) {
-            addHeatPanel(heatCell)
-            addHeatScale(heatScaleCell)
-        } else if (fighter) {
-            addGroundMovementTable(groundMovementCell)
-            addFighterReturnTable(fighterReturnCell)
-        }
-        if (fighter) {
-            addBombsPanel()
+        if (largeCraft) {
+            addEquipmentTable(largeCraftEqTableCell)
+            addFluffPanel(largeCraftFluffCell)
+            addArmorDiagram(armorCell)
+            addLCCritPanel(largeCraftCritDamageCell)
+            addLCPilotPanel(pilotCell)
+            addVelocityPanel(velocityCell)
+            addLCHeatPanel(largeCraftHeatCell)
+        } else {
+            addEquipmentTable(eqTableCell)
+            addFluffPanel(eqTableCell)
+            addArmorDiagram(armorCell)
+            addCritPanel(critDamageCell)
+            addPilotPanel(pilotCell)
+            addVelocityPanel(velocityCell)
+            if (tracksHeat) {
+                addHeatPanel(heatCell)
+                addHeatScale(heatScaleCell)
+            } else if (fighter) {
+                addGroundMovementTable(groundMovementCell)
+                addFighterReturnTable(fighterReturnCell)
+            }
+            if (fighter) {
+                addBombsPanel()
+            }
         }
     }
 
@@ -214,6 +231,72 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         document.documentElement.appendChild(g)
     }
 
+    private fun addLCCritPanel(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
+            bundle.getString("criticalDamage.title"), bottomTab = true,
+            textBelow = bundle.getString("heatPanel.title"), parent = g)
+        val fontSize = FONT_SIZE_MEDIUM
+        val lineHeight = inner.height / 8.0
+        var ypos = inner.y + lineHeight * 0.5
+        val boxHeight = calcFontHeight(fontSize) * 1.2
+        val col2X = inner.x + inner.width * 0.63
+        g.appendChild(DamageCheckBox(bundle.getString("avionics"), listOf("+1", "+2", "+5"),
+            boxHeight = boxHeight)
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.57,
+            fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        g.appendChild(DamageCheckBox(bundle.getString("gear"), listOf("+5"),
+            boxHeight = boxHeight)
+            .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("fcs"), listOf("2", "4", "D"),
+            boxHeight = boxHeight)
+            .draw(this, inner.x + padding, ypos,
+                fontSize, width = inner.width * 0.57,
+            fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"),
+            boxHeight = boxHeight)
+            .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("sensors"), listOf("+1", "+2", "+5"),
+            boxHeight = boxHeight)
+            .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.57,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        g.appendChild(DamageCheckBox(bundle.getString("kfBoom"), listOf("D"),
+            boxHeight = boxHeight)
+            .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        ypos += lineHeight
+        addTextElement(inner.x + padding, ypos + boxHeight * 0.9, bundle.getString("thrusters"),
+            fontSize, fontWeight = SVGConstants.SVG_BOLD_VALUE, parent = g)
+        g.appendChild(DamageCheckBox(bundle.getString("dockingCollar"), listOf("D"),
+            boxHeight = boxHeight)
+            .draw(this, col2X, ypos,
+                fontSize, width = inner.width * 0.35,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("left"), listOf("+1", "+2", "+3", "D"),
+            boxHeight = boxHeight)
+            .draw(this, inner.x + padding * 5, ypos, fontSize,
+                width = inner.width * 0.57 + boxHeight - padding * 3,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("right"), listOf("+1", "+2", "+3", "D"),
+            boxHeight = boxHeight)
+            .draw(this, inner.x + padding * 5, ypos, fontSize,
+                width = inner.width * 0.57 + boxHeight - padding * 3,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        ypos += lineHeight
+        g.appendChild(DamageCheckBox(bundle.getString("engine"), listOf("-1", "-2", "-3", "-4", "-5", "D"),
+            boxHeight = boxHeight)
+            .draw(this, inner.x + padding, ypos, fontSize,
+                width = inner.width * 0.57 + (boxHeight + padding) * 3,
+                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        document.documentElement.appendChild(g)
+    }
+
     private fun addPilotPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
@@ -321,6 +404,10 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         return outline
     }
 
+    private fun addLCPilotPanel(rect: Cell) {
+
+    }
+
     private fun addVelocityPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width, rect.height,
@@ -412,6 +499,10 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         8 -> java.lang.String.format(bundle.getString("heat.fireMod"), 1)
         5 -> java.lang.String.format(bundle.getString("heat.randomMovement"), 5)
         else -> null
+    }
+
+    private fun addLCHeatPanel(rect: Cell) {
+
     }
 
     private fun addBombsPanel() {
@@ -512,6 +603,7 @@ class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, col
     override val atmospheric = false
     override val fighter = true
     override val tracksHeat = true
+    override val largeCraft = false
 }
 
 class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -521,6 +613,7 @@ class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(s
     override val atmospheric = true
     override val fighter = true
     override val tracksHeat = false
+    override val largeCraft = false
 }
 
 class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -530,8 +623,8 @@ class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val atmospheric = false
     override val fighter = false
     override val tracksHeat = true
+    override val largeCraft = false
 }
-
 
 class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "smallcraft_spheroid_default.svg"
@@ -540,4 +633,15 @@ class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val atmospheric = false
     override val fighter = false
     override val tracksHeat = true
+    override val largeCraft = false
+}
+
+class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+    override val fileName = "dropship_aerodyne_default.svg"
+    override val armorDiagramFileName = "armor_diagram_dropship_aerodyne.svg"
+    override val dataPanelTitle: String = bundle.getString("dropshipData")
+    override val atmospheric = false
+    override val fighter = false
+    override val tracksHeat = false
+    override val largeCraft = true
 }
