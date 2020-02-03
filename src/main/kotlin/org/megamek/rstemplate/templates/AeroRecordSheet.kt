@@ -51,6 +51,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     abstract val largeCraft: Boolean
     abstract val capitalScale: Boolean
     abstract val warship: Boolean
+    abstract val aerodyne: Boolean
 
     override fun build() {
         if (largeCraft) {
@@ -433,11 +434,13 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             LabeledField(bundle.getString("nCrew"), "nCrew", "0"),
             LabeledField(bundle.getString("nPassengers"), "nPassengers", "0"),
             LabeledField(bundle.getString("nOther"), "nOther", "0")
-        ), inner.x + padding, ypos, fontSize, fieldOffset = inner.width * 0.35, parent = g)
+        ), inner.x + padding, ypos, fontSize, fieldOffset = inner.width * 0.4,
+            fieldAnchor = SVGConstants.SVG_END_VALUE, parent = g)
         addFieldSet(listOf(
             LabeledField(bundle.getString("nMarines"), "nMarines", "0"),
-            LabeledField(bundle.getString("nBA"), "nBattleArmor", "0")
-        ), inner.x + inner.width * 0.5, ypos, fontSize, fieldOffset = inner.width * 0.35, parent = g)
+            LabeledField(bundle.getString("nBA"), "nBattleArmor", "0", labelId = "lblBattleArmor")
+        ), inner.x + inner.width * 0.5, ypos, fontSize, fieldOffset = inner.width * 0.4,
+            fieldAnchor = SVGConstants.SVG_END_VALUE, parent = g)
         ypos += lineHeight * 3.2
         addTextElement(inner.x + inner.width * 0.5, ypos, bundle.getString("lifeBoats"),
             fontSize, fontWeight, anchor = SVGConstants.SVG_MIDDLE_VALUE, id="lifeBoatsEscapePods",
@@ -591,10 +594,10 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, parent = g)
         val col1Width = calcTextLength(bundle.getString("heatSinks"), FONT_SIZE_LARGE)
         addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 2,
-            "0", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="heatSinks",
+            "0", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="hsCount",
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 3,
-            "(0)", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="doubleHeatSinks",
+            "(0)", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="hsCountDouble",
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         val lineHeight = inner.height / if (warship) 7 else 6
         addTextElement(inner.x + inner.width * 0.35, inner.y + col1Height,
@@ -607,6 +610,16 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                     LabeledField(bundle.getString("foreSides"), "foreSidesHeat", "0/0"),
                     LabeledField(bundle.getString("broadsides"), "broadsidesHeat", "0/0"),
                     LabeledField(bundle.getString("aftSides"), "aftSidesHeat", "0/0"),
+                    LabeledField(bundle.getString("aft"), "aftHeat", "0")
+                ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
+                FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
+                fieldOffset = inner.width * 0.55, parent = g)
+        } else if (aerodyne) {
+            addFieldSet(
+                listOf(
+                    LabeledField(bundle.getString("nose"), "noseHeat", "0"),
+                    LabeledField(bundle.getString("wings"), "foreSidesHeat", "0/0"),
+                    LabeledField(bundle.getString("wingsRear"), "aftSidesHeat", "0/0"),
                     LabeledField(bundle.getString("aft"), "aftHeat", "0")
                 ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
                 FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
@@ -726,6 +739,7 @@ class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, col
     override val largeCraft = false
     override val capitalScale = false
     override val warship = false
+    override val aerodyne = true
 }
 
 class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -738,6 +752,7 @@ class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(s
     override val largeCraft = false
     override val capitalScale = false
     override val warship = false
+    override val aerodyne = true
 }
 
 class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -750,6 +765,7 @@ class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val largeCraft = false
     override val capitalScale = false
     override val warship = false
+    override val aerodyne = true
 }
 
 class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -762,6 +778,7 @@ class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val largeCraft = false
     override val capitalScale = false
     override val warship = false
+    override val aerodyne = false
 }
 
 class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
@@ -774,4 +791,5 @@ class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSh
     override val largeCraft = true
     override val capitalScale = false
     override val warship = false
+    override val aerodyne = true
 }
