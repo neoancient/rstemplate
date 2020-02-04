@@ -45,13 +45,15 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     final override fun height() = super.height()
     abstract val dataPanelTitle: String
     abstract val armorDiagramFileName: String
+
     abstract val fighter: Boolean
-    abstract val atmospheric: Boolean
     abstract val tracksHeat: Boolean
     abstract val largeCraft: Boolean
-    abstract val capitalScale: Boolean
-    abstract val warship: Boolean
-    abstract val aerodyne: Boolean
+
+    open fun isAtmospheric(): Boolean = false
+    open fun isCapitalScale(): Boolean = false
+    open fun isWarship(): Boolean = false
+    open fun isAerodyne(): Boolean = false
 
     override fun build() {
         if (largeCraft) {
@@ -182,7 +184,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             g.appendChild(label.draw())
             val labelCenterX = rect.width - (label.rectWidth + label.taperWidth) * 0.5
             addTextElement(labelCenterX,label.height() + calcFontHeight(FONT_SIZE_SMALL),
-                bundle.getString(if (capitalScale) "capitalScale" else "standardScale"),
+                bundle.getString(if (isCapitalScale()) "capitalScale" else "standardScale"),
                 FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
                 anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
             embedImage(
@@ -195,7 +197,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 if (color) CGL_LOGO else CGL_LOGO_BW, parent = g
             )
         }
-        if (!atmospheric) {
+        if (!isAtmospheric()) {
             addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), g)
         }
         document.documentElement.appendChild(g)
@@ -599,11 +601,11 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 3,
             "(0)", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="hsCountDouble",
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        val lineHeight = inner.height / if (warship) 7 else 6
+        val lineHeight = inner.height / if (isWarship()) 7 else 6
         addTextElement(inner.x + inner.width * 0.35, inner.y + col1Height,
             bundle.getString("heatGenerationPerArc"), FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE,
             fixedWidth = true, parent = g)
-        if (warship) {
+        if (isWarship()) {
             addFieldSet(
                 listOf(
                     LabeledField(bundle.getString("nose"), "noseHeat", "0"),
@@ -614,7 +616,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
                 FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
                 fieldOffset = inner.width * 0.55, parent = g)
-        } else if (aerodyne) {
+        } else if (isAerodyne()) {
             addFieldSet(
                 listOf(
                     LabeledField(bundle.getString("nose"), "noseHeat", "0"),
@@ -733,63 +735,57 @@ class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, col
     override val fileName = "fighter_aerospace_default.svg"
     override val armorDiagramFileName = "armor_diagram_asf.svg"
     override val dataPanelTitle: String = bundle.getString("fighterData")
-    override val atmospheric = false
     override val fighter = true
     override val tracksHeat = true
     override val largeCraft = false
-    override val capitalScale = false
-    override val warship = false
-    override val aerodyne = true
+    override fun isAerodyne() = true
 }
 
 class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "fighter_conventional_default.svg"
     override val armorDiagramFileName = "armor_diagram_convfighter.svg"
     override val dataPanelTitle: String = bundle.getString("fighterData")
-    override val atmospheric = true
     override val fighter = true
     override val tracksHeat = false
     override val largeCraft = false
-    override val capitalScale = false
-    override val warship = false
-    override val aerodyne = true
+    override fun isAerodyne() = true
+    override fun isAtmospheric() = true
 }
 
 class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "smallcraft_aerodyne_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_aerodyne.svg"
     override val dataPanelTitle: String = bundle.getString("craftData")
-    override val atmospheric = false
     override val fighter = false
     override val tracksHeat = true
     override val largeCraft = false
-    override val capitalScale = false
-    override val warship = false
-    override val aerodyne = true
+    override fun isAerodyne() = true
 }
 
 class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "smallcraft_spheroid_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_spheroid.svg"
     override val dataPanelTitle: String = bundle.getString("craftData")
-    override val atmospheric = false
     override val fighter = false
     override val tracksHeat = true
     override val largeCraft = false
-    override val capitalScale = false
-    override val warship = false
-    override val aerodyne = false
 }
 
 class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
     override val fileName = "dropship_aerodyne_default.svg"
     override val armorDiagramFileName = "armor_diagram_dropship_aerodyne.svg"
     override val dataPanelTitle: String = bundle.getString("dropshipData")
-    override val atmospheric = false
     override val fighter = false
     override val tracksHeat = false
     override val largeCraft = true
-    override val capitalScale = false
-    override val warship = false
-    override val aerodyne = true
+    override fun isAerodyne() = true
+}
+
+class SpheroidDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+    override val fileName = "dropship_spheroid_default.svg"
+    override val armorDiagramFileName = "armor_diagram_dropship_spheroid.svg"
+    override val dataPanelTitle: String = bundle.getString("dropshipData")
+    override val fighter = false
+    override val tracksHeat = false
+    override val largeCraft = true
 }

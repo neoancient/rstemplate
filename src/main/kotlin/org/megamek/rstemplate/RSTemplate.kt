@@ -57,6 +57,7 @@ fun writeRecordSheets(size: PaperSize, color: Boolean, dir: String) {
     outputRS(AerodyneSmallCraftRecordSheet(size, color), dir)
     outputRS(SpheroidSmallCraftRecordSheet(size, color), dir)
     outputRS(AerodyneDropshipRecordSheet(size, color), dir)
+    outputRS(SpheroidDropshipRecordSheet(size, color), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
