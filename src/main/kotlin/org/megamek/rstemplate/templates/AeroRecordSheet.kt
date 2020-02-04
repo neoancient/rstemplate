@@ -96,7 +96,8 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addField(bundle.getString("type"), "type", internal.x +padding,
+            ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
             maxWidth = internal.width - internal.x - padding, parent = g)
         ypos += lineHeight
         ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
@@ -141,12 +142,21 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     open fun addUnitDataFields(x: Double, y: Double, width: Double, parent: Element): Double {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
-        addTextElement(x, y, bundle.getString("thrust"), fontSize,
+        var ypos = y
+        if (largeCraft) {
+            addField(bundle.getString("name"), "fluffName", x, ypos,
+                fontSize, blankId = "blankFluffName",
+                blankWidth = width * 0.45 - calcTextLength(bundle.getString("name") + "_", fontSize),
+                parent = parent)
+            ypos += lineHeight
+        }
+        addTextElement(x, ypos, bundle.getString("thrust"), fontSize,
             SVGConstants.SVG_BOLD_VALUE, parent = parent)
+        ypos += lineHeight
         addFieldSet(listOf(
             LabeledField(bundle.getString("safeThrust"), "mpWalk", "0"),
             LabeledField(bundle.getString("maxThrust"), "mpRun", "0")
-        ), x + calcTextLength("_", fontSize), y + lineHeight, fontSize, FILL_DARK_GREY,
+        ), x + calcTextLength("_", fontSize), ypos, fontSize, FILL_DARK_GREY,
             70.0, SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
@@ -211,7 +221,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         val fontSize = FONT_SIZE_MEDIUM
         val lineHeight = inner.height / 4.0
         var ypos = inner.y + lineHeight * 0.5
-        val boxHeight = calcFontHeight(fontSize) * 1.2
+        val boxHeight = calcFontHeight(fontSize) * 1.5
         g.appendChild(DamageCheckBox(bundle.getString("avionics"), listOf("+1", "+2", "+5"),
             boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.45))
@@ -246,7 +256,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         val fontSize = FONT_SIZE_MEDIUM
         val lineHeight = inner.height / 8.0
         var ypos = inner.y + lineHeight * 0.5
-        val boxHeight = calcFontHeight(fontSize) * 1.2
+        val boxHeight = calcFontHeight(fontSize) * 1.5
         val col2X = inner.x + inner.width * 0.63
         g.appendChild(DamageCheckBox(bundle.getString("avionics"), listOf("+1", "+2", "+5"),
             boxHeight = boxHeight)
@@ -594,11 +604,10 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         val col1Height = calcFontHeight(FONT_SIZE_VLARGE)
         addTextElement(inner.x + padding, inner.y + col1Height, bundle.getString("heatSinks"),
             FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, parent = g)
-        val col1Width = calcTextLength(bundle.getString("heatSinks"), FONT_SIZE_LARGE)
-        addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 2,
+        addTextElement(inner.x + inner.width * 0.15, inner.y + col1Height * 2,
             "0", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="hsCount",
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(inner.x + col1Width * 0.5, inner.y + col1Height * 3,
+        addTextElement(inner.x + inner.width * 0.15, inner.y + col1Height * 3,
             "(0)", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, id="hsCountDouble",
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         val lineHeight = inner.height / if (isWarship()) 7 else 6
@@ -615,7 +624,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                     LabeledField(bundle.getString("aft"), "aftHeat", "0")
                 ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
                 FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
-                fieldOffset = inner.width * 0.55, parent = g)
+                fieldOffset = inner.width * 0.5, parent = g)
         } else if (isAerodyne()) {
             addFieldSet(
                 listOf(
@@ -625,7 +634,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                     LabeledField(bundle.getString("aft"), "aftHeat", "0")
                 ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
                 FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
-                fieldOffset = inner.width * 0.55, parent = g)
+                fieldOffset = inner.width * 0.5, parent = g)
         } else {
             addFieldSet(
                 listOf(
@@ -635,7 +644,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                     LabeledField(bundle.getString("aft"), "aftHeat", "0")
                 ), inner.x + inner.width * 0.35, inner.y + col1Height + lineHeight,
                 FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
-                fieldOffset = inner.width * 0.55, parent = g)
+                fieldOffset = inner.width * 0.45, parent = g)
         }
         document.documentElement.appendChild(g)
     }
