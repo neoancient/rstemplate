@@ -54,6 +54,8 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     open fun isCapitalScale(): Boolean = false
     open fun isWarship(): Boolean = false
     open fun isAerodyne(): Boolean = false
+    open fun stationKeeping(): Boolean = false
+    open fun isStation(): Boolean = false
 
     override fun build() {
         if (largeCraft) {
@@ -124,7 +126,9 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "notes")
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("notes.title"), bottomTab = true,
-            textBelow = bundle.getString("criticalDamage.title"), parent = g)
+            textBelow = bundle.getString(if (isStation()) "notes.title"
+                else if (largeCraft) "velocityRecord.title"
+                else "criticalDamage.title"), parent = g)
         document.documentElement.appendChild(g)
         val fluffCell = rect.inset(
             padding,
@@ -153,11 +157,16 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         addTextElement(x, ypos, bundle.getString("thrust"), fontSize,
             SVGConstants.SVG_BOLD_VALUE, parent = parent)
         ypos += lineHeight
-        addFieldSet(listOf(
-            LabeledField(bundle.getString("safeThrust"), "mpWalk", "0"),
-            LabeledField(bundle.getString("maxThrust"), "mpRun", "0")
-        ), x + calcTextLength("_", fontSize), ypos, fontSize, FILL_DARK_GREY,
-            70.0, SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        if (stationKeeping()) {
+            addTextElement(x + calcTextLength("_", fontSize), ypos, bundle.getString("stationKeeping"),
+                fontSize, parent = parent)
+        } else {
+            addFieldSet(listOf(
+                LabeledField(bundle.getString("safeThrust"), "mpWalk", "0"),
+                LabeledField(bundle.getString("maxThrust"), "mpRun", "0")
+            ), x + calcTextLength("_", fontSize), ypos, fontSize, FILL_DARK_GREY,
+                70.0, SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        }
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
@@ -207,7 +216,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 if (color) CGL_LOGO else CGL_LOGO_BW, parent = g
             )
         }
-        if (!isAtmospheric()) {
+        if (!isAtmospheric() && !stationKeeping()) {
             addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), g)
         }
         document.documentElement.appendChild(g)
@@ -262,37 +271,50 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.57,
             fontWeight = SVGConstants.SVG_BOLD_VALUE))
-        g.appendChild(DamageCheckBox(bundle.getString("gear"), listOf("+5"),
+        if (isCapitalScale()) {
+            g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"),
+                boxHeight = boxHeight)
+                .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
+                    fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        } else {
+            g.appendChild(DamageCheckBox(bundle.getString("gear"), listOf("+5"),
             boxHeight = boxHeight)
             .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
                 fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        }
         ypos += lineHeight
-        g.appendChild(DamageCheckBox(bundle.getString("fcs"), listOf("2", "4", "D"),
+        g.appendChild(DamageCheckBox(bundle.getString(if (isCapitalScale()) "cic" else "fcs"), listOf("2", "4", "D"),
             boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos,
                 fontSize, width = inner.width * 0.57,
             fontWeight = SVGConstants.SVG_BOLD_VALUE))
-        g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"),
-            boxHeight = boxHeight)
-            .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
-                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        if (!isCapitalScale()) {
+            g.appendChild(DamageCheckBox(bundle.getString("lifeSupport"), listOf("+2"),
+                boxHeight = boxHeight)
+                .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
+                    fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        }
         ypos += lineHeight
         g.appendChild(DamageCheckBox(bundle.getString("sensors"), listOf("+1", "+2", "+5"),
             boxHeight = boxHeight)
             .draw(this, inner.x + padding, ypos, fontSize, width = inner.width * 0.57,
                 fontWeight = SVGConstants.SVG_BOLD_VALUE))
-        g.appendChild(DamageCheckBox(bundle.getString("kfBoom"), listOf("D"),
-            boxHeight = boxHeight)
-            .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
-                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        if (!isCapitalScale()) {
+            g.appendChild(DamageCheckBox(bundle.getString("kfBoom"), listOf("D"),
+                boxHeight = boxHeight)
+                .draw(this, col2X, ypos, fontSize, width = inner.width * 0.35,
+                    fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        }
         ypos += lineHeight
         addTextElement(inner.x + padding, ypos + boxHeight * 0.9, bundle.getString("thrusters"),
             fontSize, fontWeight = SVGConstants.SVG_BOLD_VALUE, parent = g)
-        g.appendChild(DamageCheckBox(bundle.getString("dockingCollar"), listOf("D"),
-            boxHeight = boxHeight)
-            .draw(this, col2X, ypos,
-                fontSize, width = inner.width * 0.35,
-                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        if (!isCapitalScale()) {
+            g.appendChild(DamageCheckBox(bundle.getString("dockingCollar"), listOf("D"),
+                boxHeight = boxHeight)
+                .draw(this, col2X, ypos,
+                    fontSize, width = inner.width * 0.35,
+                    fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        }
         ypos += lineHeight
         g.appendChild(DamageCheckBox(bundle.getString("left"), listOf("+1", "+2", "+3", "D"),
             boxHeight = boxHeight)
@@ -506,13 +528,19 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
 
     private fun addVelocityPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        val inner = addBorder(0.0, 0.0, rect.width, rect.height,
-            bundle.getString("velocityRecord.title"), topTab = true, bottomTab = false,
-            parent = g)
-        addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.1,
-            inner.width - padding * 2, inner.height * 0.3, (1..10).toList(), g)
-        addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.55,
-            inner.width - padding * 2, inner.height * 0.3, (11..20).toList(), g)
+        if (isStation()) {
+            addBorder(0.0, 0.0, rect.width, rect.height,
+                bundle.getString("notes.title"), topTab = true, bottomTab = false,
+                parent = g)
+        } else {
+            val inner = addBorder(0.0, 0.0, rect.width, rect.height,
+                bundle.getString("velocityRecord.title"), topTab = true, bottomTab = false,
+                parent = g)
+            addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.1,
+                inner.width - padding * 2, inner.height * 0.3, (1..10).toList(), g)
+            addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.55,
+                inner.width - padding * 2, inner.height * 0.3, (11..20).toList(), g)
+        }
         document.documentElement.appendChild(g)
     }
 
@@ -797,4 +825,37 @@ class SpheroidDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSh
     override val fighter = false
     override val tracksHeat = false
     override val largeCraft = true
+}
+
+class JumpshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+    override val fileName = "jumpship_default.svg"
+    override val armorDiagramFileName = "armor_diagram_jumpship.svg"
+    override val dataPanelTitle: String = bundle.getString("jumpshipData")
+    override val fighter = false
+    override val tracksHeat = false
+    override val largeCraft = true
+    override fun isCapitalScale() = true
+    override fun stationKeeping() = true
+}
+
+class WarshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+    override val fileName = "warship_default.svg"
+    override val armorDiagramFileName = "armor_diagram_warship.svg"
+    override val dataPanelTitle: String = bundle.getString("warshipData")
+    override val fighter = false
+    override val tracksHeat = false
+    override val largeCraft = true
+    override fun isCapitalScale() = true
+}
+
+class SpaceStationRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+    override val fileName = "spacestation_default.svg"
+    override val armorDiagramFileName = "armor_diagram_spacestation.svg"
+    override val dataPanelTitle: String = bundle.getString("stationData")
+    override val fighter = false
+    override val tracksHeat = false
+    override val largeCraft = true
+    override fun isCapitalScale() = true
+    override fun stationKeeping() = true
+    override fun isStation() = true
 }
