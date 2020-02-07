@@ -263,7 +263,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             bundle.getString("criticalDamage.title"), bottomTab = true,
             textBelow = bundle.getString("heatPanel.title"), parent = g)
         val fontSize = FONT_SIZE_MEDIUM
-        val lineHeight = inner.height / 8.0
+        val lineHeight = inner.height / if (isStation()) 7.0 else 8.0
         var ypos = inner.y + lineHeight * 0.5
         val boxHeight = calcFontHeight(fontSize) * 1.5
         val col2X = inner.x + inner.width * 0.63
@@ -328,11 +328,13 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 width = inner.width * 0.57 + boxHeight - padding * 3,
                 fontWeight = SVGConstants.SVG_BOLD_VALUE))
         ypos += lineHeight
-        g.appendChild(DamageCheckBox(bundle.getString("engine"), listOf("-1", "-2", "-3", "-4", "-5", "D"),
-            boxHeight = boxHeight)
-            .draw(this, inner.x + padding, ypos, fontSize,
-                width = inner.width * 0.57 + (boxHeight + padding) * 3,
-                fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        if (!isStation()) {
+            g.appendChild(DamageCheckBox(bundle.getString("engine"), listOf("-1", "-2", "-3", "-4", "-5", "D"),
+                boxHeight = boxHeight)
+                .draw(this, inner.x + padding, ypos, fontSize,
+                    width = inner.width * 0.57 + (boxHeight + padding) * 3,
+                    fontWeight = SVGConstants.SVG_BOLD_VALUE))
+        }
         document.documentElement.appendChild(g)
     }
 

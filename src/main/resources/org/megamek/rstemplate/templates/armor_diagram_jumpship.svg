@@ -583,7 +583,7 @@
     <rect x="145" y="395" width="50" height="150" id="armorPipsARS"/>
     <rect x="-75" y="625" width="150" height="50" id="armorPipsAFT"/>
 </g>
-<g id="structurePips" transform="matrix(0.75,0,0,0.75,163.3,239.1)" fill="none">
+<g id="structurePips" transform="matrix(0.75,0,0,0.75,162.3,239.1)" fill="none">
     <rect x="-32.5" y="0" width="65" height="16" id="kfPips"/>
     <rect x="-32.5" y="45" width="65" height="8" id="sailPips"/>
     <rect x="-32.5" y="82.8" width="65" height="8" id="dcPips"/>
