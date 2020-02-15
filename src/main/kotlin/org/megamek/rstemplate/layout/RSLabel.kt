@@ -21,7 +21,9 @@ import java.lang.Double.min
 class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: String,
                val fontSize: Float, val bgColor: String = FILL_BLACK,
                val fgColor: String = FILL_WHITE, val center: Boolean = false,
-               val right: Boolean = false, val width: Double? = null) {
+               val right: Boolean = false, val width: Double? = null,
+               val textAnchor: String = SVGConstants.SVG_START_VALUE,
+               val textId: String? = null) {
 
     val textHeight = sheet.calcFontHeight(fontSize) * 0.625
     val textWidth = sheet.calcTextLength(text, fontSize, SVGConstants.SVG_BOLD_VALUE)
@@ -51,8 +53,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
 
         val t = sheet.createTextElement(taperWidth + rectWidth * 0.5,
             textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fill = fgColor,
-            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true,
-            width = min(rectWidth - rectMargin * 2, textWidth * 1.5))
+            anchor = textAnchor, fixedWidth = true,
+            width = min(rectWidth - rectMargin * 2, textWidth * 1.5), id = textId)
         g.appendChild(t)
 
         return g

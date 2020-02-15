@@ -72,7 +72,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
     /**
      * @return width of printable area
      */
-    fun width() = size.width - LEFT_MARGIN - RIGHT_MARGIN
+    fun width() = size.width.toDouble() - LEFT_MARGIN - RIGHT_MARGIN
 
     /**
      * @return height of printable area
@@ -82,6 +82,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
     open fun fullPage() = true
 
     open fun showLogo() = true
+
+    open fun showFooter() = true
 
     /**
      * Checks for an effect at the given heat level
@@ -217,6 +219,9 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @return The height of the title text
      */
     open fun addTitle(parent: Element = document.documentElement): Double {
+        if (!showLogo()) {
+            return 0.0
+        }
         val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -240,6 +245,9 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @return The height of the copyright footer's text element.
      */
     open fun addCopyrightFooter(parent: Element = document.documentElement): Double {
+        if (!showFooter()) {
+            return 0.0
+        }
         val bundle = ResourceBundle.getBundle(RecordSheet::class.java.name)
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")

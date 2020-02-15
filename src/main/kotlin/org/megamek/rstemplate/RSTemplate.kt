@@ -61,6 +61,8 @@ fun writeRecordSheets(size: PaperSize, color: Boolean, dir: String) {
     outputRS(JumpshipRecordSheet(size, color), dir)
     outputRS(WarshipRecordSheet(size, color), dir)
     outputRS(SpaceStationRecordSheet(size, color), dir)
+    // other
+    outputRS(InfantryRecordSheet(size, color), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
