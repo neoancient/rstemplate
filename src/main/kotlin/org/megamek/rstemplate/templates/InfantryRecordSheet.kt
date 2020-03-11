@@ -19,6 +19,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
 
     override fun build() {
         val inner = addTabbedBorder()
+        addTextFields(inner)
         addDamagePanel(inner.x + inner.width * 0.2, inner.y + inner.height * 0.05,
             inner.width * 0.8 - padding, inner.height * 0.8)
     }
@@ -39,6 +40,50 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
         document.documentElement.appendChild(g)
         return Cell(LEFT_MARGIN.toDouble(), 0.0, width(), height() - tabBevelY)
             .inset(3.0, 5.0,3.0 + label.textHeight * 2, 5.0)
+    }
+
+    private fun addTextFields(rect: Cell) {
+        addField(bundle.getString("armorType"), "armor_kit", rect.width * 0.6 + padding, rect.y,
+            FONT_SIZE_FREE_LABEL, defaultText = bundle.getString("none"))
+        addField(bundle.getString("divisor"), "armor_divisor", rect.width * 0.9, rect.y,
+            FONT_SIZE_FREE_LABEL, defaultText = "1")
+        // We want to line up the max damage with the row in the damage panel so we use that as our
+        // reference point for determining the text positions
+        val maxDamageYPos = rect.y + rect.height * 0.39 + calcFontHeight(FONT_SIZE_LARGE) * 0.4
+        val lineHeight = (maxDamageYPos - rect.y) / 5.0
+        addField(bundle.getString("commander"), "pilotName0", rect.x, maxDamageYPos - lineHeight * 4,
+            FONT_SIZE_LARGE, blankWidth = rect.width * 0.2 - padding * 2
+                    - calcTextLength("${bundle.getString("commander")}_", FONT_SIZE_LARGE),
+            blankId = "blankCrewName0")
+        addField(bundle.getString("gunnerySkill"), "gunnerySkill0", rect.x, maxDamageYPos - lineHeight * 3,
+            FONT_SIZE_LARGE, blankWidth = rect.width * 0.2 - padding * 2
+                    - calcTextLength("${bundle.getString("gunnerySkill")}_", FONT_SIZE_LARGE),
+            blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0")
+        addField(bundle.getString("antiMechSkill"), "pilotingSkill0", rect.x, maxDamageYPos - lineHeight * 2,
+            FONT_SIZE_LARGE, blankWidth = rect.width * 0.2 - padding * 2
+                    - calcTextLength("${bundle.getString("antiMechSkill")}_", FONT_SIZE_LARGE),
+            blankId = "blankPilotingSkill0", labelId = "pilotingSkillText0")
+        addField(bundle.getString("role"), "role", rect.x, maxDamageYPos - lineHeight,
+            FONT_SIZE_LARGE, labelId = "labelRole")
+        addTextElement(rect.x, maxDamageYPos, bundle.getString("maxWeaponDamage"), FONT_SIZE_LARGE,
+            SVGConstants.SVG_BOLD_VALUE)
+        addTextElement(rect.x, maxDamageYPos + lineHeight, bundle.getString("notes"), FONT_SIZE_LARGE,
+            SVGConstants.SVG_BOLD_VALUE)
+        addRect(rect.x, maxDamageYPos + lineHeight * 2, rect.width * 0.2 - padding,
+            rect.height - maxDamageYPos - lineHeight * 2, fill = SVGConstants.SVG_NONE_VALUE,
+            stroke = SVGConstants.SVG_NONE_VALUE, id = "notes")
+        addField(bundle.getString("bv"), "bv", rect.x + rect.width * 0.2, rect.bottomY() - padding * 2,
+            FONT_SIZE_LARGE, defaultText = "0")
+        addField(bundle.getString("transportWeight"), "transportWt", rect.x + rect.width * 0.3, rect.bottomY() - padding * 2,
+            FONT_SIZE_LARGE, defaultText = "0 tons")
+        addField(bundle.getString("movementMP"), "mp_1", rect.x + rect.width * 0.55, rect.bottomY() - padding * 2,
+            FONT_SIZE_LARGE, defaultText = "0")
+        addField(bundle.getString("movementMP"), "mp_2", rect.x + rect.width * 0.55,
+            rect.bottomY() - padding * 2 + lineHeight * 0.8, FONT_SIZE_LARGE, hidden = true, defaultText = "N/A")
+        addField(bundle.getString("type"), "movement_mode_1", rect.x + rect.width * 0.75, rect.bottomY() - padding * 2,
+            FONT_SIZE_LARGE, defaultText = "0")
+        addField(bundle.getString("type"), "movement_mode_2", rect.x + rect.width * 0.75,
+            rect.bottomY() - padding * 2 + lineHeight * 0.8, FONT_SIZE_LARGE, hidden = true, defaultText = "N/A")
     }
 
     fun addDamagePanel(x: Double, y: Double, width: Double, height: Double) {
