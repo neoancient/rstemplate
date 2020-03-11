@@ -23,7 +23,7 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
                  val textWidth: Double, val stroke: String = FILL_DARK_GREY,
                  val strokeWidth: Double = STROKE_WIDTH,
                  val topTab: Boolean = true,
-                 val bottomTab: Boolean = false,
+                 val bottomTab: Boolean = false, val bevelTopLeft: Boolean = true,
                  val bevelTopRight: Boolean = true, val bevelBottomRight: Boolean = true,
                  val bevelBottomLeft: Boolean = true, val labelWidthBelow: Double? = null) {
 
@@ -43,8 +43,12 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
 
     private fun calcPath(): String {
         val sj = StringJoiner(" ")
-        sj.add("M $x,${y + tabBevelY}")
-        sj.add(absLineTo(tabBevelX, 0.0))
+        if (bevelTopLeft) {
+            sj.add("M $x,${y + tabBevelY}")
+            sj.add(absLineTo(tabBevelX, 0.0))
+        } else {
+            sj.add("M $x,$y")
+        }
         if (topTab) {
             sj.add(relLineTo(textWidth, 0.0))
             sj.add(relLineTo(tabBevelX, tabBevelY))

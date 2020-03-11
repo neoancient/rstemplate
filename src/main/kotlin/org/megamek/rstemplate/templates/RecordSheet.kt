@@ -306,7 +306,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      */
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
                   topTab: Boolean = true, bottomTab: Boolean = false,
-                  bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
+                  bevelTopLeft: Boolean = true, bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true, textBelow: String? = null,
                   parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
@@ -325,10 +325,10 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         }
         val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
             label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
-            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
+            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
         val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932,
-            topTab, bottomTab, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
+            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
