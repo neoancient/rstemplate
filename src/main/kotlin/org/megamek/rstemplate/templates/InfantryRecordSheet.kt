@@ -25,7 +25,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
     }
 
     fun addTabbedBorder(): Cell {
-        val g = createTranslatedGroup(LEFT_MARGIN.toDouble(), 0.0)
+        val g = createTranslatedGroup(0.0, 0.0)
         val label = RSLabel(this,2.5, 3.0, bundle.getString("panel.title"),
             FONT_SIZE_TAB_LABEL, width = width() * 0.5, textId = "type")
         val shadow = CellBorder(2.5, 2.5, width() - 2.5, height() - 6.0 - tabBevelY,

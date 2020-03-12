@@ -83,6 +83,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
 
     open fun showLogo() = true
 
+    open fun showTitle() = showLogo()
+
     open fun showFooter() = true
 
     /**
@@ -219,7 +221,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @return The height of the title text
      */
     open fun addTitle(parent: Element = document.documentElement): Double {
-        if (!showLogo()) {
+        if (!showTitle()) {
             return 0.0
         }
         val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
