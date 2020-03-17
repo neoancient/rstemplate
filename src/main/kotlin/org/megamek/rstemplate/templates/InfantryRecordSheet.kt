@@ -61,10 +61,12 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
         addField(bundle.getString("gunnerySkill"), "gunnerySkill0", rect.x, maxDamageYPos - lineHeight * 3,
             FONT_SIZE_LARGE, blankWidth = rect.width * 0.2 - padding * 2
                     - calcTextLength("${bundle.getString("gunnerySkill")}_", FONT_SIZE_LARGE),
+            fieldOffset = rect.width * 0.1,
             blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0")
         addField(bundle.getString("antiMechSkill"), "pilotingSkill0", rect.x, maxDamageYPos - lineHeight * 2,
             FONT_SIZE_LARGE, blankWidth = rect.width * 0.2 - padding * 2
                     - calcTextLength("${bundle.getString("antiMechSkill")}_", FONT_SIZE_LARGE),
+            fieldOffset = rect.width * 0.1,
             blankId = "blankPilotingSkill0", labelId = "pilotingSkillText0")
         addField(bundle.getString("role"), "role", rect.x, maxDamageYPos - lineHeight,
             FONT_SIZE_LARGE, labelId = "labelRole")
