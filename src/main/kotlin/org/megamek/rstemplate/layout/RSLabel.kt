@@ -21,8 +21,8 @@ import java.lang.Double.min
 class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: String,
                val fontSize: Float, val bgColor: String = FILL_BLACK,
                val fgColor: String = FILL_WHITE, val center: Boolean = false,
-               val right: Boolean = false, val width: Double? = null,
-               val textId: String? = null) {
+               val right: Boolean = false, val width: Double? = null, val fixedWidth: Boolean = true,
+               val textId: String? = null, val centerText: Boolean = true) {
 
     val textHeight = sheet.calcFontHeight(fontSize) * 0.625
     val textWidth = sheet.calcTextLength(text, fontSize, SVGConstants.SVG_BOLD_VALUE)
@@ -50,10 +50,11 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
             + " l ${taperWidth.truncate()},${textHeight.truncate()} l ${(-taperWidth).truncate()},${textHeight.truncate()} l ${(-rectWidth).truncate()},0 Z")
         g.appendChild(background)
 
-        val t = sheet.createTextElement(taperWidth + rectWidth * 0.5,
+        val t = sheet.createTextElement(if (centerText) taperWidth + rectWidth * 0.5 else taperWidth,
             textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fill = fgColor,
-            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true,
-            width = min(rectWidth - rectMargin * 2, textWidth * 1.5), id = textId)
+            anchor = if (centerText) SVGConstants.SVG_MIDDLE_VALUE else SVGConstants.SVG_START_VALUE,
+            fixedWidth = fixedWidth, width = if (fixedWidth) min(rectWidth - rectMargin * 2, textWidth * 1.5)
+            else rectWidth - rectMargin * 2, id = textId)
         g.appendChild(t)
 
         return g

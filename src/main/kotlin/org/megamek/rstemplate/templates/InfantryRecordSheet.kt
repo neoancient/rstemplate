@@ -15,7 +15,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
     override fun fullPage() = false
     override fun showLogo() = false
     override fun showFooter() = false
-    override fun height(): Double = super.height() * 0.25 + tabBevelY - padding
+    override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.25 - padding * 5
 
     override fun build() {
         val inner = addTabbedBorder()
@@ -27,25 +27,28 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
     fun addTabbedBorder(): Cell {
         val g = createTranslatedGroup(0.0, 0.0)
         val label = RSLabel(this,2.5, 3.0, bundle.getString("panel.title"),
-            FONT_SIZE_TAB_LABEL, width = width() * 0.5, textId = "type")
+            FONT_SIZE_TAB_LABEL, width = width() * 0.45, textId = "type", fixedWidth = false,
+            centerText = false)
         val shadow = CellBorder(2.5, 2.5, width() - 2.5, height() - 6.0 - tabBevelY,
             label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
-            true, true, true, true, true, true, width() * 0.5)
+            true, true, true, true, true, true,
+            width() * 0.5)
         val border = CellBorder(0.0, 0.0, width() - 2.5, height() - 5.0 - tabBevelY,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932,
-            true, true, true, true,true, true, width() * 0.5)
+            true, true, true, true,true, true,
+            width() * 0.5)
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
         document.documentElement.appendChild(g)
-        return Cell(LEFT_MARGIN.toDouble(), 0.0, width(), height() - tabBevelY)
+        return Cell(0.0, 0.0, width(), height() - tabBevelY)
             .inset(3.0, 5.0,3.0 + label.textHeight * 2, 5.0)
     }
 
     private fun addTextFields(rect: Cell) {
-        addField(bundle.getString("armorType"), "armor_kit", rect.width * 0.6 + padding, rect.y,
+        addField(bundle.getString("armorType"), "armor_kit", rect.width * 0.55 + padding, rect.y,
             FONT_SIZE_FREE_LABEL, defaultText = bundle.getString("none"))
-        addField(bundle.getString("divisor"), "armor_divisor", rect.width * 0.9, rect.y,
+        addField(bundle.getString("divisor"), "armor_divisor", rect.width * 0.8, rect.y,
             FONT_SIZE_FREE_LABEL, defaultText = "1")
         // We want to line up the max damage with the row in the damage panel so we use that as our
         // reference point for determining the text positions

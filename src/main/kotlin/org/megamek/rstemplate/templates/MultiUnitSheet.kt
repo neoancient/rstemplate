@@ -12,9 +12,9 @@ import java.util.*
  */
 abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
 
-    private val titleCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(),
+    private val titleCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding, TOP_MARGIN.toDouble(),
         width() / 3.0, logoHeight)
-    private val unitCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + padding,
+    private val unitCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + padding * 2,
         size.width.toDouble(), height() - logoHeight - footerHeight - padding * 2)
     override fun showTitle() = false
     override final fun height() = super.height()
@@ -53,7 +53,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
         val lineHeight = calcFontHeight(FONT_SIZE_VLARGE)
         val text = createTextElement(0.0, 0.0, "",
             FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE)
-        val startY = (rect.height - padding - lineHeight * title.size) * 0.5 + lineHeight
+        val startY = (rect.height - padding - lineHeight * title.size) * 0.5 + lineHeight * 0.8
         for (line in title.withIndex()) {
             val tspan = document.createElementNS(null, SVGConstants.SVG_TSPAN_TAG)
             tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE,
