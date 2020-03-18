@@ -46,10 +46,10 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
     }
 
     private fun addTextFields(rect: Cell) {
-        addField(bundle.getString("armorType"), "armor_kit", rect.width * 0.55 + padding, rect.y,
-            FONT_SIZE_FREE_LABEL, defaultText = bundle.getString("none"))
+        addField(bundle.getString("armorType"), "armor_kit", rect.width * 0.50 + padding, rect.y,
+            FONT_SIZE_FREE_LABEL, defaultText = bundle.getString("none"), maxWidth = rect.width * 0.28)
         addField(bundle.getString("divisor"), "armor_divisor", rect.width * 0.8, rect.y,
-            FONT_SIZE_FREE_LABEL, defaultText = "1")
+            FONT_SIZE_FREE_LABEL, defaultText = "1", maxWidth = rect.width * 0.18)
         // We want to line up the max damage with the row in the damage panel so we use that as our
         // reference point for determining the text positions
         val maxDamageYPos = rect.y + rect.height * 0.39 + calcFontHeight(FONT_SIZE_LARGE) * 0.4
@@ -79,16 +79,18 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
             stroke = SVGConstants.SVG_NONE_VALUE, id = "notes")
         addField(bundle.getString("bv"), "bv", rect.x + rect.width * 0.2, rect.bottomY() - padding * 2,
             FONT_SIZE_LARGE, defaultText = "0")
-        addField(bundle.getString("transportWeight"), "transportWt", rect.x + rect.width * 0.3, rect.bottomY() - padding * 2,
+        addField(bundle.getString("transportWeight"), "transport_wt", rect.x + rect.width * 0.3, rect.bottomY() - padding * 2,
             FONT_SIZE_LARGE, defaultText = "0 tons")
         addField(bundle.getString("movementMP"), "mp_1", rect.x + rect.width * 0.55, rect.bottomY() - padding * 2,
             FONT_SIZE_LARGE, defaultText = "0")
         addField(bundle.getString("movementMP"), "mp_2", rect.x + rect.width * 0.55,
-            rect.bottomY() - padding * 2 + lineHeight * 0.8, FONT_SIZE_LARGE, hidden = true, defaultText = "N/A")
+            rect.bottomY() - padding * 2 + lineHeight * 0.8, FONT_SIZE_LARGE, hidden = true,
+            labelId = "mp_2_label", defaultText = "N/A")
         addField(bundle.getString("type"), "movement_mode_1", rect.x + rect.width * 0.75, rect.bottomY() - padding * 2,
             FONT_SIZE_LARGE, defaultText = "0")
         addField(bundle.getString("type"), "movement_mode_2", rect.x + rect.width * 0.75,
-            rect.bottomY() - padding * 2 + lineHeight * 0.8, FONT_SIZE_LARGE, hidden = true, defaultText = "N/A")
+            rect.bottomY() - padding * 2 + lineHeight * 0.8, FONT_SIZE_LARGE, hidden = true,
+            labelId = "movement_mode_2_label", defaultText = "N/A")
     }
 
     fun addDamagePanel(x: Double, y: Double, width: Double, height: Double) {
@@ -133,7 +135,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
         image.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
         image.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.truncate())
         image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.truncate())
-        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "no_soldier$index")
+        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "no_soldier_$index")
         image.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY,
             SVGConstants.CSS_HIDDEN_VALUE)
         image.setAttributeNS(null, "xlink:${SVGConstants.XLINK_HREF_ATTRIBUTE}",
@@ -144,7 +146,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
         image.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
         image.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.truncate())
         image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.truncate())
-        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "soldier$index")
+        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "soldier_$index")
         image.setAttributeNS(null, "xlink:${SVGConstants.XLINK_HREF_ATTRIBUTE}",
             bundle.getString("soldier_image"))
         parent.appendChild(image)
@@ -175,52 +177,52 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
             SVGConstants.SVG_BOLD_VALUE, parent = parent)
         ypos += lineHeight
         addTextElement(x, ypos, bundle.getString("underwater"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, hidden = true, parent = parent)
+            SVGConstants.SVG_BOLD_VALUE, hidden = true, id = "uw_range_modifier", parent = parent)
         ypos += lineHeight
         val fieldGunGroup = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         fieldGunGroup.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
         fieldGunGroup.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "field_gun_columns")
         parent.appendChild(fieldGunGroup)
-        addTextElement(x, ypos, bundle.getString("quantity"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+        addTextElement(x + padding, ypos, bundle.getString("quantity"), FONT_SIZE_SMALL,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.04, ypos, bundle.getString("fieldGunType"), FONT_SIZE_SMALL,
             SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.19, ypos, bundle.getString("damage"), FONT_SIZE_SMALL,
             SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.27, ypos, bundle.getString("minimum"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.30, ypos, bundle.getString("short"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.33, ypos, bundle.getString("medium"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.36, ypos, bundle.getString("long"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.4, ypos, bundle.getString("ammo"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.45, ypos, bundle.getString("crew"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = fieldGunGroup)
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         parent.appendChild(createDestMods(x + width * 0.5, ypos, lineHeight * 0.8))
         parent.appendChild(createSneakCamoMods(x + width * 0.5, ypos, width, lineHeight * 0.8))
         parent.appendChild(createSneakIRMods(x + width * 0.75, ypos, width, lineHeight * 0.8))
         ypos += lineHeight
-        addTextElement(x, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_qty", parent = fieldGunGroup)
+        addTextElement(x + padding, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            id = "field_gun_qty", anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
         addTextElement(x + width * 0.04, ypos, "", FONT_SIZE_SMALL,
             SVGConstants.SVG_BOLD_VALUE, id = "field_gun_type", parent = fieldGunGroup)
         addTextElement(x + width * 0.19, ypos, "", FONT_SIZE_SMALL,
             SVGConstants.SVG_BOLD_VALUE, id = "field_gun_dmg", parent = fieldGunGroup)
-        addTextElement(x + width * 0.27, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_min_range", parent = fieldGunGroup)
-        addTextElement(x + width * 0.30, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_short", parent = fieldGunGroup)
-        addTextElement(x + width * 0.33, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_med", parent = fieldGunGroup)
-        addTextElement(x + width * 0.36, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_long", parent = fieldGunGroup)
-        addTextElement(x + width * 0.4, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_ammo", parent = fieldGunGroup)
-        addTextElement(x + width * 0.45, ypos, "", FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_crew", parent = fieldGunGroup)
+        addTextElement(x + width * 0.27, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, id = "field_gun_min_range", parent = fieldGunGroup)
+        addTextElement(x + width * 0.30, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            id = "field_gun_short", anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
+        addTextElement(x + width * 0.33, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            id = "field_gun_med", anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
+        addTextElement(x + width * 0.36, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            id = "field_gun_long", anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
+        addTextElement(x + width * 0.4, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            id = "field_gun_ammo", anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = fieldGunGroup)
+        addTextElement(x + width * 0.45, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, id = "field_gun_crew", parent = fieldGunGroup)
         ypos += lineHeight
     }
 
