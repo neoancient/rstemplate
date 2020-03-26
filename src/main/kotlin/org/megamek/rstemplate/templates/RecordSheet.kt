@@ -51,6 +51,8 @@ const val BT_LOGO = "btlogo.svg"
 const val BT_LOGO_BW = "btlogo_bw.svg"
 const val CGL_LOGO = "cgllogo.svg"
 const val CGL_LOGO_BW = "cgllogo_bw.svg"
+const val CGL_LOGO_WIDTH = 50.0
+const val CGL_LOGO_HEIGHT = 30.0
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 val crewSizeId = listOf("Single", "Dual", "Triple")
@@ -246,7 +248,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      *
      * @return The height of the copyright footer's text element.
      */
-    open fun addCopyrightFooter(parent: Element = document.documentElement): Double {
+    open fun addCopyrightFooter(x: Double = 0.0, width: Double = size.width.toDouble(),
+                                parent: Element = document.documentElement): Double {
         if (!showFooter()) {
             return 0.0
         }
@@ -258,7 +261,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
 
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${size.width / 2.0} $bottomY)")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${width * 0.5} $bottomY)")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VSMALL}px")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_WEIGHT_ATTRIBUTE, SVGConstants.SVG_BOLD_VALUE)
@@ -269,18 +272,18 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         textElem.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "footer")
 
         var tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
-        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0")
+        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "$x")
         tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "-${height.truncate()}")
-        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.95).truncate())
+        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width * 0.95).truncate())
         tspan.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
         tspan.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "tspanCopyright")
         tspan.textContent = line1
         textElem.appendChild(tspan)
 
         tspan = document.createElementNS(svgNS, SVGConstants.SVG_TSPAN_TAG)
-        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "0")
+        tspan.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, "$x")
         tspan.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, "0")
-        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width() * 0.9).truncate())
+        tspan.setAttributeNS(null, SVGConstants.SVG_TEXT_LENGTH_ATTRIBUTE, (width * 0.9).truncate())
         tspan.setAttributeNS(null, SVGConstants.SVG_LENGTH_ADJUST_ATTRIBUTE, SVGConstants.SVG_SPACING_AND_GLYPHS_VALUE)
         tspan.textContent = line2
         textElem.appendChild(tspan)

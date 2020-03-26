@@ -1,10 +1,8 @@
 package org.megamek.rstemplate.templates
 
 import org.apache.batik.util.SVGConstants
-import org.megamek.rstemplate.layout.Cell
-import org.megamek.rstemplate.layout.CellBorder
-import org.megamek.rstemplate.layout.PaperSize
-import org.megamek.rstemplate.layout.tabBevelY
+import org.megamek.rstemplate.layout.*
+import org.w3c.dom.Element
 import java.util.*
 
 /**
@@ -23,10 +21,22 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
     abstract val unitCount: Int
     abstract val encodedFluffImage: String
     abstract val title: List<String>
+    abstract fun logoInFooter(): Boolean
 
     override fun build() {
         addTitleCell(titleCell)
         addUnitGroups(unitCell)
+    }
+
+    override fun addCopyrightFooter(x: Double, width: Double, parent: Element): Double {
+        if (logoInFooter()) {
+            super.addCopyrightFooter(LEFT_MARGIN + CGL_LOGO_WIDTH + padding, width() - CGL_LOGO_WIDTH - padding, parent)
+            embedImage(LEFT_MARGIN.toDouble(), height() + padding * 2, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
+                if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, parent = parent)
+            return CGL_LOGO_HEIGHT
+        } else {
+            return super.addCopyrightFooter(0.0, size.width.toDouble(), parent)
+        }
     }
 
     private fun addTitleCell(rect: Cell) {
@@ -82,4 +92,5 @@ class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, 
     override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
         .getString("soldier_image")
     override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
+    override fun logoInFooter() = true
 }

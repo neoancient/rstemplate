@@ -191,7 +191,8 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 armorDiagramFileName, ImageAnchor.CENTER, g
             )
             embedImage(
-                rect.width - 50.0 - rightMargin - padding, rect.height - 30.0, 50.0, 30.0,
+                rect.width - 50.0 - rightMargin - padding, rect.height - CGL_LOGO_HEIGHT,
+                CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
                 if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g
             )
         } else {
