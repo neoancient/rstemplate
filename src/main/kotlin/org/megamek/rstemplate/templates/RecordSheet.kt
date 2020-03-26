@@ -683,8 +683,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                 formatStyle(fontSize, SVGConstants.SVG_BOLD_VALUE))
             text.setAttributeNS(null, SVGConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchor)
             for (header in headers.withIndex()) {
-                if (header.index > 0 || !firstColBold || firstColAnchor == null) {
-                    text.appendChild(createTspan(width * colOffsets[header.index],ypos, header.value))
+                if (header.index > 0 || !(firstColBold || firstColAnchor != null)) {
+                    text.appendChild(createTspan(width * colOffsets[header.index], ypos, header.value))
                 }
             }
             g.appendChild(text)
@@ -699,7 +699,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
             rowYPos.add(ypos)
             var lineCount = 0
             for (cell in row.withIndex()) {
-                if (firstColBold && cell.index == 0) {
+                if ((firstColBold || firstColAnchor != null) && cell.index == 0) {
                     continue
                 }
                 val lines = cell.value.split("\n".toRegex())
@@ -711,7 +711,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
             }
             ypos += useLineHeight * lineCount
         }
-        if (firstColBold) {
+        if (firstColBold || firstColAnchor != null) {
             val colX = width * colOffsets[0]
             val colText = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
             colText.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,

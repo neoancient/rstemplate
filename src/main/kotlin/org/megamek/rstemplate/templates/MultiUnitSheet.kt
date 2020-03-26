@@ -94,3 +94,20 @@ class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, 
     override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
     override fun logoInFooter() = true
 }
+
+class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
+    override val fileName = "conventional_infantry_tables.svg"
+    override val unitCount = 3
+    override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
+        .getString("soldier_image")
+    override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
+    override fun logoInFooter() = false
+
+    private val burstFireCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + height() * 0.75,
+        width() * 0.5, height() * 0.25 - footerHeight)
+
+    override fun build() {
+        super.build()
+        InfantryBurstFireTable(this).draw(burstFireCell)
+    }
+}
