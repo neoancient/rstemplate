@@ -248,7 +248,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      *
      * @return The height of the copyright footer's text element.
      */
-    open fun addCopyrightFooter(x: Double = 0.0, width: Double = size.width.toDouble(),
+    open fun addCopyrightFooter(x: Double = LEFT_MARGIN.toDouble(), width: Double = width(),
                                 parent: Element = document.documentElement): Double {
         if (!showFooter()) {
             return 0.0

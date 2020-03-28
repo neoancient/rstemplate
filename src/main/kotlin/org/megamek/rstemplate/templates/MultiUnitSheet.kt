@@ -19,6 +19,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
 
     protected val bundle = ResourceBundle.getBundle(MultiUnitSheet::class.java.name)
     abstract val unitCount: Int
+    abstract val unitCapacity: Int
     abstract val encodedFluffImage: String
     abstract val title: List<String>
     abstract fun logoInFooter(): Boolean
@@ -35,7 +36,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
                 if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, parent = parent)
             return CGL_LOGO_HEIGHT
         } else {
-            return super.addCopyrightFooter(0.0, size.width.toDouble(), parent)
+            return super.addCopyrightFooter(x, width, parent)
         }
     }
 
@@ -79,7 +80,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
 
     private fun addUnitGroups(rect: Cell) {
         for (i in 0 until unitCount) {
-            val g = createTranslatedGroup(rect.x, rect.y + i * rect.height / unitCount)
+            val g = createTranslatedGroup(rect.x, rect.y + i * rect.height / unitCapacity)
             g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unit_$i")
             document.documentElement.appendChild(g)
         }
@@ -89,6 +90,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
 class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
     override val fileName = "conventional_infantry_default.svg"
     override val unitCount = 4
+    override val unitCapacity = 4
     override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
         .getString("soldier_image")
     override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
@@ -98,6 +100,7 @@ class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, 
 class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
     override val fileName = "conventional_infantry_tables.svg"
     override val unitCount = 3
+    override val unitCapacity = 4
     override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
         .getString("soldier_image")
     override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
@@ -105,9 +108,12 @@ class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(
 
     private val burstFireCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + height() * 0.75,
         width() * 0.5, height() * 0.25 - footerHeight)
+    private val weaponDamageCell = Cell(burstFireCell.rightX() + padding, burstFireCell.y + tabBevelY,
+        width() * 0.5 - padding, height() * 0.25 - footerHeight - tabBevelY)
 
     override fun build() {
         super.build()
         InfantryBurstFireTable(this).draw(burstFireCell)
+        InfantryWeaponDamageTable(this).draw(weaponDamageCell)
     }
 }
