@@ -50,7 +50,7 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
             + " l ${taperWidth.truncate()},${textHeight.truncate()} l ${(-taperWidth).truncate()},${textHeight.truncate()} l ${(-rectWidth).truncate()},0 Z")
         g.appendChild(background)
 
-        val t = sheet.createTextElement(if (centerText) taperWidth + rectWidth * 0.5 else taperWidth,
+        val t = sheet.createTextElement(if (centerText) taperWidth + rectWidth * 0.5 else taperWidth + padding,
             textHeight * 1.5, text, fontSize, SVGConstants.SVG_BOLD_VALUE, fill = fgColor,
             anchor = if (centerText) SVGConstants.SVG_MIDDLE_VALUE else SVGConstants.SVG_START_VALUE,
             fixedWidth = fixedWidth, width = if (fixedWidth) min(rectWidth - rectMargin * 2, textWidth * 1.5)
