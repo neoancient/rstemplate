@@ -143,9 +143,9 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
     override val title = (1..2).map { bundle.getString("ba.title.$it") }.toList()
     override fun logoInFooter() = false
 
-    private val legAttackTableCell = Cell(LEFT_MARGIN + width() * 0.65 + padding,
+    private val legAttackTableCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding,
         TOP_MARGIN + logoHeight + padding * 2,
-        width() * 0.35 - padding, (height() - logoHeight - footerHeight) * 0.13 - padding)
+        width() / 3.0 - padding, (height() - logoHeight - footerHeight) * 0.13 - padding)
     private val swarmAttackTableCell = Cell(legAttackTableCell.x, legAttackTableCell.bottomY() + padding,
         legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.11 - padding)
     private val swarmAttackModsCell = Cell(legAttackTableCell.x, swarmAttackTableCell.bottomY() + padding,
@@ -158,5 +158,6 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
     override fun build() {
         super.build()
         LegAttacksTable(this).draw(legAttackTableCell)
+        SwarmAttacksTable(this).draw(swarmAttackTableCell)
     }
 }
