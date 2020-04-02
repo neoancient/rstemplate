@@ -9,7 +9,7 @@ import java.util.*
  *
  */
 class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
-    override val fileName = "battle_armor.svg"
+    override val fileName = "battle_armor_squad.svg"
 
     private val bundle = ResourceBundle.getBundle(BattleArmorRecordSheet::class.java.name)
     override fun fullPage() = false

@@ -59,7 +59,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
             "1")
         image.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, (rect.width * 0.15).truncate())
         image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, (rect.height - 2 - padding).truncate())
-        image.setAttributeNS(null, "xlink:href", bundle.getString("infantry.fluff"))
+        image.setAttributeNS(null, "xlink:href", encodedFluffImage)
         g.appendChild(image)
         val lineHeight = calcFontHeight(FONT_SIZE_VLARGE)
         val text = createTextElement(0.0, 0.0, "",
@@ -103,17 +103,31 @@ class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(
     override val unitCapacity = 4
     override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
         .getString("soldier_image")
-    override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
+    override val title = (1..3).map { bundle.getString("infantry.title.$it") }.toList()
     override fun logoInFooter() = false
 
-    private val burstFireCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + height() * 0.75,
-        width() * 0.5, height() * 0.25 - footerHeight)
-    private val weaponDamageCell = Cell(burstFireCell.rightX() + padding, burstFireCell.y + tabBevelY,
-        width() * 0.5 - padding, height() * 0.25 - footerHeight - tabBevelY)
+    private val burstFireCell = Cell(
+        LEFT_MARGIN.toDouble(), TOP_MARGIN + height() * 0.75,
+        width() * 0.5, height() * 0.25 - footerHeight
+    )
+    private val weaponDamageCell = Cell(
+        burstFireCell.rightX() + padding, burstFireCell.y + tabBevelY,
+        width() * 0.5 - padding, height() * 0.25 - footerHeight - tabBevelY
+    )
 
     override fun build() {
         super.build()
         InfantryBurstFireTable(this).draw(burstFireCell)
         InfantryWeaponDamageTable(this).draw(weaponDamageCell)
     }
+}
+
+class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color) {
+    override val fileName = "battle_armor_default.svg"
+    override val unitCount = 5
+    override val unitCapacity = 5
+    override val encodedFluffImage = ResourceBundle.getBundle(BattleArmorRecordSheet::class.java.name)
+        .getString("ba_image")
+    override val title = (1..2).map { bundle.getString("ba.title.$it") }.toList()
+    override fun logoInFooter() = false
 }

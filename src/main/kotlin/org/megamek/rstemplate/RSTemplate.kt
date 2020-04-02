@@ -66,6 +66,7 @@ fun writeRecordSheets(size: PaperSize, color: Boolean, dir: String) {
     outputRS(InfantryMultiSheet(size, color), dir)
     outputRS(InfantryMultiSheetTables(size, color), dir)
     outputRS(BattleArmorRecordSheet(size, color), dir)
+    outputRS(BAMultiSheet(size, color), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
