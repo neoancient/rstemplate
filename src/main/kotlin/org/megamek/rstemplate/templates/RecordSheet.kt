@@ -313,7 +313,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                   topTab: Boolean = true, bottomTab: Boolean = false,
                   bevelTopLeft: Boolean = true, bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true, textBelow: String? = null,
-                  parent: Element = document.documentElement): Cell {
+                  textId: String? = null, parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (x != 0.0 && y != 0.0) {
             g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -321,7 +321,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         }
 
         val label = RSLabel(this,2.5, 3.0, title,
-            FONT_SIZE_TAB_LABEL, width = if (topTab) null else width - 5.0 - bevelX * 2)
+            FONT_SIZE_TAB_LABEL, width = if (topTab) null else width - 5.0 - bevelX * 2, textId = textId)
         val labelWidthBelow = if (textBelow != null) {
             val lbl = RSLabel(this, 2.5, 3.0, textBelow, FONT_SIZE_TAB_LABEL, width = null)
             lbl.rectWidth + 4.0
