@@ -3,7 +3,6 @@ package org.megamek.rstemplate.layout
 import org.apache.batik.util.SVGConstants
 import org.megamek.rstemplate.templates.FONT_SIZE_VSMALL
 import org.megamek.rstemplate.templates.RecordSheet
-import org.megamek.rstemplate.templates.truncate
 import org.w3c.dom.Element
 import java.util.*
 

@@ -11,13 +11,13 @@ import java.util.*
 abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
 
     private val titleCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding, TOP_MARGIN.toDouble(),
-        width() / 3.0, logoHeight)
+        width() / 3.0 - padding, logoHeight)
     private val unitCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + padding * 2,
         size.width.toDouble(), height() - logoHeight - footerHeight - padding * 2)
     override fun showTitle() = false
-    override final fun height() = super.height()
+    final override fun height() = super.height()
 
-    protected val bundle = ResourceBundle.getBundle(MultiUnitSheet::class.java.name)
+    protected val bundle: ResourceBundle = ResourceBundle.getBundle(MultiUnitSheet::class.java.name)
     abstract val unitCount: Int
     abstract val unitCapacity: Int
     abstract val encodedFluffImage: String
@@ -30,13 +30,13 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
     }
 
     override fun addCopyrightFooter(x: Double, width: Double, parent: Element): Double {
-        if (logoInFooter()) {
+        return if (logoInFooter()) {
             super.addCopyrightFooter(LEFT_MARGIN + CGL_LOGO_WIDTH + padding, width() - CGL_LOGO_WIDTH - padding, parent)
             embedImage(LEFT_MARGIN.toDouble(), height() + padding * 2, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
                 if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, parent = parent)
-            return CGL_LOGO_HEIGHT
+            CGL_LOGO_HEIGHT
         } else {
-            return super.addCopyrightFooter(x, width, parent)
+            super.addCopyrightFooter(x, width, parent)
         }
     }
 
@@ -44,10 +44,22 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
         val g = createTranslatedGroup(rect.x, rect.y)
         val shadow = CellBorder(2.5, 2.5, rect.width - 2.5, rect.height - 2.5,
             0.0, FILL_LIGHT_GREY, 5.2,
-            false, false, true, true, true, true)
+            topTab = false,
+            bottomTab = false,
+            bevelTopLeft = true,
+            bevelTopRight = true,
+            bevelBottomRight = true,
+            bevelBottomLeft = true
+        )
         val border = CellBorder(0.0, 0.0, rect.width - 2.5, rect.height - 2.5,
             0.0, FILL_DARK_GREY, 1.932,
-            false, false, true, true, true, true)
+            false,
+            bottomTab = false,
+            bevelTopLeft = true,
+            bevelTopRight = true,
+            bevelBottomRight = true,
+            bevelBottomLeft = true
+        )
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         addRect(rect.width * 0.6, 1.0, rect.width * 0.15,
@@ -91,7 +103,7 @@ class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, 
     override val fileName = "conventional_infantry_default.svg"
     override val unitCount = 4
     override val unitCapacity = 4
-    override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
+    override val encodedFluffImage: String = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
         .getString("soldier_image")
     override val title = (1..3).map{bundle.getString("infantry.title.$it")}.toList()
     override fun logoInFooter() = true
@@ -101,7 +113,7 @@ class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(
     override val fileName = "conventional_infantry_tables.svg"
     override val unitCount = 3
     override val unitCapacity = 4
-    override val encodedFluffImage = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
+    override val encodedFluffImage: String = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
         .getString("soldier_image")
     override val title = (1..3).map { bundle.getString("infantry.title.$it") }.toList()
     override fun logoInFooter() = false
@@ -126,8 +138,25 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
     override val fileName = "battle_armor_default.svg"
     override val unitCount = 5
     override val unitCapacity = 5
-    override val encodedFluffImage = ResourceBundle.getBundle(BattleArmorRecordSheet::class.java.name)
+    override val encodedFluffImage: String = ResourceBundle.getBundle(BattleArmorRecordSheet::class.java.name)
         .getString("ba_image")
     override val title = (1..2).map { bundle.getString("ba.title.$it") }.toList()
     override fun logoInFooter() = false
+
+    private val legAttackTableCell = Cell(LEFT_MARGIN + width() * 0.65 + padding,
+        TOP_MARGIN + logoHeight + padding * 2,
+        width() * 0.35 - padding, (height() - logoHeight - footerHeight) * 0.13 - padding)
+    private val swarmAttackTableCell = Cell(legAttackTableCell.x, legAttackTableCell.bottomY() + padding,
+        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.11 - padding)
+    private val swarmAttackModsCell = Cell(legAttackTableCell.x, swarmAttackTableCell.bottomY() + padding,
+        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.3 - padding)
+    private val swarmAttackLocCell = Cell(legAttackTableCell.x, swarmAttackModsCell.bottomY() + padding,
+        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.22 - padding)
+    private val transportLocCell = Cell(legAttackTableCell.x, swarmAttackLocCell.bottomY() + padding,
+        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.24 - padding)
+
+    override fun build() {
+        super.build()
+        LegAttacksTable(this).draw(legAttackTableCell)
+    }
 }
