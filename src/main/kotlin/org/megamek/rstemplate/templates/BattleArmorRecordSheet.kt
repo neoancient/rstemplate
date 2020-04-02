@@ -5,6 +5,7 @@ import org.megamek.rstemplate.layout.Cell
 import org.megamek.rstemplate.layout.PaperSize
 import org.megamek.rstemplate.layout.RoundedBorder
 import org.megamek.rstemplate.layout.tabBevelY
+import org.w3c.dom.Element
 import java.util.*
 
 /**
@@ -23,9 +24,9 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
         val internal = addBorder(0.0, 0.0, width() * 0.65, height() - tabBevelY,
             bundle.getString("title"), true,true,
             textBelow = bundle.getString("title"), textId = "squad")
-        addTextFields(Cell(internal.x, internal.y, internal.width * 0.5, internal.height))
-        addDamagePanel(Cell(internal.x + internal.width * 0.5, internal.y,
-            internal.width * 0.5, internal.height))
+        addTextFields(Cell(internal.x, internal.y, internal.width * 0.5 - padding, internal.height))
+        addDamagePanel(Cell(internal.x + internal.width * 0.5 - padding, internal.y - tabBevelY + padding,
+            internal.width * 0.5, internal.height + tabBevelY - padding))
     }
 
     fun addTextFields(rect: Cell) {
@@ -76,7 +77,45 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
     }
 
     fun addDamagePanel(rect: Cell) {
-
+        val height = rect.height / 6.0 - 2.0
+        var ypos = rect.y
+        for (i in 1..6) {
+            document.documentElement.appendChild(drawSuit(i, rect.x, ypos, rect.width, height))
+            ypos += rect.height / 6.0
+        }
     }
 
+    private fun drawSuit(index: Int, x: Double, y: Double, width: Double, height: Double): Element {
+        val bevelX = 2.25
+        val bevelY = 2.4
+        val g = createTranslatedGroup(x, y)
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "suit$index")
+        val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
+        path.setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_ATTRIBUTE, "0.966")
+        path.setAttributeNS(null, SVGConstants.SVG_STROKE_ATTRIBUTE, FILL_DARK_GREY)
+        path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
+        path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
+            "M 0,$bevelY l $bevelX,-$bevelY h 20 l $bevelX,$bevelY h ${width - 20 - bevelX * 3} l $bevelX,$bevelY" +
+                    "v ${height - bevelY * 4} l -$bevelX,$bevelY h -${width - 20 - bevelX * 3} l -$bevelX,$bevelY" +
+                    "h -20 l -$bevelX,-$bevelY Z")
+        g.appendChild(path)
+        addTextElement(9.0, height * 0.7, index.toString(),
+            FONT_SIZE_TAB_LABEL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE, parent = g)
+        addSuitImage(index,9.0, 1.0, 16.0, height -  2.0, g)
+        addRect(20.0 + bevelX * 2, bevelY + 1.0, width - 20.0 - bevelX * 3, height - bevelY * 2 - 2,
+            stroke = SVGConstants.SVG_NONE_VALUE, id = "pips_$index", parent = g)
+        return g
+    }
+
+    private fun addSuitImage(index: Int, x: Double, y: Double, width: Double, height: Double, parent: Element) {
+        var image = document.createElementNS(svgNS, SVGConstants.SVG_IMAGE_TAG)
+        image.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
+        image.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
+        image.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width.truncate())
+        image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.truncate())
+        image.setAttributeNS(null, "xlink:${SVGConstants.XLINK_HREF_ATTRIBUTE}",
+            bundle.getString("ba_image"))
+        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "fluff$index")
+        parent.appendChild(image)
+    }
 }
