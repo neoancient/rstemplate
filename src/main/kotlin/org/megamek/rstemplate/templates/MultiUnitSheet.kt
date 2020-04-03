@@ -160,5 +160,6 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
         LegAttacksTable(this).draw(legAttackTableCell)
         SwarmAttacksTable(this).draw(swarmAttackTableCell)
         SwarmAttackModsTable(this).draw(swarmAttackModsCell)
+        SwarmAttackLocTable(this).draw(swarmAttackLocCell)
     }
 }
