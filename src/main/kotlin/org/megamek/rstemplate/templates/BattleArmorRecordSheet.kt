@@ -18,7 +18,7 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
     override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - padding * 5
 
     override fun build() {
-        val internal = addBorder(0.0, 0.0, width() * 0.65, height() - tabBevelY,
+        val internal = addBorder(0.0, 0.0, width() * 2.0 / 3.0, height() - tabBevelY,
             bundle.getString("title"), topTab = true,bottomTab = true,
             textBelow = bundle.getString("title"), textId = "squad")
         addTextFields(Cell(internal.x, internal.y, internal.width * 0.5 - padding, internal.height))
@@ -33,34 +33,34 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
         addField(bundle.getString("type"), "type", rect.x, ypos, fontSize, maxWidth = rect.width)
         ypos += lineHeight
         addField(bundle.getString("gunnerySkill"), "gunnerySkill0", rect.x + padding, ypos, fontSize,
-            blankId = "blankGunnerySkill0", maxWidth = rect.width * 0.5 - padding)
+            blankId = "blankGunnerySkill0", blankWidth = rect.width * 0.5 - padding)
         addField(bundle.getString("antiMechSkill"), "pilotingSkill0", rect.x + rect.width * 0.5 + padding,
-            ypos, fontSize, blankId = "blankPilotingSkill0", maxWidth = rect.width * 0.5 - padding)
+            ypos, fontSize, blankId = "blankPilotingSkill0", blankWidth = rect.width * 0.5 - padding)
         ypos += lineHeight
-        addField(bundle.getString("groundMP"), "walkMP", rect.x + padding, ypos, fontSize,
+        addField(bundle.getString("groundMP"), "mpWalk", rect.x + padding, ypos, fontSize,
             maxWidth = rect.width * 0.5 - padding)
-        addField(bundle.getString("jumpMP"), "jumpMP", rect.x + rect.width * 0.5 + padding,
-            ypos, fontSize, maxWidth = rect.width * 0.5 - padding)
-        addRect(padding, ypos, rect.width - padding, rect.height - ypos, id = "inventory")
+        addField(bundle.getString("jumpMP"), "mp_2", rect.x + rect.width * 0.5 + padding,
+            ypos, fontSize, maxWidth = rect.width * 0.5 - padding, labelId = "movement_mode_2")
+        addRect(padding, ypos, rect.width - padding, rect.height - ypos + lineHeight * 0.5, id = "inventory")
         ypos = rect.bottomY() - lineHeight
-        addTextElement(padding, ypos, bundle.getString("mechanized"),
+        addTextElement(rect.x + padding, ypos, bundle.getString("mechanized"),
             fontSize, SVGConstants.SVG_BOLD_VALUE)
-        addTextElement(padding + rect.width * 0.35, ypos, bundle.getString("swarm"),
+        addTextElement(rect.x + padding + rect.width * 0.35, ypos, bundle.getString("swarm"),
             fontSize, SVGConstants.SVG_BOLD_VALUE)
-        addTextElement(padding + rect.width * 0.63, ypos, bundle.getString("leg"),
+        addTextElement(rect.x + padding + rect.width * 0.63, ypos, bundle.getString("leg"),
             fontSize, SVGConstants.SVG_BOLD_VALUE)
-        addTextElement(padding + rect.width * 0.84, ypos, bundle.getString("ap"),
+        addTextElement(rect.x + padding + rect.width * 0.84, ypos, bundle.getString("ap"),
             fontSize, SVGConstants.SVG_BOLD_VALUE)
         ypos -= lineHeight * 0.8
-        addCheckBox(padding + calcTextLength(bundle.getString("mechanized") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE),
+        addCheckBox(rect.x +padding + calcTextLength(bundle.getString("mechanized") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE),
             ypos, lineHeight.toDouble(), "checkMechanized")
-        addCheckBox(padding + rect.width * 0.35 +
+        addCheckBox(rect.x +padding + rect.width * 0.35 +
                 calcTextLength(bundle.getString("swarm") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE),
             ypos, lineHeight.toDouble(), "checkSwarm")
-        addCheckBox(padding + rect.width * 0.63 +
+        addCheckBox(rect.x +padding + rect.width * 0.63 +
                 calcTextLength(bundle.getString("leg") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE),
             ypos, lineHeight.toDouble(), "checkLeg")
-        addCheckBox(padding + rect.width * 0.84 +
+        addCheckBox(rect.x +padding + rect.width * 0.84 +
                 calcTextLength(bundle.getString("ap") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE),
             ypos, lineHeight.toDouble(), "checkAP")
         addRect(rect.rightX() - 20 - padding,rect.y - tabBevelY + 1.0,20.0, 20.0, id = "eraIcon")
@@ -77,7 +77,7 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
     private fun addDamagePanel(rect: Cell) {
         val height = rect.height / 6.0 - 2.0
         var ypos = rect.y
-        for (i in 1..6) {
+        for (i in 0..5) {
             document.documentElement.appendChild(drawSuit(i, rect.x, ypos, rect.width, height))
             ypos += rect.height / 6.0
         }
@@ -101,10 +101,10 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
                     "v ${height - bevelY * 4} l -$bevelX,$bevelY h -${width - 20 - bevelX * 3} l -$bevelX,$bevelY" +
                     "h -20 l -$bevelX,-$bevelY Z")
         g.appendChild(path)
-        addTextElement(9.0, height * 0.7, index.toString(),
+        addTextElement(9.0, height * 0.7, (index + 1).toString(),
             FONT_SIZE_TAB_LABEL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE, parent = g)
         addSuitImage(index,9.0, 1.0, 16.0, height -  2.0, g)
-        addRect(20.0 + bevelX * 2, bevelY + 1.0, width - 20.0 - bevelX * 3, height - bevelY * 2 - 2,
+        addRect(20.0 + bevelX * 2, bevelY + 1.0, width - 20.0 - bevelX * 3, height - bevelY * 2 - 1,
             stroke = SVGConstants.SVG_NONE_VALUE, id = "pips_$index", parent = g)
         return g
     }

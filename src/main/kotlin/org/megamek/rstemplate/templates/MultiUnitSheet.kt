@@ -145,15 +145,15 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
 
     private val legAttackTableCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding,
         TOP_MARGIN + logoHeight + padding * 2,
-        width() / 3.0 - padding, (height() - logoHeight - footerHeight) * 0.13 - padding)
+        width() / 3.0 - padding, (height() - logoHeight - footerHeight - padding) * 0.13 - padding)
     private val swarmAttackTableCell = Cell(legAttackTableCell.x, legAttackTableCell.bottomY() + padding,
-        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.11 - padding)
+        legAttackTableCell.width, (height() - logoHeight - footerHeight - padding) * 0.11 - padding)
     private val swarmAttackModsCell = Cell(legAttackTableCell.x, swarmAttackTableCell.bottomY() + padding,
-        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.3 - padding)
+        legAttackTableCell.width, (height() - logoHeight - footerHeight - padding) * 0.3 - padding)
     private val swarmAttackLocCell = Cell(legAttackTableCell.x, swarmAttackModsCell.bottomY() + padding,
-        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.22 - padding)
+        legAttackTableCell.width, (height() - logoHeight - footerHeight - padding) * 0.22 - padding)
     private val transportLocCell = Cell(legAttackTableCell.x, swarmAttackLocCell.bottomY() + padding,
-        legAttackTableCell.width, (height() - logoHeight - footerHeight) * 0.24 - padding)
+        legAttackTableCell.width, (height() - logoHeight - footerHeight - padding) * 0.24 - padding)
 
     override fun build() {
         super.build()
