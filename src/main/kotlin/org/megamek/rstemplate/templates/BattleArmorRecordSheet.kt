@@ -33,9 +33,11 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
         addField(bundle.getString("type"), "type", rect.x, ypos, fontSize, maxWidth = rect.width)
         ypos += lineHeight
         addField(bundle.getString("gunnerySkill"), "gunnerySkill0", rect.x + padding, ypos, fontSize,
-            blankId = "blankGunnerySkill0", blankWidth = rect.width * 0.5 - padding)
+            blankId = "blankGunnerySkill0", blankWidth = rect.width * 0.5 - padding -
+                    calcTextLength(bundle.getString("gunnerySkill") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE))
         addField(bundle.getString("antiMechSkill"), "pilotingSkill0", rect.x + rect.width * 0.5 + padding,
-            ypos, fontSize, blankId = "blankPilotingSkill0", blankWidth = rect.width * 0.5 - padding)
+            ypos, fontSize, blankId = "blankPilotingSkill0", blankWidth = rect.width * 0.5 - padding * 2 -
+                    calcTextLength(bundle.getString("antiMechSkill") + "_", fontSize, SVGConstants.SVG_BOLD_VALUE))
         ypos += lineHeight
         addField(bundle.getString("groundMP"), "mpWalk", rect.x + padding, ypos, fontSize,
             maxWidth = rect.width * 0.5 - padding)
