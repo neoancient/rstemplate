@@ -764,9 +764,10 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                 var xpos = x
                 for (seg in segments) {
                     if (seg.isEmpty()) continue
-                    val textWidth = mult * calcTextLength(seg, fontSize, styles[styleIndex])
+                    val textWidth = mult * calcTextLength(if (styleIndex == 1) "${seg}_" else seg,
+                        fontSize, styles[styleIndex])
                     addTextElement(xpos, ypos, seg, fontSize,
-                        rightJustified = !last,
+                        rightJustified = !last, fixedWidth = true,
                         width = if (last) null else textWidth, fontStyle = styles[styleIndex], parent = parent)
                     xpos += textWidth
                     styleIndex = 1 - styleIndex
