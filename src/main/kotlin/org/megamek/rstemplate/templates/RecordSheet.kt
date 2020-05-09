@@ -310,6 +310,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @param fontSize The size of font to use for the title label
      * @param tabWidth The width of the top tab. If null, the tabe is sized by the length of the text.
      *                 If there is no top tab this is ignored.
+     * @param dropShadow If true, adds a drop shadow on the bottom and right side of the border.
+     *                   The drop shadow in contained within the allocated dimensions of the border.
      * @param equalBevels If true, the tab bevels have the same slope as the corner bevels.
      *                    Used to fit panels together better.
      * @return The area inside the border
@@ -319,7 +321,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                   bevelTopLeft: Boolean = true, bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true, textBelow: String? = null,
                   textId: String? = null, fontSize: Float = FONT_SIZE_TAB_LABEL,
-                  tabWidth: Double? = null, equalBevels: Boolean = false,
+                  tabWidth: Double? = null, dropShadow: Boolean = true, equalBevels: Boolean = false,
                   parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (x != 0.0 && y != 0.0) {
@@ -337,19 +339,34 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         } else {
             null
         }
-        val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
-            label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
-            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
-            labelWidthBelow, equalBevels)
-        val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
-            label.rectWidth + 4, FILL_DARK_GREY, 1.932,
-            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
-            labelWidthBelow, equalBevels)
-        g.appendChild(shadow.draw(document))
-        g.appendChild(border.draw(document))
+        if (dropShadow) {
+            val shadow = CellBorder(
+                2.5, 2.5, width - 6.0, height - 6.0,
+                label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
+                topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
+                labelWidthBelow, equalBevels
+            )
+            val border = CellBorder(
+                0.0, 0.0, width - 5.0, height - 5.0,
+                label.rectWidth + 4, FILL_DARK_GREY, 1.932,
+                topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
+                labelWidthBelow, equalBevels
+            )
+            g.appendChild(shadow.draw(document))
+            g.appendChild(border.draw(document))
+        } else {
+            val border = CellBorder(
+                0.0, 0.0, width - 2.0, height - 2.0, label.rectWidth + 4, FILL_DARK_GREY, 1.932,
+                topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
+                labelWidthBelow, equalBevels
+            )
+            g.appendChild(border.draw(document))
+        }
         g.appendChild(label.draw())
         parent.appendChild(g)
-        return Cell(x, y, width, height).inset(3.0, 5.0,3.0 + label.textHeight * 2, 5.0)
+        return Cell(x, y, width, height).inset(3.0,
+            if (dropShadow) 5.0 else 3.0,3.0 + label.textHeight * 2,
+            if (dropShadow) 5.0 else 3.0)
     }
 
     fun formatStyle(fontSize: Float, fontWeight: String = SVGConstants.SVG_NORMAL_VALUE,
