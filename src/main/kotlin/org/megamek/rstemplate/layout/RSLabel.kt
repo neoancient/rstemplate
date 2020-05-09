@@ -22,12 +22,13 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
                val fontSize: Float, val bgColor: String = FILL_BLACK,
                val fgColor: String = FILL_WHITE, val center: Boolean = false,
                val right: Boolean = false, val width: Double? = null, val fixedWidth: Boolean = true,
-               val textId: String? = null, val centerText: Boolean = true) {
+               val textId: String? = null, val centerText: Boolean = true,
+               val bevelX: Double = tabBevelX, val bevelY: Double = tabBevelY) {
 
     val textHeight = sheet.calcFontHeight(fontSize) * 0.625
     val textWidth = sheet.calcTextLength(text, fontSize, SVGConstants.SVG_BOLD_VALUE)
     val rectMargin = textWidth * 0.05
-    val taperWidth = textHeight * tabBevelX / tabBevelY
+    val taperWidth = textHeight * bevelX / bevelY
     val rectWidth = width ?: textWidth + rectMargin * 2
 
     fun height() = textHeight * 2

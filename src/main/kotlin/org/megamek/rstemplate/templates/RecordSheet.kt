@@ -307,13 +307,20 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @param bevelBottomRight Whether to bevel the bottom right corner; ignored if {@code bottomTab} is true
      * @param textBelow The text in the top tab of the panel below this one, if any. Used to size the
      *                  bottom tab. If there is no bottom tab, this is ignored
+     * @param fontSize The size of font to use for the title label
+     * @param tabWidth The width of the top tab. If null, the tabe is sized by the length of the text.
+     *                 If there is no top tab this is ignored.
+     * @param equalBevels If true, the tab bevels have the same slope as the corner bevels.
+     *                    Used to fit panels together better.
      * @return The area inside the border
      */
     fun addBorder(x: Double, y: Double, width: Double, height: Double, title: String,
                   topTab: Boolean = true, bottomTab: Boolean = false,
                   bevelTopLeft: Boolean = true, bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true, textBelow: String? = null,
-                  textId: String? = null, parent: Element = document.documentElement): Cell {
+                  textId: String? = null, fontSize: Float = FONT_SIZE_TAB_LABEL,
+                  tabWidth: Double? = null, equalBevels: Boolean = false,
+                  parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (x != 0.0 && y != 0.0) {
             g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -321,19 +328,23 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         }
 
         val label = RSLabel(this,2.5, 3.0, title,
-            FONT_SIZE_TAB_LABEL, width = if (topTab) null else width - 5.0 - bevelX * 2, textId = textId)
+            fontSize, width = if (topTab) tabWidth else width - 5.0 - bevelX * 2, textId = textId,
+            bevelX = if (equalBevels) bevelX else tabBevelX,
+            bevelY = if (equalBevels) bevelY else tabBevelY)
         val labelWidthBelow = if (textBelow != null) {
-            val lbl = RSLabel(this, 2.5, 3.0, textBelow, FONT_SIZE_TAB_LABEL, width = null)
+            val lbl = RSLabel(this, 2.5, 3.0, textBelow, fontSize, width = null)
             lbl.rectWidth + 4.0
         } else {
             null
         }
         val shadow = CellBorder(2.5, 2.5, width - 6.0, height - 6.0,
             label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
-            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
+            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
+            labelWidthBelow, equalBevels)
         val border = CellBorder(0.0, 0.0, width - 5.0, height - 5.0,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932,
-            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft, labelWidthBelow)
+            topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
+            labelWidthBelow, equalBevels)
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
