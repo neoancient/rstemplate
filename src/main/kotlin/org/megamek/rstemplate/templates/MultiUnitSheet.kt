@@ -164,3 +164,12 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
         TransportLocTable(this).draw(transportLocCell)
     }
 }
+
+internal class ProtoMechMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
+    override val fileName = "protomech_default.svg"
+    override val unitCount = 5
+    override val unitCapacity = 5
+    override val encodedFluffImage: String = bundle.getString("protomech.fluff")
+    override val title = (1..2).map{bundle.getString("protomech.title.$it")}.toList()
+    override fun logoInFooter() = true
+}

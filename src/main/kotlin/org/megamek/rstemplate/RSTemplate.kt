@@ -70,6 +70,7 @@ fun writeRecordSheets(size: PaperSize, color: Boolean, dir: String) {
     outputRS(BipedProtoMechRecordSheet(size, color), dir)
     outputRS(QuadProtoMechRecordSheet(size, color), dir)
     outputRS(GliderProtoMechRecordSheet(size, color), dir)
+    outputRS(ProtoMechMultiSheet(size, color), dir)
 }
 
 private fun outputRS(sheet: RecordSheet, dir: String) {
