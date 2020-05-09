@@ -17,10 +17,11 @@ import org.w3c.dom.Element
  * @param control The length of the control point segments
  * @param strokeWidth The width of the border line
  * @param stroke The color of the border
+ * @param fill The color of in the interior
  */
 class RoundedBorder (val x: Double, val y: Double, val width: Double, val height: Double,
                      val radius: Double, val control: Double, val strokeWidth: Double,
-                     val stroke: String = FILL_DARK_GREY
+                     val stroke: String = FILL_DARK_GREY, val fill: String = SVGConstants.SVG_NONE_VALUE
 ) {
 
     /**
@@ -31,7 +32,7 @@ class RoundedBorder (val x: Double, val y: Double, val width: Double, val height
     fun draw(doc: Document): Element {
         val path = doc.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
 
-        path.setAttributeNS(null, SVGConstants.CSS_FILL_PROPERTY, SVGConstants.SVG_NONE_VALUE)
+        path.setAttributeNS(null, SVGConstants.CSS_FILL_PROPERTY, fill)
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_PROPERTY, stroke)
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_WIDTH_PROPERTY, strokeWidth.toString())
         path.setAttributeNS(null, SVGConstants.CSS_STROKE_LINEJOIN_PROPERTY, SVGConstants.SVG_ROUND_VALUE)

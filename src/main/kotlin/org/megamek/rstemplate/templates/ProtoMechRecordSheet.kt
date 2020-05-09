@@ -6,7 +6,7 @@ import org.w3c.dom.Element
 import java.util.*
 
 /**
- *
+ * Creates template for ProtoMech record sheets
  */
 internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
     protected val bundle = ResourceBundle.getBundle(ProtoMechRecordSheet::class.java.name)
@@ -15,6 +15,10 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
     override fun showFooter() = false
     override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.25 - padding * 5
     abstract val armorDiagramFileName: String
+
+    abstract fun isQuad(): Boolean
+    abstract fun isGlider(): Boolean
+    abstract fun locations(): Int
 
     override fun build() {
         val inner = addTabbedBorder()
@@ -134,9 +138,129 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
         val inner = addBorder(
             0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("hitPanel.title"), topTab = false,
-            fontSize = FONT_SIZE_FREE_LABEL, dropShadow = false, parent = g
+            fontSize = FONT_SIZE_FREE_LABEL, dropShadow = false, parent = g)
+        val fontHeight = calcFontHeight(FONT_SIZE_SMALL)
+        val lineHeight = inner.height / (locations() + 3)
+        val colXOffsets = listOf(0.06, 0.12, 0.3, 0.55, 0.8).map{
+            inner.x + it * inner.width
+        }.toList()
+        var ypos = inner.y + fontHeight * 1.2
+        // Ratio of the space available in a column to the longest string
+        val kern = (0.25 * inner.width - fontHeight * 1.2 - padding) /
+                calcTextLength(bundle.getString("halfJump"), FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE)
+        addTextElement(colXOffsets[0], ypos, bundle.getString("2d6"),
+            FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+            parent = g)
+        addTextElement(colXOffsets[1], ypos, bundle.getString("location"),
+            FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        addTextElement(colXOffsets[2], ypos, bundle.getString("1stHit"),
+            FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        addTextElement(colXOffsets[3], ypos, bundle.getString("2ndHit"),
+            FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        addTextElement(colXOffsets[4], ypos, bundle.getString("3rdHit"),
+            FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        ypos += lineHeight
+        addHitTableRow(colXOffsets, ypos, kern, "2", bundle.getString("mainGun"),
+            listOf(FILL_WHITE), listOf(bundle.getString("mainGunDestroyed")), g)
+        ypos += lineHeight
+        if (isGlider()) {
+            addHitTableRow(
+                colXOffsets, ypos, kern, "3,11", bundle.getString("wings"),
+                listOf(null),
+                listOf(bundle.getString("wingHit")), g)
+            ypos += lineHeight
+        }
+        if (!isQuad()) {
+            addHitTableRow(
+                colXOffsets, ypos, kern, "4", bundle.getString("rightArm"),
+                listOf(FILL_WHITE, FILL_LIGHT_GREY),
+                listOf(bundle.getString("toHitMod"), bundle.getString("rightArmDestroyed")), g
+            )
+            ypos += lineHeight
+        }
+        addHitTableRow(
+            colXOffsets, ypos, kern, if (isQuad()) "4,5,9,10" else "5,9", bundle.getString("legs"),
+            listOf(FILL_WHITE, FILL_WHITE, FILL_LIGHT_GREY),
+            listOf(bundle.getString("walkMod"), bundle.getString("halfWalk"), bundle.getString("noMove")), g)
+        ypos += lineHeight
+        addHitTableRow(
+            colXOffsets, ypos, kern, "6,7,8", bundle.getString("torso"),
+            listOf(FILL_LIGHT_GREY, FILL_LIGHT_GREY, FILL_DARK_GREY),
+            if (isGlider())
+                listOf(bundle.getString("cruiseMod"), bundle.getString("halfCruise"), bundle.getString("protoDestroyed"))
+            else
+                listOf(bundle.getString("jumpMod"), bundle.getString("halfJump"), bundle.getString("protoDestroyed")), g)
+        ypos += lineHeight
+        if (!isQuad()) {
+            addHitTableRow(
+                colXOffsets, ypos, kern, "10", bundle.getString("leftArm"),
+                listOf(FILL_WHITE, FILL_LIGHT_GREY),
+                listOf(bundle.getString("toHitMod"), bundle.getString("leftArmDestroyed")), g
+            )
+            ypos += lineHeight
+        }
+        addHitTableRow(
+            colXOffsets, ypos, kern, "12", bundle.getString("head"),
+            listOf(FILL_WHITE, FILL_LIGHT_GREY),
+            listOf(bundle.getString("toHitMod"), bundle.getString("sensorsDestroyed")), g
         )
+        ypos = inner.bottomY() - fontHeight * if (isQuad()) 3 else 2
+        addTextElement(inner.x, ypos, bundle.getString("torsoWeaponDestroyed"),
+            FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        ypos += fontHeight
+        addTextElement(inner.x, ypos, "Weapon A", FONT_SIZE_VSMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_0", width = inner.width * 0.3, parent = g)
+        addTextElement(inner.x + inner.width * 0.33, ypos, "Weapon B", FONT_SIZE_VSMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_1", width = inner.width * 0.3, parent = g)
+        addTextElement(inner.x + inner.width * 0.66, ypos, "Weapon C", FONT_SIZE_VSMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_2", width = inner.width * 0.3, parent = g)
+        if (isQuad()) {
+            ypos += fontHeight
+            addTextElement(
+                inner.x, ypos, "Weapon D", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_3", width = inner.width * 0.3, parent = g
+            )
+            addTextElement(
+                inner.x + inner.width * 0.33, ypos, "Weapon E", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_4", width = inner.width * 0.3, parent = g
+            )
+            addTextElement(
+                inner.x + inner.width * 0.66, ypos, "Weapon F", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_5", width = inner.width * 0.3, parent = g
+            )
+        }
         document.documentElement.appendChild(g)
+    }
+
+    fun addHitTableRow(colX: List<Double>, ypos: Double, kern: Double, roll: String, locName: String,
+            boxFill: List<String?>, critNames: List<String>, parent: Element) {
+        val fontSize = FONT_SIZE_VSMALL
+        addTextElement(colX[0], ypos, roll, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        addTextElement(colX[1], ypos, locName, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            parent = parent)
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        for (i in critNames.withIndex()) {
+            var xpos = colX[i.index + 2]
+            if (i.index < boxFill.size) {
+                boxFill[i.index] ?.let {
+                    val box = RoundedBorder(
+                        xpos, ypos - lineHeight * 0.8, lineHeight, lineHeight,
+                        1.315, 0.726,
+                        0.96, fill = it)
+                    parent.appendChild(box.draw(document))
+                    xpos += lineHeight * 1.2
+                }
+            }
+            val lines = i.value.split("|")
+            for (line in lines.withIndex()) {
+                addTextElement(
+                    xpos, ypos + line.index * lineHeight, line.value, fontSize,
+                    SVGConstants.SVG_BOLD_VALUE, fixedWidth = true,
+                    width = calcTextLength(line.value, fontSize, SVGConstants.SVG_BOLD_VALUE) * kern,
+                    parent = parent)
+            }
+        }
     }
 
     fun addArmorDiagram(rect: Cell) {
@@ -247,15 +371,30 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
 }
 
 internal class BipedProtoMechRecordSheet(size: PaperSize, color: Boolean):
-        ProtoMechRecordSheet(size, color) {
+    ProtoMechRecordSheet(size, color) {
     override val fileName = "protomech_biped.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_biped.svg"
+    override fun isQuad() = false
+    override fun isGlider() = false
+    override fun locations() = 6
+}
+
+internal class QuadProtoMechRecordSheet(size: PaperSize, color: Boolean):
+    ProtoMechRecordSheet(size, color) {
+    override val fileName = "protomech_quad.svg"
+    override val armorDiagramFileName = "armor_diagram_protomech_quad.svg"
+    override fun isQuad() = true
+    override fun isGlider() = false
+    override fun locations() = 4
 }
 
 internal class GliderProtoMechRecordSheet(size: PaperSize, color: Boolean):
         ProtoMechRecordSheet(size, color) {
     override val fileName = "protomech_glider.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_biped.svg"
+    override fun isQuad() = false
+    override fun isGlider() = true
+    override fun locations() = 7
 
     override fun addMPFields(x: Double, y: Double, parent: Element) {
         addFieldSet(listOf(
