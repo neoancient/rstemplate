@@ -179,7 +179,7 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
             ypos += lineHeight
         }
         addHitTableRow(
-            colXOffsets, ypos, kern, if (isQuad()) "4,5,9,10" else "5,9", bundle.getString("legs"),
+            colXOffsets, ypos, kern, if (isQuad()) "4,5|9,10" else "5,9", bundle.getString("legs"),
             listOf(FILL_WHITE, FILL_WHITE, FILL_LIGHT_GREY),
             listOf(bundle.getString("walkMod"), bundle.getString("halfWalk"), bundle.getString("noMove")), g)
         ypos += lineHeight
@@ -235,11 +235,14 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
     fun addHitTableRow(colX: List<Double>, ypos: Double, kern: Double, roll: String, locName: String,
             boxFill: List<String?>, critNames: List<String>, parent: Element) {
         val fontSize = FONT_SIZE_VSMALL
-        addTextElement(colX[0], ypos, roll, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        val lineHeight = calcFontHeight(fontSize).toDouble()
+        for (i in roll.split("|").withIndex()) {
+            addTextElement(
+                colX[0], ypos + lineHeight * i.index, i.value, fontSize, SVGConstants.SVG_BOLD_VALUE,
+                anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+        }
         addTextElement(colX[1], ypos, locName, fontSize, SVGConstants.SVG_BOLD_VALUE,
             parent = parent)
-        val lineHeight = calcFontHeight(fontSize).toDouble()
         for (i in critNames.withIndex()) {
             var xpos = colX[i.index + 2]
             if (i.index < boxFill.size) {
