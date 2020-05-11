@@ -67,9 +67,9 @@ fun writeRecordSheets(size: PaperSize, color: Boolean, dir: String) {
     outputRS(InfantryMultiSheetTables(size, color), dir)
     outputRS(BattleArmorRecordSheet(size, color), dir)
     outputRS(BAMultiSheet(size, color), dir)
-    outputRS(BipedProtoMechRecordSheet(size, color), dir)
-    outputRS(QuadProtoMechRecordSheet(size, color), dir)
-    outputRS(GliderProtoMechRecordSheet(size, color), dir)
+    outputRS(BipedProtomechRecordSheet(size, color), dir)
+    outputRS(QuadProtomechRecordSheet(size, color), dir)
+    outputRS(GliderProtomechRecordSheet(size, color), dir)
     outputRS(ProtoMechMultiSheet(size, color), dir)
 }
 

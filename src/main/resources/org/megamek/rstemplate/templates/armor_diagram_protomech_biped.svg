@@ -156,74 +156,74 @@
            </g>
    <g fill="none" id="armorPips">
     <g id="armorPipsHD" transform="translate(42.335,13.18)" style="mml-multisection:true"><g id="armorPipsHDSection01">
-      <rect x="-2.4" width="4.8" y="0" height="2.6" id="armorHDRow00"/>
-      <rect x="-4.3" width="8.6" y="1.3" height="2.6" id="armorHDRow01"/>
-      <rect x="-4.95" width="9.9" y="2.6" height="2.6" id="armorHDRow02"/>
+      <rect x="-2.4" width="4.8" y="0" height="3.2" id="armorHDRow00"/>
+      <rect x="-4.3" width="8.6" y="1" height="3.2" id="armorHDRow01"/>
+      <rect x="-4.95" width="9.9" y="2" height="3.2" id="armorHDRow02"/>
       </g><g id="armorPipsHDSection02">
-      <rect x="-4" width="8" y="7.8" height="2.6" id="armorHDRow03"/>
-      <rect x="-3.55" width="7.1" y="9.1" height="2.6" id="armorHDRow04"/>
-      <rect x="-2.9" width="5.8" y="10.4" height="2.6" id="armorHDRow05"/>
+      <rect x="-4" width="8" y="7.8" height="3.2" id="armorHDRow03"/>
+      <rect x="-3.55" width="7.1" y="8.8" height="3.2" id="armorHDRow04"/>
+      <rect x="-2.9" width="5.8" y="9.8" height="3.2" id="armorHDRow05"/>
     </g></g>
-    <g id="armorPipsT" transform="translate(42.335,25.18)">
-      <rect x="-14.6" width="29.2" y="0" height="2.6" style="mml-gap:-8,8" id="armorTRow00"/>
-      <rect x="-14.25" width="28.5" y="2.6" height="2.6" style="mml-gap:-5.9,5.9" id="armorTRow01"/>
-      <rect x="-14" width="28" y="5.2" height="2.6" style="mml-gap:-4,4" id="armorTRow03"/>
-      <rect x="-14" width="28" y="7.8" height="2.6" id="armorTRow04"/>
-      <rect x="-14.5" width="29" y="10.4" height="2.6" id="armorTRow05"/>
-      <rect x="-14.5" width="29" y="13" height="2.6" id="armorTRow06"/>
+    <g id="armorPipsT" transform="translate(42.335,25.78)">
+      <rect x="-14.6" width="29.2" y="0" height="3.2" style="mml-gap:-8,8" id="armorTRow00"/>
+      <rect x="-14.25" width="28.5" y="2.6" height="3.2" style="mml-gap:-5.9,5.9" id="armorTRow01"/>
+      <rect x="-14" width="28" y="5.2" height="3.2" style="mml-gap:-4,4" id="armorTRow03"/>
+      <rect x="-14" width="28" y="7.8" height="3.2" id="armorTRow04"/>
+      <rect x="-14.5" width="29" y="10.4" height="3.2" id="armorTRow05"/>
+      <rect x="-14.5" width="29" y="13" height="3.2" id="armorTRow06"/>
     </g>
-    <g id="armorPipsRA" transform="rotate(-45,58.337388,-60.318862)">
-      <rect x="-7.3" width="14.2" y="5.2" height="2.6" id="armorRARow02"/>
-      <rect x="-6.8" width="12.6" y="7.8" height="2.6" id="armorRARow03"/>
-      <rect x="-7.2" width="13" y="10.4" height="2.6" id="armorRARow04"/>
-      <rect x="-6.7" width="12.5" y="13" height="2.6" id="armorRARow05"/>
-      <rect x="-4.7" width="9.9" y="15.6" height="2.6" id="armorRARow06"/>
+    <g id="armorPipsRA" transform="rotate(-45,59.07844,-61.47437)">
+      <rect x="-7.3" width="14.2" y="5.2" height="3.2" id="armorRARow02"/>
+      <rect x="-6.8" width="12.6" y="7.8" height="3.2" id="armorRARow03"/>
+      <rect x="-7.2" width="13" y="10.4" height="3.2" id="armorRARow04"/>
+      <rect x="-6.7" width="12.5" y="13" height="3.2" id="armorRARow05"/>
+      <rect x="-4.7" width="9.9" y="15.6" height="3.2" id="armorRARow06"/>
     </g>
-    <g id="armorPipsLA" transform="rotate(45,-15.983915,37.103032)">
-      <rect x="-7.3" width="14.2" y="5.2" height="2.6" id="armorLARow02"/>
-      <rect x="-6.8" width="12.6" y="7.8" height="2.6" id="armorLARow03"/>
-      <rect x="-7.2" width="13" y="10.4" height="2.6" id="armorLARow04"/>
-      <rect x="-6.7" width="12.5" y="13" height="2.6" id="armorLARow05"/>
-      <rect x="-4.7" width="9.9" y="15.6" height="2.6" id="armorLARow06"/>
+    <g id="armorPipsLA" transform="matrix(-0.70712197,-0.70710678,-0.70712197,0.70710678,23.488057,23.636133)">
+      <rect x="-7.3" width="14.2" y="5.2" height="3.2" id="armorLARow02"/>
+      <rect x="-6.8" width="12.6" y="7.8" height="3.2" id="armorLARow03"/>
+      <rect x="-7.2" width="13" y="10.4" height="3.2" id="armorLARow04"/>
+      <rect x="-6.7" width="12.5" y="13" height="3.2" id="armorLARow05"/>
+      <rect x="-4.7" width="9.9" y="15.6" height="3.2" id="armorLARow06"/>
     </g>
-    <g id="armorPipsL" transform="translate(42.335,25.18)">
-      <rect x="-20" width="40" y="7.8" height="2.6" style="mml-gap:-5.7,5.7" id="armorLRow00"/>
-      <rect x="-21.7" width="43.4" y="10.4" height="2.6" style="mml-gap:-8.8,8.8" id="armorLRow01"/>
-      <rect x="-22.8" width="45.6" y="13" height="2.6" style="mml-gap:-10,10" id="armorLRow02"/>
-      <rect x="-24.2" width="45.6" y="15.6" height="2.6" style="mml-gap:-10,10" id="armorLRow03"/>
-      <rect x="-22.8" width="45.6" y="18.2" height="2.6" style="mml-gap:-10.3,10.3" id="armorLRow04"/>
-      <rect x="-24" width="48" y="20.8" height="2.6" style="mml-gap:-10,10" id="armorLRow05"/>
-      <rect x="-23.8" width="47.6" y="23.4" height="2.6" style="mml-gap:-9.7,9.7" id="armorLRow06"/>
-      <rect x="-22.8" width="48" y="26" height="2.6" style="mml-gap:-8.3,8.3" id="armorLRow07"/>
-      <rect x="-22.5" width="48" y="28.6" height="2.6" style="mml-gap:-8.2,8.2" id="armorLRow08"/>
+    <g id="armorPipsL" transform="translate(42.335,59.08)">
+      <rect x="-20" width="40" y="7.8" height="3.2" style="mml-gap:-5.7,5.7" id="armorLRow00"/>
+      <rect x="-21.7" width="43.4" y="10.4" height="3.2" style="mml-gap:-8.8,8.8" id="armorLRow01"/>
+      <rect x="-22.8" width="45.6" y="13" height="3.2" style="mml-gap:-10,10" id="armorLRow02"/>
+      <rect x="-24.2" width="45.6" y="15.6" height="3.2" style="mml-gap:-10,10" id="armorLRow03"/>
+      <rect x="-22.8" width="45.6" y="18.2" height="3.2" style="mml-gap:-10.3,10.3" id="armorLRow04"/>
+      <rect x="-24" width="48" y="20.8" height="3.2" style="mml-gap:-10,10" id="armorLRow05"/>
+      <rect x="-23.8" width="47.6" y="23.4" height="3.2" style="mml-gap:-9.7,9.7" id="armorLRow06"/>
+      <rect x="-22.8" width="48" y="26" height="3.2" style="mml-gap:-8.3,8.3" id="armorLRow07"/>
+      <rect x="-22.5" width="48" y="28.6" height="3.2" style="mml-gap:-8.2,8.2" id="armorLRow08"/>
     </g>
     <g id="armorPipsMG" transform="translate(30.535,1.78)">
-      <rect x="-1.5" width="3" y="0" height="2.6" id="armorMGRow00"/>
-      <rect x="-3.1" width="6.2" y="1.3" height="2.6" id="armorMGRow01"/>
-      <rect x="-3.75" width="7.5" y="2.6" height="2.6" id="armorMGRow02"/>
-      <rect x="-4" width="8" y="3.9" height="2.6" id="armorMGRow03"/>
-      <rect x="-3.9" width="7.8" y="5.2" height="2.6" id="armorMGRow04"/>
+      <rect x="-1.5" width="3" y="0" height="3.2" id="armorMGRow00"/>
+      <rect x="-3.1" width="6.2" y="0.95" height="3.2" id="armorMGRow01"/>
+      <rect x="-3.75" width="7.5" y="2.3" height="3.2" id="armorMGRow02"/>
+      <rect x="-4" width="8" y="3.45" height="3.2" id="armorMGRow03"/>
+      <rect x="-3.9" width="7.8" y="4.6" height="3.2" id="armorMGRow04"/>
     </g>
    </g>
    <g fill="none" id="structurePips">
     <g id="structurePipsHD" transform="translate(42.335,13.18)">
-      <rect x="-2.4" width="5.8" y="0" height="2.6" id="structureHDRow00"/>
+      <rect x="-4.4" width="8.8" y="5.2" height="2.6" id="structureHDRow00"/>
     </g>
-    <g id="structurePipsT" transform="translate(42.335,40.78)">
+    <g id="structurePipsT" transform="translate(42.335,41.38)">
       <rect x="-13.9" width="27.8" y="0" height="2.6" id="structureTRow00"/>
       <rect x="-10.7" width="21.4" y="2.6" height="2.6" id="structureTRow01"/>
     </g>
-    <g id="structurePipsRA" transform="rotate(-45,58.337388,-60.318862)">
+    <g id="structurePipsRA" transform="rotate(-45,59.07844,-61.47437)">
       <rect x="-1.9" width="8" y="0" height="2.6" id="structureRARow00"/>
       <rect x="-4.4" width="10.8" y="2.6" height="2.6" id="structureRARow01"/>
     </g>
-    <g id="structurePipsLA" transform="rotate(45,-15.983915,37.103032)">
+    <g id="structurePipsLA" transform="matrix(-0.70712197,-0.70710678,-0.70712197,0.70710678,23.488057,23.636133)">
       <rect x="-1.9" width="8" y="0" height="2.6" id="structureLARow00"/>
       <rect x="-4.4" width="10.8" y="2.6" height="2.6" id="structureLARow01"/>
     </g>
-    <g id="structurePipsL" transform="translate(42.335,25.18)">
+    <g id="structurePipsL" transform="translate(42.335,59.08)">
       <rect x="-14.6" width="29.2" y="0" height="2.6" id="structureLRow00"/>
-      <rect x="-16.85" width="33.7" y="2.6" height="2.6" id="structureLRow01"/>
+      <rect x="-16.85" width="33.7" y="2.6" height="2.6" style="mml-gap:-3,3" id="structureLRow01"/>
       <rect x="-18.5" width="37" y="5.2" height="2.6" style="mml-gap:-4,4" id="structureLRow02"/>
     </g>
     <g id="structurePipsMG" transform="translate(30.535,1.78)">

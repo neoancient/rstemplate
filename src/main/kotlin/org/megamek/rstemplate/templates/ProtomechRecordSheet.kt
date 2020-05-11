@@ -8,12 +8,12 @@ import java.util.*
 /**
  * Creates template for ProtoMech record sheets
  */
-internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
-    protected val bundle = ResourceBundle.getBundle(ProtoMechRecordSheet::class.java.name)
+internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
+    protected val bundle = ResourceBundle.getBundle(ProtomechRecordSheet::class.java.name)
     override fun fullPage() = false
     override fun showLogo() = false
     override fun showFooter() = false
-    override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.25 - padding * 5
+    override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - padding * 4
     abstract val armorDiagramFileName: String
 
     abstract fun isQuad(): Boolean
@@ -50,7 +50,7 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
         val g = createTranslatedGroup(0.0, 0.0)
         val label = RSLabel(
             this, 2.5, 3.0, bundle.getString("panel.title"),
-            FONT_SIZE_TAB_LABEL, textId = "type", fixedWidth = false,
+            FONT_SIZE_TAB_LABEL, textId = "protomechIndex", fixedWidth = false,
             centerText = false
         )
         val labelWidthBelow = RSLabel(
@@ -79,33 +79,36 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
 
     fun addTextFields(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        val lineHeight = rect.height / 7.0
+        val lineHeight = rect.height / 8.0
         var ypos = lineHeight
+        val fontSize = FONT_SIZE_LARGE
         addField(
-            bundle.getString("type"), "type", rect.x, ypos, FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE,
+            bundle.getString("type"), "type", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
             maxWidth = rect.width - rect.x - padding, parent = g
         )
         ypos += lineHeight
+        addTextElement(rect.x + rect.width * 0.5, ypos, "", fontSize,
+            id = "type2", width = rect.width * 0.5 - padding, parent = g)
         addField(
-            bundle.getString("tons"), "tonnage", rect.x, ypos, FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE,
-            defaultText = "0", maxWidth = rect.width - rect.x - padding, parent = g
+            bundle.getString("tons"), "tonnage", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            defaultText = "0", maxWidth = rect.width * 0.5 - rect.x - padding, parent = g
         )
         ypos += lineHeight
         addField(
-            bundle.getString("role"), "role", rect.x, ypos, FONT_SIZE_LARGE, SVGConstants.SVG_BOLD_VALUE,
-            maxWidth = rect.width - rect.x - padding, parent = g
+            bundle.getString("role"), "role", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            maxWidth = rect.width - rect.x - padding, labelId = "lblRole", parent = g
         )
         ypos += lineHeight
         addTextElement(
-            rect.x, ypos, bundle.getString("movementPoints"), FONT_SIZE_LARGE,
+            rect.x, ypos, bundle.getString("movementPoints"), fontSize,
             SVGConstants.SVG_BOLD_VALUE, parent = g
         )
         ypos += lineHeight
-        addMPFields(rect.x + padding, ypos, g)
+        addMPFields(rect.x + padding, ypos, fontSize, g)
         document.documentElement.appendChild(g)
     }
 
-    open fun addMPFields(x: Double, y: Double, parent: Element) {
+    open fun addMPFields(x: Double, y: Double, fontSize: Float, parent: Element) {
         addFieldSet(
             listOf(
                 LabeledField(bundle.getString("walk"), "mpWalk", "0"),
@@ -114,7 +117,7 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
                     bundle.getString("jump"), "mpJump", "0",
                     labelId = "textJumpMP"
                 )
-            ), x, y, FONT_SIZE_LARGE, FILL_DARK_GREY, 50.0,
+            ), x, y, fontSize, FILL_DARK_GREY, 50.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = parent
         )
     }
@@ -140,7 +143,7 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
             bundle.getString("hitPanel.title"), topTab = false,
             fontSize = FONT_SIZE_FREE_LABEL, dropShadow = false, parent = g)
         val fontHeight = calcFontHeight(FONT_SIZE_SMALL)
-        val lineHeight = inner.height / (locations() + 3)
+        val lineHeight = inner.height / (locations() + 4)
         val colXOffsets = listOf(0.06, 0.12, 0.3, 0.55, 0.8).map{
             inner.x + it * inner.width
         }.toList()
@@ -208,25 +211,25 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
         addTextElement(inner.x, ypos, bundle.getString("torsoWeaponDestroyed"),
             FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
         ypos += fontHeight
-        addTextElement(inner.x, ypos, "Weapon A", FONT_SIZE_VSMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_0", width = inner.width * 0.3, parent = g)
-        addTextElement(inner.x + inner.width * 0.33, ypos, "Weapon B", FONT_SIZE_VSMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_1", width = inner.width * 0.3, parent = g)
-        addTextElement(inner.x + inner.width * 0.66, ypos, "Weapon C", FONT_SIZE_VSMALL,
-            SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_2", width = inner.width * 0.3, parent = g)
+        addTextElement(inner.x, ypos, "", FONT_SIZE_VSMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_0", width = inner.width * 0.3, parent = g)
+        addTextElement(inner.x + inner.width * 0.33, ypos, "", FONT_SIZE_VSMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_1", width = inner.width * 0.3, parent = g)
+        addTextElement(inner.x + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_2", width = inner.width * 0.3, parent = g)
         if (isQuad()) {
             ypos += fontHeight
             addTextElement(
-                inner.x, ypos, "Weapon D", FONT_SIZE_VSMALL,
-                SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_3", width = inner.width * 0.3, parent = g
+                inner.x, ypos, "", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_3", width = inner.width * 0.3, parent = g
             )
             addTextElement(
-                inner.x + inner.width * 0.33, ypos, "Weapon E", FONT_SIZE_VSMALL,
-                SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_4", width = inner.width * 0.3, parent = g
+                inner.x + inner.width * 0.33, ypos, "", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_4", width = inner.width * 0.3, parent = g
             )
             addTextElement(
-                inner.x + inner.width * 0.66, ypos, "Weapon F", FONT_SIZE_VSMALL,
-                SVGConstants.SVG_BOLD_VALUE, id = "weaponSlot_5", width = inner.width * 0.3, parent = g
+                inner.x + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_5", width = inner.width * 0.3, parent = g
             )
         }
         document.documentElement.appendChild(g)
@@ -289,13 +292,13 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
             fontSize = FONT_SIZE_FREE_LABEL, tabWidth = tabWidth, dropShadow = false,
             equalBevels = true, parent = g
         )
-        val fontSize = FONT_SIZE_LARGE
-        val lineHeight = inner.height / 3.0
+        val fontSize = FONT_SIZE_MEDIUM
+        val lineHeight = inner.height / 2.0
         addField(
             bundle.getString("name"), "pilotName0",
-            padding, inner.y + lineHeight, fontSize,
+            padding + bevelX, inner.y + lineHeight, fontSize,
             blankId = "blankCrewName0",
-            blankWidth = inner.width * 0.45 - padding * 2
+            blankWidth = inner.width * 0.45 - padding * 2 - bevelX
                     - calcTextLength(
                 "${bundle.getString("name")}_",
                 fontSize, SVGConstants.SVG_BOLD_VALUE
@@ -304,13 +307,13 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
         )
         addField(
             bundle.getString("gunnerySkill"), "gunnerySkill0",
-            padding,
+            padding + bevelX,
             inner.y + lineHeight * 2, fontSize, defaultText = "0",
             blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0",
             blankWidth = inner.width * 0.13, parent = g
         )
         addPilotDamageTrack(
-            inner.x + inner.width * 0.45, inner.y + (inner.height - bevelY - 20) * 0.5,
+            inner.x + inner.width * 0.45, inner.y + (inner.height - bevelY - 16) * 0.5,
             inner.width * 0.5, parent = g
         )
         document.documentElement.appendChild(g)
@@ -320,7 +323,7 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         val chartBounds = Cell(
             x + width * 0.35, y,
-            width * 0.65 - padding, 20.0
+            width * 0.65 - padding, 18.0
         )
         val outline = RoundedBorder(
             chartBounds.x, chartBounds.y, chartBounds.width, chartBounds.height,
@@ -373,8 +376,8 @@ internal abstract class ProtoMechRecordSheet(size: PaperSize, color: Boolean): R
     }
 }
 
-internal class BipedProtoMechRecordSheet(size: PaperSize, color: Boolean):
-    ProtoMechRecordSheet(size, color) {
+internal class BipedProtomechRecordSheet(size: PaperSize, color: Boolean):
+    ProtomechRecordSheet(size, color) {
     override val fileName = "protomech_biped.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_biped.svg"
     override fun isQuad() = false
@@ -382,8 +385,8 @@ internal class BipedProtoMechRecordSheet(size: PaperSize, color: Boolean):
     override fun locations() = 6
 }
 
-internal class QuadProtoMechRecordSheet(size: PaperSize, color: Boolean):
-    ProtoMechRecordSheet(size, color) {
+internal class QuadProtomechRecordSheet(size: PaperSize, color: Boolean):
+    ProtomechRecordSheet(size, color) {
     override val fileName = "protomech_quad.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_quad.svg"
     override fun isQuad() = true
@@ -391,21 +394,21 @@ internal class QuadProtoMechRecordSheet(size: PaperSize, color: Boolean):
     override fun locations() = 4
 }
 
-internal class GliderProtoMechRecordSheet(size: PaperSize, color: Boolean):
-        ProtoMechRecordSheet(size, color) {
+internal class GliderProtomechRecordSheet(size: PaperSize, color: Boolean):
+        ProtomechRecordSheet(size, color) {
     override val fileName = "protomech_glider.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_biped.svg"
     override fun isQuad() = false
     override fun isGlider() = true
     override fun locations() = 7
 
-    override fun addMPFields(x: Double, y: Double, parent: Element) {
+    override fun addMPFields(x: Double, y: Double, fontSize: Float, parent: Element) {
         addFieldSet(listOf(
             LabeledField(bundle.getString("ground"), "mpGround", "1"),
             LabeledField(bundle.getString("cruise"), "mpWalk", "0"),
             LabeledField(bundle.getString("flank"), "mpRun", "0",
-                labelId="textJumpMP")
-        ), x, y, FONT_SIZE_MEDIUM, FILL_DARK_GREY, 50.0,
+                labelId="lblJump")
+        ), x, y, fontSize, FILL_DARK_GREY, 50.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
     }
 }
