@@ -27,10 +27,10 @@ import kotlin.math.sqrt
 const val padding = 3.0
 
 const val SVGNS = SVGDOMImplementation.SVG_NAMESPACE_URI
-const val LEFT_MARGIN = 36
-const val RIGHT_MARGIN = 36
-const val TOP_MARGIN = 36
-const val BOTTOM_MARGIN = 36
+const val LEFT_MARGIN = 18
+const val RIGHT_MARGIN = 18
+const val TOP_MARGIN = 18
+const val BOTTOM_MARGIN = 18
 const val TYPEFACE = "Eurostile"
 const val FILL_BLACK = "#000000"
 const val FILL_LIGHT_GREY = "#c8c7c7"
@@ -321,8 +321,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                   bevelTopLeft: Boolean = true, bevelTopRight: Boolean = true, bevelBottomRight: Boolean = true,
                   bevelBottomLeft: Boolean = true, textBelow: String? = null,
                   textId: String? = null, fontSize: Float = FONT_SIZE_TAB_LABEL,
-                  tabWidth: Double? = null, dropShadow: Boolean = true, equalBevels: Boolean = false,
-                  parent: Element = document.documentElement): Cell {
+                  tabWidth: Double? = null, strokeWidth: Double = 1.932, dropShadow: Boolean = true,
+                  equalBevels: Boolean = false, parent: Element = document.documentElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (x != 0.0 && y != 0.0) {
             g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -348,7 +348,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
             )
             val border = CellBorder(
                 0.0, 0.0, width - 5.0, height - 5.0,
-                label.rectWidth + 4, FILL_DARK_GREY, 1.932,
+                label.rectWidth + 4, FILL_DARK_GREY, strokeWidth,
                 topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
                 labelWidthBelow, equalBevels
             )
@@ -356,7 +356,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
             g.appendChild(border.draw(document))
         } else {
             val border = CellBorder(
-                0.0, 0.0, width - 2.0, height - 2.0, label.rectWidth + 4, FILL_DARK_GREY, 1.932,
+                0.0, 0.0, width - 2.0, height - 2.0, label.rectWidth + 4,
+                FILL_DARK_GREY, strokeWidth,
                 topTab, bottomTab, bevelTopLeft, bevelTopRight, bevelBottomRight, bevelBottomLeft,
                 labelWidthBelow, equalBevels
             )

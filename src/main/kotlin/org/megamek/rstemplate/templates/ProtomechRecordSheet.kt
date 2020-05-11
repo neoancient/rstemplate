@@ -5,6 +5,8 @@ import org.megamek.rstemplate.layout.*
 import org.w3c.dom.Element
 import java.util.*
 
+const val INNER_STROKE_WIDTH = 0.95
+const val PADDING = 2.0
 /**
  * Creates template for ProtoMech record sheets
  */
@@ -13,7 +15,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
     override fun fullPage() = false
     override fun showLogo() = false
     override fun showFooter() = false
-    override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - padding * 4
+    override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - PADDING * 6
     abstract val armorDiagramFileName: String
 
     abstract fun isQuad(): Boolean
@@ -24,20 +26,20 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         val inner = addTabbedBorder()
         val textCell = Cell(inner.x, inner.y, inner.width / 6.0, inner.height * 0.65);
         val inventoryCell = Cell(
-            textCell.rightX(), inner.y - tabBevelY + padding,
-            inner.width / 3.0, textCell.height + tabBevelY * 2.0 - padding * 2.0
+            textCell.rightX(), inner.y - tabBevelY + PADDING,
+            inner.width / 3.0, textCell.height + tabBevelY * 2.0 - PADDING * 2.0
         )
         val hitCell = Cell(
-            inventoryCell.rightX(), inner.y - tabBevelY + padding,
-            inventoryCell.width, inner.height + tabBevelY * 2.0 - padding * 2.0
+            inventoryCell.rightX(), inner.y - tabBevelY + PADDING,
+            inventoryCell.width, inner.height + tabBevelY * 2.0 - PADDING * 2.0
         )
         val armorCell = Cell(
-            hitCell.rightX(), inner.y - tabBevelY + padding,
-            inner.width / 6.0, inner.height + tabBevelY * 2.0 - padding * 2.0
+            hitCell.rightX(), inner.y - tabBevelY + PADDING,
+            inner.width / 6.0, inner.height + tabBevelY * 2.0 - PADDING * 2.0
         )
         val pilotCell = Cell(
             inner.x, textCell.bottomY(),
-            inner.width * 0.5, inner.height * 0.35 - padding
+            inner.width * 0.5, inner.height * 0.35 - PADDING
         )
         addTextFields(textCell)
         addInventoryPanel(inventoryCell)
@@ -84,19 +86,19 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         val fontSize = FONT_SIZE_LARGE
         addField(
             bundle.getString("type"), "type", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            maxWidth = rect.width - rect.x - padding, parent = g
+            maxWidth = rect.width - rect.x - PADDING, parent = g
         )
         ypos += lineHeight
         addTextElement(rect.x + rect.width * 0.5, ypos, "", fontSize,
-            id = "type2", width = rect.width * 0.5 - padding, parent = g)
+            id = "type2", width = rect.width * 0.5 - PADDING, parent = g)
         addField(
             bundle.getString("tons"), "tonnage", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            defaultText = "0", maxWidth = rect.width * 0.5 - rect.x - padding, parent = g
+            defaultText = "0", maxWidth = rect.width * 0.5 - rect.x - PADDING, parent = g
         )
         ypos += lineHeight
         addField(
             bundle.getString("role"), "role", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            maxWidth = rect.width - rect.x - padding, labelId = "lblRole", parent = g
+            maxWidth = rect.width - rect.x - PADDING, labelId = "lblRole", parent = g
         )
         ypos += lineHeight
         addTextElement(
@@ -104,7 +106,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             SVGConstants.SVG_BOLD_VALUE, parent = g
         )
         ypos += lineHeight
-        addMPFields(rect.x + padding, ypos, fontSize, g)
+        addMPFields(rect.x + PADDING, ypos, fontSize, g)
         document.documentElement.appendChild(g)
     }
 
@@ -125,12 +127,13 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
     fun addInventoryPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(
-            0.0, 0.0, rect.width - padding, rect.height,
+            0.0, 0.0, rect.width - PADDING, rect.height,
             bundle.getString("inventoryPanel.title"), topTab = false,
-            fontSize = FONT_SIZE_FREE_LABEL, dropShadow = false, parent = g
+            fontSize = FONT_SIZE_FREE_LABEL, strokeWidth = INNER_STROKE_WIDTH,
+            dropShadow = false, parent = g
         )
         addRect(
-            inner.x, inner.y, inner.width - padding, inner.height,
+            inner.x, inner.y, inner.width - PADDING, inner.height,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g
         )
         document.documentElement.appendChild(g)
@@ -139,9 +142,9 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
     fun addHitPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(
-            0.0, 0.0, rect.width - padding, rect.height,
+            0.0, 0.0, rect.width - PADDING, rect.height,
             bundle.getString("hitPanel.title"), topTab = false,
-            fontSize = FONT_SIZE_FREE_LABEL, dropShadow = false, parent = g)
+            fontSize = FONT_SIZE_FREE_LABEL, strokeWidth = INNER_STROKE_WIDTH,dropShadow = false, parent = g)
         val fontHeight = calcFontHeight(FONT_SIZE_SMALL)
         val lineHeight = inner.height / (locations() + 4)
         val colXOffsets = listOf(0.06, 0.12, 0.3, 0.55, 0.8).map{
@@ -149,7 +152,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         }.toList()
         var ypos = inner.y + fontHeight * 1.2
         // Ratio of the space available in a column to the longest string
-        val kern = (0.25 * inner.width - fontHeight * 1.2 - padding) /
+        val kern = (0.25 * inner.width - fontHeight * 1.2 - PADDING) /
                 calcTextLength(bundle.getString("halfJump"), FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE)
         addTextElement(colXOffsets[0], ypos, bundle.getString("2d6"),
             FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
@@ -277,7 +280,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         )
         g.appendChild(label.draw())
         embedImage(
-            0.0, label.height(), rect.width, rect.height - label.height() - padding,
+            0.0, label.height(), rect.width, rect.height - label.height() - PADDING,
             armorDiagramFileName, ImageAnchor.CENTER, g
         )
         g.appendChild(label.draw())
@@ -287,18 +290,19 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
     fun addPilotData(rect: Cell, tabWidth: Double) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(
-            0.0, 0.0, rect.width - padding, rect.height,
+            0.0, 0.0, rect.width - PADDING, rect.height,
             bundle.getString("pilotPanel.title"),
-            fontSize = FONT_SIZE_FREE_LABEL, tabWidth = tabWidth, dropShadow = false,
+            fontSize = FONT_SIZE_FREE_LABEL, tabWidth = tabWidth,
+            strokeWidth = INNER_STROKE_WIDTH, dropShadow = false,
             equalBevels = true, parent = g
         )
         val fontSize = FONT_SIZE_MEDIUM
         val lineHeight = inner.height / 2.0
         addField(
             bundle.getString("name"), "pilotName0",
-            padding + bevelX, inner.y + lineHeight, fontSize,
+            PADDING + bevelX, inner.y + lineHeight * 0.8, fontSize,
             blankId = "blankCrewName0",
-            blankWidth = inner.width * 0.45 - padding * 2 - bevelX
+            blankWidth = inner.width * 0.45 - PADDING * 2 - bevelX
                     - calcTextLength(
                 "${bundle.getString("name")}_",
                 fontSize, SVGConstants.SVG_BOLD_VALUE
@@ -307,8 +311,8 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         )
         addField(
             bundle.getString("gunnerySkill"), "gunnerySkill0",
-            padding + bevelX,
-            inner.y + lineHeight * 2, fontSize, defaultText = "0",
+            PADDING + bevelX,
+            inner.y + lineHeight * 1.8, fontSize, defaultText = "0",
             blankId = "blankGunnerySkill0", labelId = "gunnerySkillText0",
             blankWidth = inner.width * 0.13, parent = g
         )
@@ -323,7 +327,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         val chartBounds = Cell(
             x + width * 0.35, y,
-            width * 0.65 - padding, 18.0
+            width * 0.65 - PADDING, 18.0
         )
         val outline = RoundedBorder(
             chartBounds.x, chartBounds.y, chartBounds.width, chartBounds.height,
@@ -363,14 +367,14 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             )
         }
         addTextElement(
-            chartBounds.x - padding, starty, bundle.getString("hitsTaken"),
+            chartBounds.x - PADDING, starty, bundle.getString("hitsTaken"),
             5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
-            width = chartBounds.x - x - padding, parent = g
+            width = chartBounds.x - x - PADDING, parent = g
         )
         addTextElement(
-            chartBounds.x - padding, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
+            chartBounds.x - PADDING, starty + chartBounds.height / 2.0, bundle.getString("consciousnessNum"),
             5.2f, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE,
-            width = chartBounds.x - x - padding, parent = g
+            width = chartBounds.x - x - PADDING, parent = g
         )
         parent.appendChild(g)
     }
