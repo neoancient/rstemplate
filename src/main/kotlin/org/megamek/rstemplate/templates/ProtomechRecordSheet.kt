@@ -46,6 +46,12 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         addHitPanel(hitCell)
         addArmorDiagram(armorCell)
         addPilotData(pilotCell, textCell.width - tabBevelX * 2.0 - 4.0)
+        addField(bundle.getString("bv"), "bv",inventoryCell.x + PADDING,
+            inner.bottomY() + tabBevelY - PADDING, FONT_SIZE_SMALL, defaultText = "0")
+        addField(bundle.getString("armor"), "armorType",pilotCell.x + pilotCell.width * 0.5,
+            inner.bottomY() + tabBevelY - PADDING, FONT_SIZE_SMALL, defaultText = "Standard")
+        addRect(inventoryCell.x - PADDING - 20.0, pilotCell.y - PADDING - 20.0,
+            10.0,10.0, id = "eraIcon")
     }
 
     fun addTabbedBorder(): Cell {

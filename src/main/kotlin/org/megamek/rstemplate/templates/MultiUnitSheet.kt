@@ -32,7 +32,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
     override fun addCopyrightFooter(x: Double, width: Double, parent: Element): Double {
         return if (logoInFooter()) {
             super.addCopyrightFooter(LEFT_MARGIN + CGL_LOGO_WIDTH + padding, width() - CGL_LOGO_WIDTH - padding, parent)
-            embedImage(LEFT_MARGIN.toDouble(), height() + padding * 2, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
+            embedImage(LEFT_MARGIN.toDouble(), height(), CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
                 if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, parent = parent)
             CGL_LOGO_HEIGHT
         } else {
