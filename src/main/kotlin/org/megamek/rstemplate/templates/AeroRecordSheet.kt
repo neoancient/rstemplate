@@ -68,7 +68,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             addLCHeatPanel(largeCraftHeatCell)
         } else {
             addEquipmentTable(eqTableCell)
-            addFluffPanel(eqTableCell)
+            addFluffPanel(fluffCell)
             addArmorDiagram(armorCell)
             addCritPanel(critDamageCell)
             addPilotPanel(pilotCell)

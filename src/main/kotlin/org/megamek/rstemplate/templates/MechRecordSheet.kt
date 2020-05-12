@@ -56,7 +56,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
             bundle.getString("dataPanel.title"), true,true,
-            false, parent = g)
+            true, parent = g)
         var ypos = internal.y
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)

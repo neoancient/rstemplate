@@ -51,7 +51,7 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
         val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
             bundle.getString("dataPanel.title"), true,
-            true, false, parent = g)
+            true, true, parent = g)
         var ypos = internal.y
         var fontSize = 9.67f
         var lineHeight = calcFontHeight(fontSize)
