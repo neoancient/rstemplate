@@ -123,10 +123,10 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
                 LabeledField(bundle.getString("run"), "mpRun", "0"),
                 LabeledField(
                     bundle.getString("jump"), "mpJump", "0",
-                    labelId = "textJumpMP"
+                    labelId = "lblJump"
                 )
             ), x, y, fontSize, FILL_DARK_GREY, 50.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+            SVGConstants.SVG_MIDDLE_VALUE, labelFixedWidth = false, parent = parent
         )
     }
 
@@ -416,9 +416,8 @@ internal class GliderProtomechRecordSheet(size: PaperSize, color: Boolean):
         addFieldSet(listOf(
             LabeledField(bundle.getString("ground"), "mpGround", "1"),
             LabeledField(bundle.getString("cruise"), "mpWalk", "0"),
-            LabeledField(bundle.getString("flank"), "mpRun", "0",
-                labelId="lblJump")
+            LabeledField(bundle.getString("flank"), "mpRun", "0")
         ), x, y, fontSize, FILL_DARK_GREY, 50.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+            SVGConstants.SVG_MIDDLE_VALUE, labelFixedWidth = false, parent = parent)
     }
 }
