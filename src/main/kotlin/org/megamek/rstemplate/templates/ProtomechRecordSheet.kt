@@ -47,9 +47,9 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         addArmorDiagram(armorCell)
         addPilotData(pilotCell, textCell.width - tabBevelX * 2.0 - 4.0)
         addField(bundle.getString("bv"), "bv",inventoryCell.x + PADDING,
-            inner.bottomY() + tabBevelY - PADDING, FONT_SIZE_SMALL, defaultText = "0")
+            inner.bottomY() + tabBevelY - PADDING * 2, FONT_SIZE_SMALL, defaultText = "0")
         addField(bundle.getString("armor"), "armorType",pilotCell.x + pilotCell.width * 0.5,
-            inner.bottomY() + tabBevelY - PADDING, FONT_SIZE_SMALL, defaultText = "Standard")
+            inner.bottomY() + tabBevelY - PADDING * 2, FONT_SIZE_SMALL, defaultText = "Standard")
         addRect(inventoryCell.x - PADDING - 20.0, pilotCell.y - PADDING - 20.0,
             10.0,10.0, id = "eraIcon")
     }
@@ -91,19 +91,19 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         var ypos = lineHeight
         val fontSize = FONT_SIZE_LARGE
         addField(
-            bundle.getString("type"), "type", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            bundle.getString("type"), "type", rect.x, ypos, fontSize,
             maxWidth = rect.width - rect.x - PADDING, parent = g
         )
         ypos += lineHeight
         addTextElement(rect.x + rect.width * 0.5, ypos, "", fontSize,
             id = "type2", width = rect.width * 0.5 - PADDING, parent = g)
         addField(
-            bundle.getString("tons"), "tonnage", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            bundle.getString("tons"), "tonnage", rect.x, ypos, fontSize,
             defaultText = "0", maxWidth = rect.width * 0.5 - rect.x - PADDING, parent = g
         )
         ypos += lineHeight
         addField(
-            bundle.getString("role"), "role", rect.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            bundle.getString("role"), "role", rect.x, ypos, fontSize,
             maxWidth = rect.width - rect.x - PADDING, labelId = "lblRole", parent = g
         )
         ypos += lineHeight
@@ -417,7 +417,7 @@ internal class GliderProtomechRecordSheet(size: PaperSize, color: Boolean):
             LabeledField(bundle.getString("ground"), "mpGround", "1"),
             LabeledField(bundle.getString("cruise"), "mpWalk", "0"),
             LabeledField(bundle.getString("flank"), "mpRun", "0")
-        ), x, y, fontSize, FILL_DARK_GREY, 50.0,
+        ), x, y, fontSize, FILL_DARK_GREY,50.0,
             SVGConstants.SVG_MIDDLE_VALUE, labelFixedWidth = false, parent = parent)
     }
 }
