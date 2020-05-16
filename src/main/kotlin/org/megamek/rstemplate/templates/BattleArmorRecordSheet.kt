@@ -18,8 +18,8 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
     override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - padding * 5
 
     override fun build() {
-        val internal = addBorder(0.0, 0.0, width() * 2.0 / 3.0, height() - tabBevelY,
-            bundle.getString("title"), topTab = true,bottomTab = true,
+        val internal = addBorder(0.966, 0.966, width() * 2.0 / 3.0, height() - tabBevelY,
+            bundle.getString("title"), topTab = true, bottomTab = true,
             textBelow = bundle.getString("title"), textId = "squad")
         addTextFields(Cell(internal.x, internal.y, internal.width * 0.5 - padding, internal.height))
         addDamagePanel(Cell(internal.x + internal.width * 0.5 - padding, internal.y - tabBevelY + padding,
