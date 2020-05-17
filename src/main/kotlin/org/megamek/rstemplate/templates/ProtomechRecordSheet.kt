@@ -69,13 +69,13 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             2.5, 2.5, width() - 2.5, height() - 6.0 - tabBevelY,
             label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
             true, true, true, true, true, true,
-            labelWidthBelow = labelWidthBelow
+            labelWidthBelow = labelWidthBelow, equalBevels = true
         )
         val border = CellBorder(
             0.0, 0.0, width() - 2.5, height() - 5.0 - tabBevelY,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932,
             true, true, true, true, true, true,
-            labelWidthBelow = labelWidthBelow
+            labelWidthBelow = labelWidthBelow, equalBevels = true
         )
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
@@ -136,7 +136,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             0.0, 0.0, rect.width - PADDING, rect.height,
             bundle.getString("inventoryPanel.title"), topTab = false,
             fontSize = FONT_SIZE_FREE_LABEL, strokeWidth = INNER_STROKE_WIDTH,
-            dropShadow = false, parent = g
+            dropShadow = false, equalBevels = true, parent = g
         )
         addRect(
             inner.x, inner.y, inner.width - PADDING, inner.height,
@@ -150,7 +150,8 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         val inner = addBorder(
             0.0, 0.0, rect.width - PADDING, rect.height,
             bundle.getString("hitPanel.title"), topTab = false,
-            fontSize = FONT_SIZE_FREE_LABEL, strokeWidth = INNER_STROKE_WIDTH,dropShadow = false, parent = g)
+            fontSize = FONT_SIZE_FREE_LABEL, strokeWidth = INNER_STROKE_WIDTH,
+            dropShadow = false, equalBevels = true, parent = g)
         val fontHeight = calcFontHeight(FONT_SIZE_SMALL)
         val lineHeight = inner.height / (locations() + 4)
         val colXOffsets = listOf(0.06, 0.12, 0.3, 0.55, 0.8).map{

@@ -330,9 +330,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         }
 
         val label = RSLabel(this,2.5, 3.0, title,
-            fontSize, width = if (topTab) tabWidth else width - 5.0 - bevelX * 2, textId = textId,
-            bevelX = if (equalBevels) bevelX else tabBevelX,
-            bevelY = if (equalBevels) bevelY else tabBevelY)
+            fontSize, width = if (topTab) tabWidth else width - 5.0 - bevelX * 2, textId = textId)
         val labelWidthBelow = if (textBelow != null) {
             val lbl = RSLabel(this, 2.5, 3.0, textBelow, fontSize, width = null)
             lbl.rectWidth + 4.0

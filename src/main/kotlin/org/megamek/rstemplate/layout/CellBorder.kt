@@ -43,50 +43,50 @@ class CellBorder(val x: Double, val y: Double, val width: Double, val height: Do
     }
 
     private fun calcPath(): String {
-        val tabX = if (equalBevels) bevelX else tabBevelX
-        val tabY = if (equalBevels) bevelY else tabBevelY
+        val cornerX = if (equalBevels) tabBevelX else bevelX
+        val cornerY = if (equalBevels) tabBevelY else bevelY
         val sj = StringJoiner(" ")
         if (bevelTopLeft) {
-            sj.add("M $x,${y + tabY}")
-            sj.add(absLineTo(tabX, 0.0))
+            sj.add("M $x,${y + tabBevelY}")
+            sj.add(absLineTo(tabBevelX, 0.0))
         } else {
             sj.add("M $x,$y")
         }
         if (topTab) {
             sj.add(relLineTo(textWidth, 0.0))
-            sj.add(relLineTo(tabX, tabY))
+            sj.add(relLineTo(tabBevelX, tabBevelY))
             if (bevelTopRight) {
-                sj.add(absLineTo(width - bevelX, tabY))
-                sj.add(relLineTo(bevelX, bevelY))
+                sj.add(absLineTo(width - cornerX, tabBevelY))
+                sj.add(relLineTo(cornerX, cornerY))
             } else {
-                sj.add(absLineTo(width, tabY))
+                sj.add(absLineTo(width, tabBevelY))
             }
         } else {
             if (bevelTopRight) {
-                sj.add(absLineTo(width - tabX, 0.0))
-                sj.add(relLineTo(tabX, tabY))
+                sj.add(absLineTo(width - tabBevelX, 0.0))
+                sj.add(relLineTo(tabBevelX, tabBevelY))
             } else {
                 sj.add(absLineTo(width, 0.0))
             }
         }
         if (bottomTab) {
             sj.add(absLineTo(width, height))
-            sj.add(relLineTo(-tabX, tabY))
+            sj.add(relLineTo(-tabBevelX, tabBevelY))
             if (labelWidthBelow != null) {
-                sj.add(absLineTo(labelWidthBelow + tabX * 2 + padding, height + tabY))
+                sj.add(absLineTo(labelWidthBelow + tabBevelX * 2 + padding, height + tabBevelY))
             } else {
-                sj.add(absLineTo(width * 0.5, height + tabY))
+                sj.add(absLineTo(width * 0.5, height + tabBevelY))
             }
-            sj.add(relLineTo(-tabX, -tabY))
+            sj.add(relLineTo(-tabBevelX, -tabBevelY))
         } else if (bevelBottomRight) {
-            sj.add(absLineTo(width, height - bevelY))
-            sj.add(relLineTo(-bevelX, bevelY))
+            sj.add(absLineTo(width, height - cornerY))
+            sj.add(relLineTo(-cornerX, cornerY))
         } else {
             sj.add(absLineTo(width, height))
         }
         if (bevelBottomLeft) {
-            sj.add(absLineTo(bevelX, height))
-            sj.add(relLineTo(-bevelX, -bevelY))
+            sj.add(absLineTo(cornerX, height))
+            sj.add(relLineTo(-cornerX, -cornerY))
         } else {
             sj.add(absLineTo(0.0, height))
         }
