@@ -309,7 +309,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             bundle.getString("name"), "pilotName0",
             PADDING + bevelX, inner.y + lineHeight * 0.8, fontSize,
             blankId = "blankCrewName0",
-            blankWidth = inner.width * 0.45 - PADDING * 2 - bevelX
+            blankWidth = inner.width * 0.50 - PADDING * 2 - bevelX
                     - calcTextLength(
                 "${bundle.getString("name")}_",
                 fontSize, SVGConstants.SVG_BOLD_VALUE
@@ -324,9 +324,8 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             blankWidth = inner.width * 0.13, parent = g
         )
         addPilotDamageTrack(
-            inner.x + inner.width * 0.45, inner.y + (inner.height - bevelY - 16) * 0.5,
-            inner.width * 0.5, parent = g
-        )
+            inner.x + inner.width * 0.48, inner.y + (inner.height - bevelY - 16) * 0.5,
+            inner.width * 0.5, parent = g)
         document.documentElement.appendChild(g)
     }
 
