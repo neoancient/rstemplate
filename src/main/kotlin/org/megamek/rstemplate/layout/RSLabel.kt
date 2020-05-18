@@ -28,7 +28,7 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
     val textHeight = sheet.calcFontHeight(fontSize) * 0.625
     val textWidth = sheet.calcTextLength(text, fontSize, SVGConstants.SVG_BOLD_VALUE)
     val rectMargin = textWidth * 0.05
-    val taperWidth = textHeight * bevelX / bevelY
+    val taperWidth = textHeight * this.bevelX / this.bevelY
     val rectWidth = width ?: textWidth + rectMargin * 2
 
     fun height() = textHeight * 2
@@ -47,8 +47,8 @@ class RSLabel (val sheet: RecordSheet, val x: Double, val y: Double, val text: S
         val background = sheet.document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         background.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, bgColor)
         background.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
-            "M 0,${textHeight.truncate()} l ${taperWidth.truncate()},${(-textHeight).truncate()} l ${rectWidth.truncate()},0"
-            + " l ${taperWidth.truncate()},${textHeight.truncate()} l ${(-taperWidth).truncate()},${textHeight.truncate()} l ${(-rectWidth).truncate()},0 Z")
+            "M 0,${textHeight.truncate()} l ${taperWidth.truncate()},${(-textHeight).truncate()} h ${rectWidth.truncate()}"
+            + " l ${taperWidth.truncate()},${textHeight.truncate()} l ${(-taperWidth).truncate()},${textHeight.truncate()} h ${(-rectWidth).truncate()} Z")
         g.appendChild(background)
 
         val t = sheet.createTextElement(if (centerText) taperWidth + rectWidth * 0.5 else taperWidth + padding,

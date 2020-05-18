@@ -38,8 +38,8 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             inner.width / 6.0, inner.height + tabBevelY * 2.0 - PADDING * 2.0
         )
         val pilotCell = Cell(
-            inner.x, textCell.bottomY(),
-            inner.width * 0.5, inner.height * 0.35 - PADDING
+            inner.x + PADDING, textCell.bottomY(),
+            inner.width * 0.5 - PADDING, inner.height * 0.35 - PADDING
         )
         addTextFields(textCell)
         addInventoryPanel(inventoryCell)
