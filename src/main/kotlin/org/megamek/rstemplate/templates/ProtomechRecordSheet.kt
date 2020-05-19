@@ -11,7 +11,7 @@ const val PADDING = 2.0
  * Creates template for ProtoMech record sheets
  */
 internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
-    protected val bundle = ResourceBundle.getBundle(ProtomechRecordSheet::class.java.name)
+    protected val bundle: ResourceBundle = ResourceBundle.getBundle(ProtomechRecordSheet::class.java.name)
     override fun fullPage() = false
     override fun showLogo() = false
     override fun showFooter() = false
@@ -24,7 +24,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
 
     override fun build() {
         val inner = addTabbedBorder()
-        val textCell = Cell(inner.x, inner.y, inner.width / 6.0, inner.height * 0.65);
+        val textCell = Cell(inner.x, inner.y, inner.width / 6.0, inner.height * 0.65)
         val inventoryCell = Cell(
             textCell.rightX(), inner.y - tabBevelY + PADDING,
             inner.width / 3.0, textCell.height + tabBevelY * 2.0 - PADDING * 2.0
@@ -54,7 +54,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             20.0,20.0, id = "eraIcon")
     }
 
-    fun addTabbedBorder(): Cell {
+    private fun addTabbedBorder(): Cell {
         val g = createTranslatedGroup(0.966, 0.966)
         val label = RSLabel(
             this, 2.5, 3.0, bundle.getString("panel.title"),
@@ -64,17 +64,27 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         val labelWidthBelow = RSLabel(
             this, 2.5, 3.0, bundle.getString("panel.title"), FONT_SIZE_TAB_LABEL,
             width = null
-        ).rectWidth + 4.0;
+        ).rectWidth + 4.0
         val shadow = CellBorder(
             2.5, 2.5, width() - 2.5, height() - 6.0 - tabBevelY,
             label.rectWidth + 4, FILL_LIGHT_GREY, 5.2,
-            true, true, true, true, true, true,
+            topTab = true,
+            bottomTab = true,
+            bevelTopLeft = true,
+            bevelTopRight = true,
+            bevelBottomRight = true,
+            bevelBottomLeft = true,
             labelWidthBelow = labelWidthBelow, equalBevels = true
         )
         val border = CellBorder(
             0.0, 0.0, width() - 2.5, height() - 5.0 - tabBevelY,
             label.rectWidth + 4, FILL_DARK_GREY, 1.932,
-            true, true, true, true, true, true,
+            topTab = true,
+            bottomTab = true,
+            bevelTopLeft = true,
+            bevelTopRight = true,
+            bevelBottomRight = true,
+            bevelBottomLeft = true,
             labelWidthBelow = labelWidthBelow, equalBevels = true
         )
         g.appendChild(shadow.draw(document))
@@ -85,7 +95,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             .inset(3.0, 5.0, 3.0 + label.textHeight * 2, 5.0)
     }
 
-    fun addTextFields(rect: Cell) {
+    private fun addTextFields(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val lineHeight = rect.height / 8.0
         var ypos = lineHeight
@@ -130,7 +140,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         )
     }
 
-    fun addInventoryPanel(rect: Cell) {
+    private fun addInventoryPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(
             0.0, 0.0, rect.width - PADDING, rect.height,
@@ -145,7 +155,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         document.documentElement.appendChild(g)
     }
 
-    fun addHitPanel(rect: Cell) {
+    private fun addHitPanel(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(
             0.0, 0.0, rect.width - PADDING, rect.height,
@@ -236,14 +246,14 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             addTextElement(inner.x + padding + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
                 SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_5", width = inner.width * 0.3, parent = g)
         }
-        ypos += calcFontHeight(5.0f);
+        ypos += calcFontHeight(5.0f)
         addTextElement(inner.x + padding, ypos, bundle.getString("magClampNote"), 5.0f,
             SVGConstants.SVG_BOLD_VALUE, id = "magClampNote", hidden = true, parent = g)
         document.documentElement.appendChild(g)
     }
 
-    fun addHitTableRow(colX: List<Double>, ypos: Double, kern: Double, roll: String, locName: String,
-            boxFill: List<String?>, critNames: List<String>, parent: Element) {
+    private fun addHitTableRow(colX: List<Double>, ypos: Double, kern: Double, roll: String, locName: String,
+                               boxFill: List<String?>, critNames: List<String>, parent: Element) {
         val fontSize = FONT_SIZE_VSMALL
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (i in roll.split("|").withIndex()) {
@@ -276,7 +286,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         }
     }
 
-    fun addArmorDiagram(rect: Cell) {
+    private fun addArmorDiagram(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val label = RSLabel(
             this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
@@ -291,7 +301,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         document.documentElement.appendChild(g)
     }
 
-    fun addPilotData(rect: Cell, tabWidth: Double) {
+    private fun addPilotData(rect: Cell, tabWidth: Double) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(
             0.0, 0.0, rect.width - PADDING, rect.height,
@@ -341,9 +351,9 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         grid.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
             "M ${chartBounds.x.truncate()},${(chartBounds.y + chartBounds.height / 2.0).truncate()}"
                     + " l ${chartBounds.width.truncate()},0"
-                    + (1..5).map {
+                    + (1..5).joinToString(" ") {
                 " M ${(chartBounds.x + it * chartBounds.width / 6.0).truncate()},${chartBounds.y.truncate()} l 0,${chartBounds.height.truncate()}"
-            }.joinToString(" ")
+            }
         )
         grid.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
         grid.setAttributeNS(
