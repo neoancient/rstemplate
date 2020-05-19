@@ -153,7 +153,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             fontSize = FONT_SIZE_FREE_LABEL, strokeWidth = INNER_STROKE_WIDTH,
             dropShadow = false, equalBevels = true, parent = g)
         val fontHeight = calcFontHeight(FONT_SIZE_SMALL)
-        val lineHeight = inner.height / (locations() + 4)
+        val lineHeight = inner.height / (locations() + 5)
         val colXOffsets = listOf(0.06, 0.12, 0.3, 0.55, 0.8).map{
             inner.x + it * inner.width
         }.toList()
@@ -221,27 +221,24 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         addTextElement(inner.x, ypos, bundle.getString("torsoWeaponDestroyed"),
             FONT_SIZE_VSMALL, SVGConstants.SVG_BOLD_VALUE, parent = g)
         ypos += fontHeight
-        addTextElement(inner.x, ypos, "", FONT_SIZE_VSMALL,
+        addTextElement(inner.x + padding, ypos, "", FONT_SIZE_VSMALL,
             SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_0", width = inner.width * 0.3, parent = g)
-        addTextElement(inner.x + inner.width * 0.33, ypos, "", FONT_SIZE_VSMALL,
+        addTextElement(inner.x + padding + inner.width * 0.33, ypos, "", FONT_SIZE_VSMALL,
             SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_1", width = inner.width * 0.3, parent = g)
-        addTextElement(inner.x + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
+        addTextElement(inner.x + padding + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
             SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_2", width = inner.width * 0.3, parent = g)
         if (isQuad()) {
             ypos += fontHeight
-            addTextElement(
-                inner.x, ypos, "", FONT_SIZE_VSMALL,
-                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_3", width = inner.width * 0.3, parent = g
-            )
-            addTextElement(
-                inner.x + inner.width * 0.33, ypos, "", FONT_SIZE_VSMALL,
-                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_4", width = inner.width * 0.3, parent = g
-            )
-            addTextElement(
-                inner.x + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
-                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_5", width = inner.width * 0.3, parent = g
-            )
+            addTextElement(inner.x + padding, ypos, "", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_3", width = inner.width * 0.3, parent = g)
+            addTextElement(inner.x + padding + inner.width * 0.33, ypos, "", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_4", width = inner.width * 0.3, parent = g)
+            addTextElement(inner.x + padding + inner.width * 0.66, ypos, "", FONT_SIZE_VSMALL,
+                SVGConstants.SVG_BOLD_VALUE, id = "torsoWeapon_5", width = inner.width * 0.3, parent = g)
         }
+        ypos += calcFontHeight(5.0f);
+        addTextElement(inner.x + padding, ypos, bundle.getString("magClampNote"), 5.0f,
+            SVGConstants.SVG_BOLD_VALUE, id = "magClampNote", hidden = true, parent = g)
         document.documentElement.appendChild(g)
     }
 
