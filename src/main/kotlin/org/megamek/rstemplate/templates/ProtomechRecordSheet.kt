@@ -51,7 +51,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         addField(bundle.getString("armor"), "armorType",pilotCell.x + pilotCell.width * 0.5,
             inner.bottomY() + tabBevelY - PADDING * 2, FONT_SIZE_SMALL, defaultText = "Standard")
         addRect(inventoryCell.x - PADDING - 20.0, pilotCell.y - PADDING - 20.0,
-            10.0,10.0, id = "eraIcon")
+            20.0,20.0, id = "eraIcon")
     }
 
     fun addTabbedBorder(): Cell {
