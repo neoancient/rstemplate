@@ -34,6 +34,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
 
     open fun isQuad() = false
     open fun isTripod() = false
+    open fun toHeatScale() = false
     open val systems = listOf(Pair(bundle.getString("engineHits"), 3),
         Pair(bundle.getString("gyroHits"), 3),
         Pair(bundle.getString("sensorHits"), 2),
@@ -377,13 +378,18 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         val g = createTranslatedGroup(rect.x, rect.y)
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("heatPanel.title"), parent = g)
-        addHeatEffects(inner.x, inner.y, inner.width, inner.height, g)
+        if (toHeatScale()) {
+            addExtendedHeatEffects(inner.x, inner.y, inner.width, inner.height, g)
+        } else {
+            addHeatEffects(inner.x, inner.y, inner.width, inner.height, g)
+        }
         document.documentElement.appendChild(g)
     }
 
     fun addHeatScale(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        g.appendChild(createHeatScale(rect.height - padding))
+        g.appendChild(createHeatScale(rect.height - padding,
+            if (toHeatScale()) 50 else 30))
         document.documentElement.appendChild(g)
     }
 
@@ -407,16 +413,121 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         5 -> format(bundle.getString("heat.mpReduction"), -1)
         else -> null
     }
+
+    fun extendedHeatEffect(heatLevel: Int): String? = when (heatLevel) {
+        50 -> bundle.getString("heat.autoShutdown")
+        49 -> format(bundle.getString("heat.mpReduction"), -9)
+        48 -> format(bundle.getString("heat.fireMod"), 7)
+        47 -> format(bundle.getString("heat.pilotDamage"), -10)
+        46 -> format(bundle.getString("heat.shutdown"), 20)
+        45 -> bundle.getString("heat.autoAmmoExplosion")
+        44 -> format(bundle.getString("heat.systemFailure"), 10)
+        43 -> format(bundle.getString("heat.mpReduction"), -8)
+        42 -> format(bundle.getString("heat.shutdown"), 18)
+        41 -> format(bundle.getString("heat.fireMod"), 6)
+        40 -> format(bundle.getString("heat.ammoExplosion"), 12)
+        39 -> format(bundle.getString("heat.pilotDamage"), 10)
+        38 -> format(bundle.getString("heat.shutdown"), 16)
+        37 -> format(bundle.getString("heat.mpReduction"), -7)
+        36 -> format(bundle.getString("heat.systemFailure"), 8)
+        35 -> format(bundle.getString("heat.ammoExplosion"), 10)
+        34 -> format(bundle.getString("heat.shutdown"), 14)
+        33 -> format(bundle.getString("heat.fireMod"), 5)
+        32 -> format(bundle.getString("heat.pilotDamage"), 8)
+        31 -> format(bundle.getString("heat.mpReduction"), -6)
+        30 -> format(bundle.getString("heat.shutdown"), 12)
+        else -> heatEffect(heatLevel)
+    }
+
+    fun addExtendedHeatEffects(x: Double, y: Double, width: Double, height: Double, parent: Element) {
+        val levelX = x + padding * 2
+        val level2X = x + width * 0.5
+        val textX = levelX + padding * 2
+        val text2X = level2X + padding * 2
+        val textWidth = width * 0.5 - textX - padding
+        val fontSize = FONT_SIZE_VSMALL
+        val effects = HashMap<Int, String>()
+        val effects2 = HashMap<Int, String>()
+        for (heat in 50 downTo 0) {
+            val text = extendedHeatEffect(heat)
+            if (text != null) {
+                effects[heat] = text
+                if (calcTextLength(text, fontSize) > textWidth) {
+                    val joinIndex = text.indexOf("/")
+                    if (joinIndex >= 0) {
+                        effects[heat] = text.substring(0, joinIndex)
+                        effects2[heat] = text.substring(joinIndex)
+                    }
+                }
+            }
+        }
+        val lineHeight = (height - 25.0 - padding * 4) / ((effects.size + effects2.size) / 2.0 + 2)
+        var ypos = y + lineHeight + 25.0 + padding
+        addTextElement(x, ypos, bundle.getString("heatLevel.1"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
+        addTextElement(level2X, ypos, bundle.getString("heatLevel.1"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        ypos += lineHeight
+        addTextElement(x, ypos, bundle.getString("heatLevel.2"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
+        addTextElement(level2X, ypos, bundle.getString("heatLevel.2"), FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        addTextElement(textX + textWidth * 0.3, ypos, bundle.getString("effects"),
+            FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        addTextElement(text2X + textWidth * 0.3, ypos, bundle.getString("effects"),
+            FONT_SIZE_MEDIUM,
+            anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+        ypos += lineHeight
+        var effectY = ypos
+        var lineCount = 0
+        var levelPos = level2X
+        var textPos = text2X
+        for (heat in 50 downTo 0) {
+            if (heat in effects) {
+                addTextElement(levelPos, effectY, heat.toString(), fontSize,
+                    anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = parent)
+                addTextElement(textPos, effectY, effects[heat]!!, fontSize,
+                    anchor = SVGConstants.SVG_START_VALUE, width = textWidth, parent = parent)
+                effectY += lineHeight
+                lineCount++
+                if (heat in effects2) {
+                    addTextElement(textPos + padding, effectY, effects2[heat]!!, fontSize,
+                        anchor = SVGConstants.SVG_START_VALUE, width = textWidth, parent = parent)
+                    effectY += lineHeight
+                    lineCount++
+                }
+                if (lineCount >= (effects.size + effects2.size) / 2) {
+                    levelPos = levelX
+                    textPos = textX
+                    lineCount = Integer.MIN_VALUE
+                    effectY = ypos
+                }
+            }
+        }
+
+        val medFontLineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
+        addTextElement(x + padding, y + medFontLineHeight, bundle.getString("heatSinks"), 8.44f,
+            id= "hsType", width = width * 0.4 - x - padding * 2, parent = parent)
+        addTextElement(x + padding, y + medFontLineHeight * 2, "10", 8.44f,
+            id= "hsCount", parent = parent)
+        if (this is LAMRecordSheet) {
+            addTextElement(x + padding, y + medFontLineHeight * 3, bundle.getString("airmechHeat"), 5.8f,
+                anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
+        }
+        addRect(x + width * 0.4, y + padding, width * 0.6 - padding, 25.0, id = "heatSinkPips",
+            parent = parent)
+    }
 }
 
-class BipedMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class BipedMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_biped_default.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
     override val armorDiagramFileName = "armor_diagram_biped.svg"
     override val isDiagramFileName = "internal_diagram_biped.svg"
 }
 
-class QuadMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class QuadMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_quad_default.svg"
     override val damageTransferFileName = "damage_transfer_quad.svg"
     override fun isQuad() = true
@@ -424,7 +535,7 @@ class QuadMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(siz
     override val isDiagramFileName = "internal_diagram_quad.svg"
 }
 
-class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
     override val fileName = "mech_tripod_default.svg"
     override val damageTransferFileName = "damage_transfer_tripod.svg"
     override val armorDiagramFileName = "armor_diagram_tripod.svg"
@@ -457,8 +568,8 @@ class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(s
     }
 }
 
-class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
-    override val fileName = "mech_biped_lam.svg"
+open class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+    override val fileName = "mech_lam_default.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
     override val armorDiagramFileName = "armor_diagram_biped.svg"
     override val isDiagramFileName = "internal_diagram_biped.svg"
@@ -665,8 +776,8 @@ class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, co
     }
 }
 
-class QuadVeeRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
-    override val fileName = "mech_quadvee.svg"
+open class QuadVeeRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+    override val fileName = "mech_quadvee_default.svg"
     override val damageTransferFileName = "damage_transfer_quadvee.svg"
     override val armorDiagramFileName = "armor_diagram_quadvee.svg"
     override val isDiagramFileName = "internal_diagram_quadvee.svg"
@@ -705,3 +816,29 @@ class QuadVeeRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size
 
     override fun hideCrewIndex(i: Int) = false
 }
+
+class BipedMechTOHeatRecordSheet(size: PaperSize, color: Boolean) : BipedMechRecordSheet(size, color) {
+    override val fileName = "mech_biped_toheat.svg"
+    override fun toHeatScale() = true
+}
+
+class QuadMechTOHeatRecordSheet(size: PaperSize, color: Boolean) : QuadMechRecordSheet(size, color) {
+    override val fileName = "mech_quad_toheat.svg"
+    override fun toHeatScale() = true
+}
+
+class TripodMechTOHeatRecordSheet(size: PaperSize, color: Boolean) : TripodMechRecordSheet(size, color) {
+    override val fileName = "mech_tripod_toheat.svg"
+    override fun toHeatScale() = true
+}
+
+class LAMTOHeatRecordSheet(size: PaperSize, color: Boolean) : LAMRecordSheet(size, color) {
+    override val fileName = "mech_lam_toheat.svg"
+    override fun toHeatScale() = true
+}
+
+class QuadVeeTOHeatRecordSheet(size: PaperSize, color: Boolean) : QuadVeeRecordSheet(size, color) {
+    override val fileName = "mech_quadvee_toheat.svg"
+    override fun toHeatScale() = true
+}
+

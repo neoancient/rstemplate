@@ -25,6 +25,11 @@ fun writeRecordSheets(size: PaperSize, color: Boolean, dir: String) {
     outputRS(TripodMechRecordSheet(size, color), dir)
     outputRS(LAMRecordSheet(size, color), dir)
     outputRS(QuadVeeRecordSheet(size, color), dir)
+    outputRS(BipedMechTOHeatRecordSheet(size, color), dir)
+    outputRS(QuadMechTOHeatRecordSheet(size, color), dir)
+    outputRS(TripodMechTOHeatRecordSheet(size, color), dir)
+    outputRS(LAMTOHeatRecordSheet(size, color), dir)
+    outputRS(QuadVeeTOHeatRecordSheet(size, color), dir)
     // Vehicles
     outputRS(NoTurretVehicleRecordSheet(size, color), dir)
     outputRS(SingleTurretVehicleRecordSheet(size, color), dir)

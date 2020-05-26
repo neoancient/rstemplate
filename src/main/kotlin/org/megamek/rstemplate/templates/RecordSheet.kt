@@ -574,21 +574,21 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * Creates the 0-30 heat scale
      *
      * @param height The height of the region
+     * @param max The maximum value for heat buildup
      * @return A group of the heat scale elements
      */
-    fun createHeatScale(height: Double): Element {
+    fun createHeatScale(height: Double, max: Int = 30): Element {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM).toDouble()
-        val boxHeight = (height - lineHeight * 3 - padding) / 33.0
+        val boxHeight = (height - lineHeight * 3 - padding) / (max + 3.0)
         val boxWidth = boxHeight * 13.0 / 8.0 // close enough approximation of the golden ratio
-        val textOffset = (boxHeight + lineHeight) * 0.5 - 1.0
+        val textOffset = ((boxHeight + lineHeight) * 15.0 / max - if (max <= 30) 1.0 else 0.0)
         var ypos = lineHeight
-        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.1"),
-            FONT_SIZE_MEDIUM,
+        val fontSize = FONT_SIZE_MEDIUM * 30.0f / max
+        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.1"), FONT_SIZE_MEDIUM,
             SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = g)
         ypos += lineHeight
-        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.2"),
-            FONT_SIZE_MEDIUM,
+        addTextElement(boxWidth * 0.5, ypos, bundle.getString("heatScale.2"), FONT_SIZE_MEDIUM,
             SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, fixedWidth = true, parent = g)
         ypos += lineHeight
         g.appendChild(RoundedBorder(boxWidth * 0.5 - boxHeight, ypos - 1.5, boxHeight * 2, boxHeight * 2,
@@ -596,7 +596,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         addTextElement(boxWidth * 0.5, ypos + 4.5, bundle.getString("overflow"),
             4.7f, anchor = SVGConstants.SVG_MIDDLE_VALUE, width = 1.5 * boxHeight, parent = g)
         ypos += boxHeight * 2 + padding
-        for (i in 30 downTo 0) {
+        for (i in max downTo 0) {
             addRect(0.0, ypos, boxWidth, boxHeight, fill = if (!color) {
                 "#ffffff"
             } else if (i < 10) {
@@ -607,8 +607,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                 format("#ff%xcc", 0xff - (i - 10) * (0xff - 0xcc) / 20)
             }, strokeWidth = 1.45, parent = g)
             addTextElement(boxWidth * 0.5, ypos + textOffset,
-                if (heatEffect(i) == null) i.toString() else "$i*",
-                FONT_SIZE_MEDIUM,
+                if (heatEffect(i) == null) i.toString() else "$i*", fontSize,
                 SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
             ypos += boxHeight
         }
