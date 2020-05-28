@@ -12,14 +12,13 @@ import java.util.*
  */
 
 abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(size, color) {
-    val eqTableCell = Cell(
-        LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
+    val eqTableCell = Cell(0.0, logoHeight + titleHeight,
         width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
-    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0, TOP_MARGIN.toDouble(), width() / 3.0,
+    val armorCell = Cell(width() * 2.0 / 3.0, 0.0, width() / 3.0,
         (height() - footerHeight) / 2.0 - padding
     )
     val crewFluffCell = Cell(eqTableCell.rightX(), eqTableCell.y, width() - eqTableCell.width - armorCell.width, eqTableCell.height)
-    val critTableCell = Cell(LEFT_MARGIN.toDouble(), armorCell.bottomY() + padding, width() * 0.667, (height() - footerHeight) / 2.0 - padding)
+    val critTableCell = Cell(0.0, armorCell.bottomY() + padding, width() * 0.667, (height() - footerHeight) / 2.0 - padding)
     val heatScaleCell = Cell(armorCell.rightX() - 20, armorCell.bottomY(), 20.0, (height() - footerHeight) / 2.0)
     val structureCell = Cell(armorCell.x, armorCell.bottomY(), armorCell.width - heatScaleCell.width, heatScaleCell.height * 0.5)
     val heatCell = structureCell.translate(0.0, structureCell.height)

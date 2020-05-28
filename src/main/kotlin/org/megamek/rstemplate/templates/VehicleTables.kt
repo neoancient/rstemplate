@@ -11,14 +11,14 @@ import java.util.*
  */
 
 abstract class VehicleTables(size: PaperSize, color: Boolean): RecordSheet(size, color) {
-    private val hitLocation = Cell(LEFT_MARGIN.toDouble(), padding,
+    private val hitLocation = Cell(0.0, padding,
         width() * 0.57, (height() - footerHeight) * 0.6 - padding)
     val motiveDamage = Cell(hitLocation.rightX() + padding, hitLocation.y,
         width() - hitLocation.width - padding, hitLocation.height)
     private val criticalHits = Cell(hitLocation.x, hitLocation.bottomY() + padding,
         width().toDouble(), height() - footerHeight - hitLocation.bottomY() - padding)
 
-    final override fun height() = size.height * 0.5 - TOP_MARGIN - padding
+    final override fun height() = size.height * 0.5 - padding
     override fun fullPage() = false
     override fun showLogo() = false
     protected val bundle = ResourceBundle.getBundle(VehicleTables::class.java.name)

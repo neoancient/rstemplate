@@ -10,9 +10,9 @@ import java.util.*
  */
 abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
 
-    private val titleCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding, TOP_MARGIN.toDouble(),
+    private val titleCell = Cell(width() * 2.0 / 3.0 + padding, 0.0,
         width() / 3.0 - padding, logoHeight)
-    private val unitCell = Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + padding * 2,
+    private val unitCell = Cell(0.0, logoHeight + padding * 2,
         size.width.toDouble(), height() - logoHeight - footerHeight - padding * 2)
     override fun showTitle() = false
     final override fun height() = super.height()
@@ -31,8 +31,8 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
 
     override fun addCopyrightFooter(x: Double, width: Double, parent: Element): Double {
         return if (logoInFooter()) {
-            super.addCopyrightFooter(LEFT_MARGIN + CGL_LOGO_WIDTH + padding, width() - CGL_LOGO_WIDTH - padding, parent)
-            embedImage(LEFT_MARGIN.toDouble(), height(), CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
+            super.addCopyrightFooter(CGL_LOGO_WIDTH + padding, width() - CGL_LOGO_WIDTH - padding, parent)
+            embedImage(0.0, height() - CGL_LOGO_HEIGHT, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
                 if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, parent = parent)
             CGL_LOGO_HEIGHT
         } else {
@@ -118,14 +118,10 @@ class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(
     override val title = (1..3).map { bundle.getString("infantry.title.$it") }.toList()
     override fun logoInFooter() = false
 
-    private val burstFireCell = Cell(
-        LEFT_MARGIN.toDouble(), TOP_MARGIN + height() * 0.75,
-        width() * 0.5, height() * 0.25 - footerHeight
-    )
-    private val weaponDamageCell = Cell(
-        burstFireCell.rightX() + padding, burstFireCell.y + tabBevelY,
-        width() * 0.5 - padding, height() * 0.25 - footerHeight - tabBevelY
-    )
+    private val burstFireCell = Cell(0.0, height() * 0.75,
+        width() * 0.5, height() * 0.25 - footerHeight)
+    private val weaponDamageCell = Cell(burstFireCell.rightX() + padding, burstFireCell.y + tabBevelY,
+        width() * 0.5 - padding, height() * 0.25 - footerHeight - tabBevelY)
 
     override fun build() {
         super.build()
@@ -143,8 +139,8 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
     override val title = (1..2).map { bundle.getString("ba.title.$it") }.toList()
     override fun logoInFooter() = false
 
-    private val legAttackTableCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding,
-        TOP_MARGIN + logoHeight + padding * 2,
+    private val legAttackTableCell = Cell(width() * 2.0 / 3.0 + padding,
+        logoHeight + padding * 2,
         width() / 3.0 - padding, (height() - logoHeight - footerHeight - padding) * 0.13 - padding)
     private val swarmAttackTableCell = Cell(legAttackTableCell.x, legAttackTableCell.bottomY() + padding,
         legAttackTableCell.width, (height() - logoHeight - footerHeight - padding) * 0.11 - padding)

@@ -10,22 +10,21 @@ import java.util.*
  */
 abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
 
-    private val eqTableCell = Cell(
-        LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
+    private val eqTableCell = Cell(0.0, logoHeight + titleHeight,
         width() * 0.4, height() * 0.5 - logoHeight - titleHeight)
-    private val armorCell = Cell(eqTableCell.rightX() + padding, TOP_MARGIN.toDouble(),
+    private val armorCell = Cell(eqTableCell.rightX() + padding, 0.0,
         width() * 0.6 - padding, height() * 0.65 - padding)
-    private val fluffCell = Cell(LEFT_MARGIN.toDouble(), eqTableCell.bottomY() + padding,
+    private val fluffCell = Cell(0.0, eqTableCell.bottomY() + padding,
         eqTableCell.width, armorCell.bottomY() - eqTableCell.bottomY() - padding)
-    private val tableCell = Cell(LEFT_MARGIN.toDouble(), armorCell.bottomY() + padding,
+    private val tableCell = Cell(0.0, armorCell.bottomY() + padding,
         width().toDouble(), height() * 0.35 - footerHeight - padding)
-    private val critDamageCell = Cell(LEFT_MARGIN.toDouble(), fluffCell.bottomY() + padding,
+    private val critDamageCell = Cell(0.0, fluffCell.bottomY() + padding,
         eqTableCell.width, height() * 0.12)
-    private val velocityCell = Cell(LEFT_MARGIN.toDouble(), critDamageCell.bottomY() + padding,
+    private val velocityCell = Cell(0.0, critDamageCell.bottomY() + padding,
         width() * 2.0 / 3.0, height() * 0.23 - footerHeight - padding)
     private val pilotCell = Cell(critDamageCell.rightX() + padding, critDamageCell.y,
         velocityCell.width - critDamageCell.width - padding, critDamageCell.height + tabBevelY)
-    private val heatScaleCell = Cell(armorCell.rightX() - 20, TOP_MARGIN + (height() - footerHeight) / 2.0,
+    private val heatScaleCell = Cell(armorCell.rightX() - 20, (height() - footerHeight) / 2.0,
         20.0, (height() - footerHeight) / 2.0)
     private val heatCell = Cell(velocityCell.rightX() + padding, tableCell.y,
         width() - velocityCell.width - heatScaleCell.width - padding, height() - armorCell.height - footerHeight - padding)
@@ -683,7 +682,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     private fun addBombsPanel() {
         val label = RSLabel(this, 0.0, 0.0,
             bundle.getString("bombsPanel.title"), FONT_SIZE_FREE_LABEL)
-        val g = createTranslatedGroup(LEFT_MARGIN + width() - label.rectWidth, TOP_MARGIN.toDouble())
+        val g = createTranslatedGroup(width() - label.rectWidth, 0.0)
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores")
         g.appendChild(label.draw())
         addRect(label.rectMargin, label.height() + padding, label.rectWidth, label.rectWidth * 0.8,

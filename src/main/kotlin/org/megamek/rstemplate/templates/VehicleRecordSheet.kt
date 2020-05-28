@@ -9,15 +9,9 @@ import java.util.*
  *
  */
 abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet(size, color) {
-    val eqTableCell = if (fullPage()) {
-        Cell(LEFT_MARGIN.toDouble(), TOP_MARGIN + logoHeight + titleHeight,
-            width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
-    } else {
-        Cell(LEFT_MARGIN.toDouble(), logoHeight + titleHeight,
-            width() * 0.4, height() - footerHeight - logoHeight - titleHeight - padding)
-    }
-    val armorCell = Cell(size.width - RIGHT_MARGIN - width() / 3.0 + padding,
-            if (fullPage()) TOP_MARGIN.toDouble() else padding,
+    val eqTableCell = Cell(0.0, logoHeight + titleHeight, width() * 0.4,
+        (if (fullPage()) height() * 0.5 else height()) - footerHeight - logoHeight - titleHeight - padding)
+    val armorCell = Cell(width() * 2.0 / 3.0 + padding, padding,
             width() / 3.0 - padding,height() - footerHeight - padding * 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
         width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding
@@ -31,7 +25,7 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
     open fun isVTOL() = false
 
     final override fun height(): Double = if (!fullPage()) {
-        size.height * 0.5 - TOP_MARGIN - padding
+        super.height() * 0.5 - padding
     } else {
         super.height()
     }

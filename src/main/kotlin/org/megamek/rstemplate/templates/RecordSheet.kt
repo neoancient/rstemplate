@@ -209,10 +209,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @return The height of the logo after scaling
      */
     open fun addLogo() = if (showLogo()) {
-        embedImage(
-            LEFT_MARGIN.toDouble(), if (fullPage()) TOP_MARGIN.toDouble() else 0.0,
-            width() * 0.67 - padding, null, if (color) BT_LOGO else BT_LOGO_BW
-        )[1]
+        embedImage(0.0, 0.0, width() * 0.67 - padding, null,
+            if (color) BT_LOGO else BT_LOGO_BW)[1]
     } else {
         0.0
     }
@@ -229,7 +227,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         val height = calcFontHeight(FONT_SIZE_VLARGE).toDouble()
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
-            "${SVGConstants.SVG_TRANSLATE_VALUE} (${LEFT_MARGIN + width() / 3.0} ${(if (fullPage()) TOP_MARGIN else 0) + logoHeight + height})")
+            "${SVGConstants.SVG_TRANSLATE_VALUE} (${width() / 3.0} ${logoHeight + height})")
         textElem.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "title")
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_FAMILY_ATTRIBUTE, font.name)
         textElem.setAttributeNS(null, SVGConstants.SVG_FONT_SIZE_ATTRIBUTE, "${FONT_SIZE_VLARGE}px")
@@ -248,7 +246,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      *
      * @return The height of the copyright footer's text element.
      */
-    open fun addCopyrightFooter(x: Double = LEFT_MARGIN.toDouble(), width: Double = width(),
+    open fun addCopyrightFooter(x: Double = 0.0, width: Double = width(),
                                 parent: Element = document.documentElement): Double {
         if (!showFooter()) {
             return 0.0
@@ -257,7 +255,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         val height = calcFontHeight(FONT_SIZE_VSMALL)
         val line1 = bundle.getString("copyright.line1.text")
         val line2 = bundle.getString("copyright.line2.text")
-        val bottomY = if (fullPage()) height() + TOP_MARGIN else height()
+        val bottomY = height()
 
         val textElem = document.createElementNS(svgNS, SVGConstants.SVG_TEXT_TAG)
         textElem.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
