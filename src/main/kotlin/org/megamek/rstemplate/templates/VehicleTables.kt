@@ -10,7 +10,7 @@ import java.util.*
  * vehicle record sheet
  */
 
-abstract class VehicleTables(size: PaperSize, color: Boolean): RecordSheet(size, color) {
+abstract class VehicleTables(size: PaperSize): RecordSheet(size) {
     private val hitLocation = Cell(0.0, padding,
         width() * 0.57, (height() - footerHeight) * 0.6 - padding)
     val motiveDamage = Cell(hitLocation.rightX() + padding, hitLocation.y,
@@ -21,6 +21,7 @@ abstract class VehicleTables(size: PaperSize, color: Boolean): RecordSheet(size,
     final override fun height() = size.height * 0.5 - padding
     override fun fullPage() = false
     override fun showLogo() = false
+    override fun colorElements() = ""
     protected val bundle = ResourceBundle.getBundle(VehicleTables::class.java.name)
 
     abstract val unitType: String
@@ -38,14 +39,14 @@ abstract class VehicleTables(size: PaperSize, color: Boolean): RecordSheet(size,
     }
 }
 
-class TankTables(size: PaperSize, color: Boolean): VehicleTables(size, color) {
+class TankTables(size: PaperSize): VehicleTables(size) {
     override val fileName = "tables_tank.svg"
     override val unitType = "tank"
     override val hitLocationTable = TankHitLocationTable(this)
     override val criticalHitTable = TankCriticalHitTable(this)
 }
 
-class VTOLTables(size: PaperSize, color: Boolean): VehicleTables(size, color) {
+class VTOLTables(size: PaperSize): VehicleTables(size) {
     val elevation = Cell(motiveDamage.x, motiveDamage.y,
         motiveDamage.width, motiveDamage.height * 0.6 - padding)
     val physicals = Cell(motiveDamage.x, elevation.height + padding,
@@ -70,7 +71,7 @@ class VTOLTables(size: PaperSize, color: Boolean): VehicleTables(size, color) {
             inner.width - padding * 2, inner.height * 0.3, (1..15).toList(), g)
         addElevationTrack(padding * 1.5, inner.y + inner.height * 0.55,
             inner.width - padding * 2, inner.height * 0.3, (16..30).toList(), g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addElevationTrack(x: Double, y: Double,
@@ -125,6 +126,6 @@ class VTOLTables(size: PaperSize, color: Boolean): VehicleTables(size, color) {
             listOf(0.17, 0.7),
             listOf(bundle.getString("differenceInLevels"), bundle.getString("attackTypes")),
             SVGConstants.SVG_MIDDLE_VALUE, true, SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 }

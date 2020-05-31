@@ -10,11 +10,12 @@ const val PADDING = 2.0
 /**
  * Creates template for ProtoMech record sheets
  */
-internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
+internal abstract class ProtomechRecordSheet(size: PaperSize): RecordSheet(size) {
     protected val bundle: ResourceBundle = ResourceBundle.getBundle(ProtomechRecordSheet::class.java.name)
     override fun fullPage() = false
     override fun showLogo() = false
     override fun showFooter() = false
+    override fun colorElements() = ""
     override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - PADDING * 6
     abstract val armorDiagramFileName: String
 
@@ -90,7 +91,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
         return Cell(0.0, 0.0, width(), height() - tabBevelY)
             .inset(3.0, 5.0, 3.0 + label.textHeight * 2, 5.0)
     }
@@ -123,7 +124,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         )
         ypos += lineHeight
         addMPFields(rect.x + PADDING, ypos, fontSize, g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     open fun addMPFields(x: Double, y: Double, fontSize: Float, parent: Element) {
@@ -152,7 +153,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
             inner.x, inner.y, inner.width - PADDING, inner.height,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g
         )
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addHitPanel(rect: Cell) {
@@ -249,7 +250,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         ypos += calcFontHeight(5.0f)
         addTextElement(inner.x + padding, ypos, bundle.getString("magClampNote"), 5.0f,
             SVGConstants.SVG_BOLD_VALUE, id = "magClampNote", hidden = true, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addHitTableRow(colX: List<Double>, ypos: Double, kern: Double, roll: String, locName: String,
@@ -295,10 +296,10 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         g.appendChild(label.draw())
         embedImage(
             0.0, label.height(), rect.width, rect.height - label.height() - PADDING,
-            armorDiagramFileName, ImageAnchor.CENTER, g
+            armorDiagramFileName, ImageAnchor.CENTER, parent = g
         )
         g.appendChild(label.draw())
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addPilotData(rect: Cell, tabWidth: Double) {
@@ -333,7 +334,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
         addPilotDamageTrack(
             inner.x + inner.width * 0.48, inner.y + (inner.height - bevelY - 16) * 0.5,
             inner.width * 0.5, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addPilotDamageTrack(x: Double, y: Double, width: Double, parent: Element) {
@@ -393,8 +394,8 @@ internal abstract class ProtomechRecordSheet(size: PaperSize, color: Boolean): R
     }
 }
 
-internal class BipedProtomechRecordSheet(size: PaperSize, color: Boolean):
-    ProtomechRecordSheet(size, color) {
+internal class BipedProtomechRecordSheet(size: PaperSize):
+    ProtomechRecordSheet(size) {
     override val fileName = "protomech_biped.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_biped.svg"
     override fun isQuad() = false
@@ -402,8 +403,8 @@ internal class BipedProtomechRecordSheet(size: PaperSize, color: Boolean):
     override fun locations() = 6
 }
 
-internal class QuadProtomechRecordSheet(size: PaperSize, color: Boolean):
-    ProtomechRecordSheet(size, color) {
+internal class QuadProtomechRecordSheet(size: PaperSize):
+    ProtomechRecordSheet(size) {
     override val fileName = "protomech_quad.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_quad.svg"
     override fun isQuad() = true
@@ -411,8 +412,8 @@ internal class QuadProtomechRecordSheet(size: PaperSize, color: Boolean):
     override fun locations() = 4
 }
 
-internal class GliderProtomechRecordSheet(size: PaperSize, color: Boolean):
-        ProtomechRecordSheet(size, color) {
+internal class GliderProtomechRecordSheet(size: PaperSize):
+        ProtomechRecordSheet(size) {
     override val fileName = "protomech_glider.svg"
     override val armorDiagramFileName = "armor_diagram_protomech_biped.svg"
     override fun isQuad() = false

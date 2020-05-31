@@ -8,7 +8,7 @@ import java.util.*
 /**
  *
  */
-abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
+abstract class MultiUnitSheet(size: PaperSize): RecordSheet(size) {
 
     private val titleCell = Cell(width() * 2.0 / 3.0 + padding, 0.0,
         width() / 3.0 - padding, logoHeight)
@@ -33,7 +33,7 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
         return if (logoInFooter()) {
             super.addCopyrightFooter(CGL_LOGO_WIDTH + padding, width() - CGL_LOGO_WIDTH - padding, parent)
             embedImage(0.0, height() - CGL_LOGO_HEIGHT, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
-                if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, parent = parent)
+                CGL_LOGO, CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_LEFT, id = "cglLogo", parent = parent)
             CGL_LOGO_HEIGHT
         } else {
             super.addCopyrightFooter(x, width, parent)
@@ -87,19 +87,19 @@ abstract class MultiUnitSheet(size: PaperSize, color: Boolean): RecordSheet(size
             text.appendChild(tspan)
         }
         g.appendChild(text)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addUnitGroups(rect: Cell) {
         for (i in 0 until unitCount) {
             val g = createTranslatedGroup(rect.x, rect.y + i * rect.height / unitCapacity)
             g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unit_$i")
-            document.documentElement.appendChild(g)
+            rootElement.appendChild(g)
         }
     }
 }
 
-class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
+class InfantryMultiSheet(size: PaperSize): MultiUnitSheet(size) {
     override val fileName = "conventional_infantry_default.svg"
     override val unitCount = 4
     override val unitCapacity = 4
@@ -109,7 +109,7 @@ class InfantryMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, 
     override fun logoInFooter() = true
 }
 
-class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
+class InfantryMultiSheetTables(size: PaperSize): MultiUnitSheet(size) {
     override val fileName = "conventional_infantry_tables.svg"
     override val unitCount = 3
     override val unitCapacity = 4
@@ -130,7 +130,7 @@ class InfantryMultiSheetTables(size: PaperSize, color: Boolean): MultiUnitSheet(
     }
 }
 
-class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color) {
+class BAMultiSheet(size: PaperSize) : MultiUnitSheet(size) {
     override val fileName = "battle_armor_default.svg"
     override val unitCount = 5
     override val unitCapacity = 5
@@ -161,7 +161,7 @@ class BAMultiSheet(size: PaperSize, color: Boolean) : MultiUnitSheet(size, color
     }
 }
 
-internal class ProtoMechMultiSheet(size: PaperSize, color: Boolean): MultiUnitSheet(size, color) {
+internal class ProtoMechMultiSheet(size: PaperSize): MultiUnitSheet(size) {
     override val fileName = "protomech_default.svg"
     override val unitCount = 5
     override val unitCapacity = 5

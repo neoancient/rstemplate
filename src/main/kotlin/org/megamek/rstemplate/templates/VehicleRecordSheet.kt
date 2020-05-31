@@ -8,7 +8,7 @@ import java.util.*
 /**
  *
  */
-abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet(size, color) {
+abstract class VehicleRecordSheet(size: PaperSize) : RecordSheet(size) {
     val eqTableCell = Cell(0.0, logoHeight + titleHeight, width() * 0.4,
         (if (fullPage()) height() * 0.5 else height()) - footerHeight - logoHeight - titleHeight - padding)
     val armorCell = Cell(width() * 2.0 / 3.0 + padding, padding,
@@ -97,7 +97,7 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
         addRect(rect.width * 0.5 + (rect.width * 0.5 - tabBevelX - padding) * 0.5 - 10,
             internal.bottomY() - padding * 0.5 - lineHeight * 0.75 + tabBevelY * 0.5 - 10.0,
             20.0, 20.0, id = "eraIcon", parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     fun addCrewPanel(rect: Cell) {
@@ -137,7 +137,7 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
             4.83f, fixedWidth = true, parent = g)
         addTextElement(inner.x + inner.width * 0.5, ypos, bundle.getString("driverHitMod"),
             4.83f, fixedWidth = true, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     open fun addCriticalDamagePanel(rect: Cell) {
@@ -187,7 +187,7 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
             g.appendChild(DamageCheckBox(bundle.getString("turret2"))
                 .draw(this, inner.x + padding + inner.width * 0.6315, ypos, fontSize, width = inner.width * 0.29))
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     fun addNotesPanel(rect: Cell) {
@@ -195,7 +195,7 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "notes")
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("notes.title"), parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
         val fluffCell = rect.inset(
             padding,
             padding,
@@ -211,57 +211,57 @@ abstract class VehicleRecordSheet(size: PaperSize, color: Boolean) : RecordSheet
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         embedImage(0.0, label.height(), rect.width, rect.height - label.height() - padding,
-            armorDiagramFileName, ImageAnchor.CENTER, g)
-        embedImage(rect.width - 50.0, rect.height - 30.0, 50.0, 30.0,
-            if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g)
+            armorDiagramFileName, ImageAnchor.CENTER, parent = g)
+        embedImage(rect.width - CGL_LOGO_WIDTH, rect.height - CGL_LOGO_HEIGHT, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
+            CGL_LOGO, CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, id = "cglLogo", parent = g)
         g.appendChild(label.draw())
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 }
 
-class SingleTurretVehicleRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class SingleTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vee_turret.svg"
     override val turretCount = 1
     override fun fullPage() = false
 }
 
-class NoTurretVehicleRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class NoTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vee_noturret.svg"
     override val turretCount = 0
     override fun fullPage() = false
 }
 
-class DualTurretVehicleRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class DualTurretVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_dualturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vee_dualturret.svg"
     override val turretCount = 2
     override fun fullPage() = false
 }
 
-class SingleTurretSHVehicleRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class SingleTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_turret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_vee_turret.svg"
     override val turretCount = 1
     override fun fullPage() = false
 }
 
-class NoTurretSHVehicleRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class NoTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_noturret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_vee_noturret.svg"
     override val turretCount = 0
     override fun fullPage() = false
 }
 
-class DualTurretSHVehicleRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class DualTurretSHVehicleRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "vehicle_dualturret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_vee_dualturret.svg"
     override val turretCount = 2
     override fun fullPage() = false
 }
 
-abstract class AbstractVTOLRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+abstract class AbstractVTOLRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override fun fullPage() = false
     override fun isVTOL() = true
     override fun addCriticalDamagePanel(rect: Cell) {
@@ -307,44 +307,44 @@ abstract class AbstractVTOLRecordSheet(size: PaperSize, color: Boolean): Vehicle
             addTextElement(inner.x + padding, ypos + padding, bundle.getString("cruisingOnly"),
                 4.83f, fixedWidth = true, parent = g)
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 }
 
-class VTOLRecordSheet(size: PaperSize, color: Boolean): AbstractVTOLRecordSheet(size, color) {
+class VTOLRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
     override val fileName = "vtol_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vtol_noturret.svg"
     override val turretCount = 0
 }
 
-class VTOLTurretRecordSheet(size: PaperSize, color: Boolean): AbstractVTOLRecordSheet(size, color) {
+class VTOLTurretRecordSheet(size: PaperSize): AbstractVTOLRecordSheet(size) {
     override val fileName = "vtol_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_vtol_chinturret.svg"
     override val turretCount = 1
 }
 
-class WiGENoTurretRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class WiGENoTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "wige_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_wige_noturret.svg"
     override val turretCount = 0
     override fun fullPage() = false
 }
 
-class WiGESingleTurretRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class WiGESingleTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "wige_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_wige_turret.svg"
     override val turretCount = 1
     override fun fullPage() = false
 }
 
-class WiGEDualTurretRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+class WiGEDualTurretRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override val fileName = "wige_dualturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_wige_dualturret.svg"
     override val turretCount = 2
     override fun fullPage() = false
 }
 
-abstract class BaseNavalRecordSheet(size: PaperSize, color: Boolean): VehicleRecordSheet(size, color) {
+abstract class BaseNavalRecordSheet(size: PaperSize): VehicleRecordSheet(size) {
     override fun fullPage() = true
     open fun isSubmarine() = false
 
@@ -375,7 +375,7 @@ abstract class BaseNavalRecordSheet(size: PaperSize, color: Boolean): VehicleRec
                 inner.width - padding * 2, inner.height * 0.3, (1..10).toList(), g)
             addDepthTrack(padding * 1.5, inner.y + inner.height * 0.55,
                 inner.width - padding * 2, inner.height * 0.3, (11..20).toList(), g)
-            document.documentElement.appendChild(g)
+            rootElement.appendChild(g)
         } else {
             super.addArmorDiagram(rect)
         }
@@ -404,7 +404,7 @@ abstract class BaseNavalRecordSheet(size: PaperSize, color: Boolean): VehicleRec
         parent.appendChild(grid)
         val fontSize = FONT_SIZE_MEDIUM
         val startX = colOffset + colWidth * 0.5
-        val startY = y + (height - calcFontHeight(fontSize)) * 0.5 - 1
+        val startY = y + height * 0.25 + calcFontHeight(fontSize) * 0.5 - 1
         addTextElement(x + padding, startY, bundle.getString("turn"),
             fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addTextElement(x + padding, height / 2.0 + startY, bundle.getString("depth"),
@@ -417,78 +417,78 @@ abstract class BaseNavalRecordSheet(size: PaperSize, color: Boolean): VehicleRec
     }
 }
 
-class NavalTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class NavalTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
     override val turretCount = 1
 }
 
-class NavalNoTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class NavalNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_noturret.svg"
     override val turretCount = 0
 }
 
-class NavalDualTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class NavalDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_dualturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_dualturret.svg"
     override val turretCount = 2
 }
 
-class SHNavalNoTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SHNavalNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_noturret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_naval_noturret.svg"
     override val turretCount = 0
 }
 
-class SHNavalTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SHNavalTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_turret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_naval_turret.svg"
     override val turretCount = 1
 }
 
-class SHNavalDualTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SHNavalDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "naval_dualturret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_naval_dualturret.svg"
     override val turretCount = 2
 }
 
-class SubmarineTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SubmarineTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_turret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_turret.svg"
     override val turretCount = 1
     override fun isSubmarine() = true
 }
 
-class SubmarineNoTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SubmarineNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_noturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_noturret.svg"
     override val turretCount = 0
     override fun isSubmarine() = true
 }
 
-class SubmarineDualTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SubmarineDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_dualturret_standard.svg"
     override val armorDiagramFileName = "armor_diagram_naval_dualturret.svg"
     override val turretCount = 2
     override fun isSubmarine() = true
 }
 
-class SHSubmarineNoTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SHSubmarineNoTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_noturret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_naval_noturret.svg"
     override val turretCount = 0
     override fun isSubmarine() = true
 }
 
-class SHSubmarineTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SHSubmarineTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_turret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_naval_turret.svg"
     override val turretCount = 1
     override fun isSubmarine() = true
 }
 
-class SHSubmarineDualTurretRecordSheet(size: PaperSize, color: Boolean): BaseNavalRecordSheet(size, color) {
+class SHSubmarineDualTurretRecordSheet(size: PaperSize): BaseNavalRecordSheet(size) {
     override val fileName = "submarine_dualturret_superheavy.svg"
     override val armorDiagramFileName = "armor_diagram_sh_naval_dualturret.svg"
     override val turretCount = 2

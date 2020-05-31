@@ -8,13 +8,14 @@ import java.util.*
 /**
  *
  */
-class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, color) {
+class InfantryRecordSheet (size: PaperSize) : RecordSheet(size) {
     override val fileName = "conventional_infantry_platoon.svg"
 
     protected val bundle = ResourceBundle.getBundle(InfantryRecordSheet::class.java.name)
     override fun fullPage() = false
     override fun showLogo() = false
     override fun showFooter() = false
+    override fun colorElements() = ""
     override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.25 - padding * 5
 
     override fun build() {
@@ -40,7 +41,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
         g.appendChild(label.draw())
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
         return Cell(0.0, 0.0, width(), height() - tabBevelY)
             .inset(3.0, 5.0,3.0 + label.textHeight * 2, 5.0)
     }
@@ -126,7 +127,7 @@ class InfantryRecordSheet (size: PaperSize, color: Boolean) : RecordSheet(size, 
                 width / 30.0 - 2, height * 0.35 - yIndex - 2, g)
         }
         addDamagePanelTextFields(padding, height * 0.5, width - padding * 2.0, height * 0.5, g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addSoldierImages(index: Int, x: Double, y: Double, width: Double, height: Double, parent: Element) {

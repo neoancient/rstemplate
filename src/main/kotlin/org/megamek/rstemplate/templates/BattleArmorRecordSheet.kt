@@ -8,7 +8,7 @@ import java.util.*
 /**
  *
  */
-class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
+class BattleArmorRecordSheet(size: PaperSize): RecordSheet(size) {
     override val fileName = "battle_armor_squad.svg"
 
     private val bundle = ResourceBundle.getBundle(BattleArmorRecordSheet::class.java.name)
@@ -16,6 +16,7 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
     override fun showLogo() = false
     override fun showFooter() = false
     override fun height(): Double = (super.height() - logoHeight - footerHeight) * 0.2 - padding * 5
+    override fun colorElements() = ""
 
     override fun build() {
         val internal = addBorder(0.966, 0.966, width() * 2.0 / 3.0, height() - tabBevelY,
@@ -71,7 +72,7 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
     private fun addCheckBox(x: Double, y: Double, size: Double, id: String) {
         val box = RoundedBorder(x, y, size, size, 1.315, 0.726,
             0.96, FILL_DARK_GREY)
-        document.documentElement.appendChild(box.draw(document))
+        rootElement.appendChild(box.draw(document))
         addTextElement(x + size * 0.5,y + size, "\u2713", FONT_SIZE_VLARGE, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, id = id)
     }
@@ -80,7 +81,7 @@ class BattleArmorRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size,
         val height = rect.height / 6.0 - 2.0
         var ypos = rect.y
         for (i in 0..5) {
-            document.documentElement.appendChild(drawSuit(i, rect.x, ypos, rect.width, height))
+            rootElement.appendChild(drawSuit(i, rect.x, ypos, rect.width, height))
             ypos += rect.height / 6.0
         }
         addField(bundle.getString("armor"), "armorType", rect.x, rect.bottomY() + tabBevelY - padding,

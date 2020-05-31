@@ -56,13 +56,14 @@ const val CGL_LOGO_HEIGHT = 30.0
 
 const val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
 val crewSizeId = listOf("Single", "Dual", "Triple")
-fun Double.truncate() = format("%.3f", this)
-fun Float.truncate() = format("%.3f", this)
+fun Double.truncate(): String = format("%.3f", this)
+fun Float.truncate(): String = format("%.3f", this)
 
-abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
+abstract class RecordSheet(val size: PaperSize) {
     abstract val fileName: String
 
     val document = generate()
+    lateinit var rootElement: Element
     val svgGenerator = SVGGraphics2D(document)
     val font= Font.decode(TYPEFACE) ?: Font.decode(Font.SANS_SERIF) ?: Font.decode(null)
     val logoHeight = addLogo()
@@ -98,6 +99,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      */
     open fun heatEffect(heatLevel: Int): String? = null
 
+    open fun colorElements() = "btLogo,cglLogo"
+
     /**
      * Generates the SVG document
      */
@@ -105,20 +108,25 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         val domImpl = SVGDOMImplementation.getDOMImplementation()
         val doc = domImpl.createDocument(SVGNS, SVGConstants.SVG_SVG_TAG, null)
         val svgRoot = doc.documentElement
-        svgRoot.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, size.width.toString())
-        svgRoot.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE,
-            if (fullPage()) {
-                size.height.toString()
-            } else {
-                height().toString()
-            })
-
+        svgRoot.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, width().toString())
+        svgRoot.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height().toString())
+        rootElement = doc.createElementNS(SVGNS, SVGConstants.SVG_G_TAG)
+        rootElement.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "rs_template")
+        rootElement.setAttributeNS(null, SVGConstants.SVG_STYLE_ATTRIBUTE,
+            "mml-color-elements:${colorElements()}")
+        doc.documentElement.appendChild(rootElement)
         return doc
     }
 
     abstract fun build()
 
-    /**
+    fun embedImage(x: Double = 0.0, y: Double = 0.0, w: Double? = null, h: Double? = null, name: String,
+                   bwImage: String, anchor: ImageAnchor = ImageAnchor.TOP_LEFT, id: String? = null,
+                   parent: Element = rootElement): Array<Double> {
+        embedImage(x, y, w, h, name, anchor, "${id}Color", false, parent)
+        return embedImage(x, y, w, h, bwImage, anchor, "${id}BW", true, parent)
+    }
+        /**
      * Loads an SVG document from a resource and embeds it in a another document, optionally scaling it to fit.
      * Scaling always maintains the aspect ratio and will size the embedded image. If both height and width
      * parameters are provided, the image will be scaled to match the more restrictive.
@@ -136,8 +144,8 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      *                  and the scale factor, in that order.
      */
     fun embedImage(x: Double = 0.0, y: Double = 0.0, w: Double? = null, h: Double? = null, name: String,
-                   anchor: ImageAnchor = ImageAnchor.TOP_LEFT,
-                   parent: Element = document.documentElement): Array<Double> {
+                   anchor: ImageAnchor = ImageAnchor.TOP_LEFT, id: String? = null, hidden: Boolean = false,
+                   parent: Element = rootElement): Array<Double> {
         val istr = this::class.java.getResourceAsStream(name)
         if (istr == null) {
             return arrayOf(0.0, 0.0, 0.0)
@@ -162,7 +170,12 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         val gElement = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         gElement.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.TRANSFORM_MATRIX}(${scale.truncate()} 0 0 ${scale.truncate()} ${xpos.truncate()} ${ypos.truncate()})")
-
+        if (id != null) {
+            gElement.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, id)
+        }
+        if (hidden) {
+            gElement.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        }
         for (i in 0 until imageDoc.documentElement.childNodes.length) {
             val node = imageDoc.documentElement.childNodes.item(i)
             gElement.appendChild(document.importNode(node, true))
@@ -210,7 +223,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      */
     open fun addLogo() = if (showLogo()) {
         embedImage(0.0, 0.0, width() * 0.67 - padding, null,
-            if (color) BT_LOGO else BT_LOGO_BW)[1]
+            BT_LOGO, BT_LOGO_BW, id = "btLogo")[1]
     } else {
         0.0
     }
@@ -220,7 +233,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      *
      * @return The height of the title text
      */
-    open fun addTitle(parent: Element = document.documentElement): Double {
+    open fun addTitle(parent: Element = rootElement): Double {
         if (!showTitle()) {
             return 0.0
         }
@@ -247,7 +260,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * @return The height of the copyright footer's text element.
      */
     open fun addCopyrightFooter(x: Double = 0.0, width: Double = width(),
-                                parent: Element = document.documentElement): Double {
+                                parent: Element = rootElement): Double {
         if (!showFooter()) {
             return 0.0
         }
@@ -320,7 +333,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                   bevelBottomLeft: Boolean = true, textBelow: String? = null,
                   textId: String? = null, fontSize: Float = FONT_SIZE_TAB_LABEL,
                   tabWidth: Double? = null, strokeWidth: Double = 1.932, dropShadow: Boolean = true,
-                  equalBevels: Boolean = false, parent: Element = document.documentElement): Cell {
+                  equalBevels: Boolean = false, parent: Element = rootElement): Cell {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         if (x != 0.0 && y != 0.0) {
             g.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
@@ -387,7 +400,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                        fill: String = FILL_DARK_GREY, anchor: String = SVGConstants.SVG_START_VALUE,
                        id: String? = null, fixedWidth: Boolean = false, hidden: Boolean = false,
                        width: Double? = null, rightJustified: Boolean = false,
-                       parent: Element = document.documentElement) {
+                       parent: Element = rootElement) {
         val element = createTextElement(x, y, text, fontSize, fontWeight, fontStyle, fill, anchor,
             id, fixedWidth, width, rightJustified, hidden)
         parent.appendChild(element)
@@ -437,7 +450,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                  labelId: String? = null, blankId: String? = null,
                  blankWidth: Double? = null, labelFixedWidth: Boolean = true,
                  maxWidth: Double? = null, hidden: Boolean = false,
-                 parent: Element = document.documentElement) {
+                 parent: Element = rootElement) {
         addFieldSet(listOf(LabeledField(label, id, defaultText, labelId, blankId)), x, y, fontSize, fill,
             fieldOffset, fieldAnchor, blankWidth, labelFixedWidth, maxWidth, hidden, parent)
     }
@@ -448,7 +461,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                     fieldAnchor: String = SVGConstants.SVG_START_VALUE,
                     blankWidth: Double? = null, labelFixedWidth: Boolean = true,
                     maxWidth: Double? = null, hidden: Boolean = false,
-                    parent: Element = document.documentElement) {
+                    parent: Element = rootElement) {
         val labelWidth = fieldOffset ?: fields.map{calcTextLength("${it.labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)}.max() ?: 0.0
         val lineHeight = calcFontHeight(fontSize).toDouble()
         for (field in fields.withIndex()) {
@@ -460,7 +473,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
 
     fun addHorizontalLine(x: Double, y: Double, width: Double, strokeWidth: Double = STROKE_WIDTH,
                           stroke: String = FILL_BLACK, id: String? = null, hidden: Boolean = false,
-                          parent: Element = document.documentElement) {
+                          parent: Element = rootElement) {
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_D_ATTRIBUTE,
             "M ${x.truncate()},${y.truncate()} L ${(x + width).truncate()},${y.truncate()}")
@@ -494,7 +507,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
     fun addRect(x: Double, y: Double, width: Double, height: Double,
                 fill: String = SVGConstants.SVG_NONE_VALUE,
                 id: String? = null, strokeWidth: Double? = null,
-                stroke: String = FILL_DARK_GREY, parent: Element = document.documentElement): Element {
+                stroke: String = FILL_DARK_GREY, parent: Element = rootElement): Element {
         val rect = document.createElementNS(svgNS, SVGConstants.SVG_RECT_TAG)
         rect.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, x.truncate())
         rect.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, y.truncate())
@@ -519,7 +532,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
         return g
     }
 
-    fun addAeroMovementCompass(rect: Cell, parent: Element = document.documentElement) {
+    fun addAeroMovementCompass(rect: Cell, parent: Element = rootElement) {
         val g = createTranslatedGroup(rect.x, rect.y)
         val fontSize = 9.35f
         val lineHeight = calcFontHeight(fontSize)
@@ -572,11 +585,17 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
      * Creates the 0-30 heat scale
      *
      * @param height The height of the region
+     * @param color Whether to print in color
      * @param max The maximum value for heat buildup
      * @return A group of the heat scale elements
      */
-    fun createHeatScale(height: Double, max: Int = 30): Element {
+    fun createHeatScale(height: Double, color: Boolean, max: Int = 30): Element {
         val g = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE,
+            if (color) "heatScaleColor" else "heatScaleBW")
+        if (!color) {
+            g.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
+        }
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM).toDouble()
         val boxHeight = (height - lineHeight * 3 - padding) / (max + 3.0)
         val boxWidth = boxHeight * 13.0 / 8.0 // close enough approximation of the golden ratio
@@ -702,7 +721,7 @@ abstract class RecordSheet(val size: PaperSize, val color: Boolean) {
                     headers: List<String>? = null, anchor: String = SVGConstants.SVG_MIDDLE_VALUE,
                     firstColBold: Boolean = true, firstColAnchor: String? = null,
                     lineHeight: Double? = null,
-                    parent: Element = document.documentElement): Double {
+                    parent: Element = rootElement): Double {
         val useLineHeight = lineHeight ?: calcFontHeight(fontSize).toDouble()
         var ypos = 0.0
         val g = createTranslatedGroup(x, y)

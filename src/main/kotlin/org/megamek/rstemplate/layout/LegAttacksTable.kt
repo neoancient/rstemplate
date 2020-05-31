@@ -19,7 +19,7 @@ class LegAttacksTable(private val sheet: RecordSheet) {
         listOf("1", "+7")
     )
 
-    fun draw(rect: Cell, parent: Element = sheet.document.documentElement) {
+    fun draw(rect: Cell, parent: Element = sheet.rootElement) {
         val g = sheet.createTranslatedGroup(rect.x, rect.y)
         val inner = sheet.addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("legAttacks.title"), topTab = false, bottomTab = false,

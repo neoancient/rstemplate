@@ -22,7 +22,7 @@ class InfantryWeaponDamageTable(val sheet: RecordSheet) {
         listOf(bundle.getString("heatEffect"), bundle.getString("seeHeatEffect"))
     )
 
-    fun draw(rect: Cell, parent: Element = sheet.document.documentElement) {
+    fun draw(rect: Cell, parent: Element = sheet.rootElement) {
         val g = sheet.createTranslatedGroup(rect.x, rect.y)
         val inner = sheet.addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("infantryWeaponDamage.title"), topTab = false, bottomTab = false,
@@ -47,8 +47,8 @@ class InfantryWeaponDamageTable(val sheet: RecordSheet) {
 
         sheet.embedImage(inner.rightX() - padding * 2 - CGL_LOGO_WIDTH,
             inner.bottomY() - padding * 2 - CGL_LOGO_HEIGHT,
-            CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT, if (sheet.color) CGL_LOGO else CGL_LOGO_BW,
-            ImageAnchor.BOTTOM_RIGHT, g)
+            CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT, CGL_LOGO, CGL_LOGO_BW, ImageAnchor.BOTTOM_RIGHT,
+            id = "cglLogo", parent = g)
 
         parent.appendChild(g)
     }

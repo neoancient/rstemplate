@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Base class for aerospace record sheets
  */
-abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(size, color) {
+abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
 
     private val eqTableCell = Cell(0.0, logoHeight + titleHeight,
         width() * 0.4, height() * 0.5 - logoHeight - titleHeight)
@@ -17,7 +17,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     private val fluffCell = Cell(0.0, eqTableCell.bottomY() + padding,
         eqTableCell.width, armorCell.bottomY() - eqTableCell.bottomY() - padding)
     private val tableCell = Cell(0.0, armorCell.bottomY() + padding,
-        width().toDouble(), height() * 0.35 - footerHeight - padding)
+        width(), height() * 0.35 - footerHeight - padding)
     private val critDamageCell = Cell(0.0, fluffCell.bottomY() + padding,
         eqTableCell.width, height() * 0.12)
     private val velocityCell = Cell(0.0, critDamageCell.bottomY() + padding,
@@ -48,6 +48,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
     abstract val fighter: Boolean
     abstract val tracksHeat: Boolean
     abstract val largeCraft: Boolean
+    override fun colorElements() = "${super.colorElements()},heatScale"
 
     open fun isAtmospheric(): Boolean = false
     open fun isCapitalScale(): Boolean = false
@@ -117,7 +118,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         addRect(rect.width * 0.5 + (rect.width * 0.5 - tabBevelX - padding) * 0.5 - 10,
             internal.bottomY() - padding * 0.5 - lineHeight * 0.75 + tabBevelY * 0.5 - 10.0,
             20.0, 20.0, id = "eraIcon", parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addFluffPanel(rect: Cell) {
@@ -125,10 +126,12 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "notes")
         addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("notes.title"), bottomTab = true,
-            textBelow = bundle.getString(if (isStation()) "notes.title"
-                else if (largeCraft) "velocityRecord.title"
-                else "criticalDamage.title"), parent = g)
-        document.documentElement.appendChild(g)
+            textBelow = bundle.getString(when {
+                    isStation() -> "notes.title"
+                    largeCraft -> "velocityRecord.title"
+                    else -> "criticalDamage.title"
+                }), parent = g)
+        rootElement.appendChild(g)
         val fluffCell = rect.inset(
             padding,
             padding,
@@ -184,16 +187,12 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 bundle.getString("armorPanel.title"), FONT_SIZE_FREE_LABEL
             )
             g.appendChild(label.draw())
-            embedImage(
-                0.0, logoHeight * 0.5, rect.width - rightMargin,
+            embedImage(0.0, logoHeight * 0.5, rect.width - rightMargin,
                 rect.height - logoHeight * 0.5,
-                armorDiagramFileName, ImageAnchor.CENTER, g
-            )
-            embedImage(
-                rect.width - 50.0 - rightMargin - padding, rect.height - CGL_LOGO_HEIGHT,
-                CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
-                if (color) CGL_LOGO else CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g
-            )
+                armorDiagramFileName, ImageAnchor.CENTER, parent = g)
+            embedImage(rect.width - 50.0 - rightMargin - padding, rect.height - CGL_LOGO_HEIGHT,
+                CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT, CGL_LOGO, CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT,
+                id = "cglLogo", parent = g)
         } else {
             val label = RSLabel(
                 this, rect.width, 0.0,
@@ -209,17 +208,15 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             embedImage(
                 0.0, logoHeight * 0.5, rect.width - rightMargin,
                 rect.height - logoHeight * 0.5 - padding,
-                armorDiagramFileName, ImageAnchor.CENTER, g
+                armorDiagramFileName, ImageAnchor.CENTER, parent = g
             )
-            embedImage(
-                labelCenterX - 25.0,label.height() + 30, 50.0, 30.0,
-                if (color) CGL_LOGO else CGL_LOGO_BW, parent = g
-            )
+            embedImage(labelCenterX - 25.0,label.height() + 30, CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT,
+                CGL_LOGO, CGL_LOGO_BW, id = "cglLogo", parent = g)
         }
         if (!isAtmospheric() && !stationKeeping()) {
             addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), g)
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addCritPanel(rect: Cell) {
@@ -254,7 +251,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             boxHeight = boxHeight)
             .draw(this, inner.x + inner.width * 0.5, ypos,
                 fontSize, width = inner.width * 0.45))
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addLCCritPanel(rect: Cell) {
@@ -335,7 +332,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                     width = inner.width * 0.57 + (boxHeight + padding) * 3,
                     fontWeight = SVGConstants.SVG_BOLD_VALUE))
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addPilotPanel(rect: Cell) {
@@ -367,7 +364,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             blankWidth = inner.width * 0.18 - padding, parent = g)
         ypos += lineHeight
         addPilotDamageTrack(0.0, ypos, inner.width, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addPilotDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
@@ -481,7 +478,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         addTextElement(inner.x + inner.width * 0.5, ypos, bundle.getString("lifeBoats"),
             fontSize, fontWeight, anchor = SVGConstants.SVG_MIDDLE_VALUE, id="lifeBoatsEscapePods",
             fixedWidth = true, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     fun addCrewDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
@@ -543,7 +540,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             addVelocityTrack(padding * 1.5, inner.y + inner.height * 0.55,
                 inner.width - padding * 2, inner.height * 0.3, (11..20).toList(), g)
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addVelocityTrack(x: Double, y: Double,
@@ -595,13 +592,14 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         val inner = addBorder(0.0, 0.0, rect.width - padding, rect.height,
             bundle.getString("heatPanel.title"), parent = g)
         addHeatEffects(inner.x, inner.y, inner.width, inner.height, g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     open fun addHeatScale(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        g.appendChild(createHeatScale(rect.height - padding))
-        document.documentElement.appendChild(g)
+        g.appendChild(createHeatScale(rect.height - padding, true))
+        g.appendChild(createHeatScale(rect.height - padding, false))
+        rootElement.appendChild(g)
     }
 
     override fun heatEffect(heatLevel: Int): String? = when (heatLevel) {
@@ -676,7 +674,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
                 FONT_SIZE_MEDIUM, fieldAnchor = SVGConstants.SVG_MIDDLE_VALUE,
                 fieldOffset = inner.width * 0.45, parent = g)
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addBombsPanel() {
@@ -702,7 +700,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         ypos += lineHeight
         addTextElement(label.rectWidth * 0.5, ypos, bundle.getString("rocket"), fontSize = FONT_SIZE_VSMALL, parent = keyGroup)
         g.appendChild(keyGroup)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addGroundMovementTable(rect: Cell) {
@@ -746,7 +744,7 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
         addTextElement(inner.width * 0.5, ypos + lineHeight, bundle.getString("groundMovementTable.footnote"),
             FONT_SIZE_VSMALL, SVGConstants.SVG_NORMAL_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     private fun addFighterReturnTable(rect: Cell) {
@@ -766,11 +764,12 @@ abstract class AeroRecordSheet(size: PaperSize, color: Boolean): RecordSheet(siz
             listOf(bundle.getString("fighterReturnTable.safeThrust"),
                 bundle.getString("fighterReturnTable.turnsBeforeReturn")),
             lineHeight = lineHeight, parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 }
 
-class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class ASFRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+    override fun colorElements() = "${super.colorElements()},heatScale"
     override val fileName = "fighter_aerospace_default.svg"
     override val armorDiagramFileName = "armor_diagram_asf.svg"
     override val dataPanelTitle: String = bundle.getString("fighterData")
@@ -780,7 +779,7 @@ class ASFRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, col
     override fun isAerodyne() = true
 }
 
-class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class ConvFighterRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "fighter_conventional_default.svg"
     override val armorDiagramFileName = "armor_diagram_convfighter.svg"
     override val dataPanelTitle: String = bundle.getString("fighterData")
@@ -791,7 +790,8 @@ class ConvFighterRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(s
     override fun isAtmospheric() = true
 }
 
-class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class AerodyneSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+    override fun colorElements() = "${super.colorElements()},heatScale"
     override val fileName = "smallcraft_aerodyne_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_aerodyne.svg"
     override val dataPanelTitle: String = bundle.getString("craftData")
@@ -801,7 +801,8 @@ class AerodyneSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override fun isAerodyne() = true
 }
 
-class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class SpheroidSmallCraftRecordSheet(size: PaperSize): AeroRecordSheet(size) {
+    override fun colorElements() = "${super.colorElements()},heatScale"
     override val fileName = "smallcraft_spheroid_default.svg"
     override val armorDiagramFileName = "armor_diagram_smallcraft_spheroid.svg"
     override val dataPanelTitle: String = bundle.getString("craftData")
@@ -810,7 +811,7 @@ class SpheroidSmallCraftRecordSheet(size: PaperSize, color: Boolean): AeroRecord
     override val largeCraft = false
 }
 
-class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class AerodyneDropshipRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "dropship_aerodyne_default.svg"
     override val armorDiagramFileName = "armor_diagram_dropship_aerodyne.svg"
     override val dataPanelTitle: String = bundle.getString("dropshipData")
@@ -820,7 +821,7 @@ class AerodyneDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSh
     override fun isAerodyne() = true
 }
 
-class SpheroidDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class SpheroidDropshipRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "dropship_spheroid_default.svg"
     override val armorDiagramFileName = "armor_diagram_dropship_spheroid.svg"
     override val dataPanelTitle: String = bundle.getString("dropshipData")
@@ -829,7 +830,7 @@ class SpheroidDropshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSh
     override val largeCraft = true
 }
 
-class JumpshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class JumpshipRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "jumpship_default.svg"
     override val armorDiagramFileName = "armor_diagram_jumpship.svg"
     override val dataPanelTitle: String = bundle.getString("jumpshipData")
@@ -840,7 +841,7 @@ class JumpshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size
     override fun stationKeeping() = true
 }
 
-class WarshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class WarshipRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "warship_default.svg"
     override val armorDiagramFileName = "armor_diagram_warship.svg"
     override val dataPanelTitle: String = bundle.getString("warshipData")
@@ -850,7 +851,7 @@ class WarshipRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size,
     override fun isCapitalScale() = true
 }
 
-class SpaceStationRecordSheet(size: PaperSize, color: Boolean): AeroRecordSheet(size, color) {
+class SpaceStationRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val fileName = "spacestation_default.svg"
     override val armorDiagramFileName = "armor_diagram_spacestation.svg"
     override val dataPanelTitle: String = bundle.getString("stationData")

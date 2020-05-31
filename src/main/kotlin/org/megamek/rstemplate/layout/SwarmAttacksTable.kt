@@ -17,7 +17,7 @@ class SwarmAttacksTable(private val sheet: RecordSheet) {
         listOf("1-3", "+5")
     )
 
-    fun draw(rect: Cell, parent: Element = sheet.document.documentElement) {
+    fun draw(rect: Cell, parent: Element = sheet.rootElement) {
         val g = sheet.createTranslatedGroup(rect.x, rect.y)
         val inner = sheet.addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("swarmAttacks.title"), topTab = false, bottomTab = false,

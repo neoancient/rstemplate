@@ -35,7 +35,7 @@ class InfantryBurstFireTable(private val sheet: RecordSheet) {
         listOf(bundle.getString("heavyGrenade"), "1D6")
     )
 
-    fun draw(rect: Cell, parent: Element = sheet.document.documentElement) {
+    fun draw(rect: Cell, parent: Element = sheet.rootElement) {
         val g = sheet.createTranslatedGroup(rect.x, rect.y)
         val inner = sheet.addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("burstTable.title"), topTab = false, bottomTab = false,

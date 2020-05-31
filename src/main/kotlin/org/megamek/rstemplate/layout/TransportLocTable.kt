@@ -31,7 +31,7 @@ class TransportLocTable(private val sheet: RecordSheet) {
         listOf("6", bundle.getString("rr2"))
     )
 
-    fun draw(rect: Cell, parent: Element = sheet.document.documentElement) {
+    fun draw(rect: Cell, parent: Element = sheet.rootElement) {
         val g = sheet.createTranslatedGroup(rect.x, rect.y)
         val inner = sheet.addBorder(0.0, 0.0, rect.width, rect.height,
             bundle.getString("transportLoc.title"), topTab = false, bottomTab = false,
@@ -54,7 +54,7 @@ class TransportLocTable(private val sheet: RecordSheet) {
 
         val imgWidth = rect.width * 0.25 - padding
         sheet.embedImage(inner.x + inner.width * 0.86 - imgWidth * 0.5, ypos, imgWidth, inner.height - ypos,
-            if (sheet.color) CGL_LOGO else CGL_LOGO_BW, ImageAnchor.CENTER, parent = g)
+            CGL_LOGO, CGL_LOGO_BW, ImageAnchor.CENTER, id = "cglLogo", parent = g)
 
         sheet.addTextElement(inner.width * 0.12, ypos, bundle.getString("trooper"),
             FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)

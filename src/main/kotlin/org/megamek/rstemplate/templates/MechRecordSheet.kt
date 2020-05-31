@@ -11,7 +11,7 @@ import java.util.*
  * Base class for Mech record sheets
  */
 
-abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(size, color) {
+abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
     val eqTableCell = Cell(0.0, logoHeight + titleHeight,
         width() * 0.4, (height() - footerHeight) / 2.0 - logoHeight - titleHeight)
     val armorCell = Cell(width() * 2.0 / 3.0, 0.0, width() / 3.0,
@@ -30,6 +30,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
     abstract val isDiagramFileName: String
 
     override final fun height() = super.height()
+    override fun colorElements() = "${super.colorElements()},heatScale"
 
     open fun isQuad() = false
     open fun isTripod() = false
@@ -82,7 +83,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         addRect(rect.width * 0.5 + (rect.width * 0.5 - tabBevelX - padding) * 0.5 - 10,
             internal.bottomY() - padding * 0.5 - lineHeight * 0.75 + tabBevelY * 0.5 - 10.0,
             20.0, 20.0, id = "eraIcon", parent = g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     /**
@@ -134,9 +135,9 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
             if (hideCrewIndex(i)) {
                 g.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
             }
-            document.documentElement.appendChild(g)
+            rootElement.appendChild(g)
         }
-        document.documentElement.appendChild(contentGroup)
+        rootElement.appendChild(contentGroup)
     }
 
     fun addCrewDamageTrack(x: Double, y: Double, width: Double, height: Double = 20.0,
@@ -225,9 +226,8 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         val label = RSLabel(this, rect.width * 0.5, 0.0, bundle.getString("armorPanel.title"),
             FONT_SIZE_FREE_LABEL, center = true)
         g.appendChild(label.draw())
-        val pipScale = embedImage(
-            padding,
-            padding, rect.width - padding, rect.height - padding, armorDiagramFileName, ImageAnchor.CENTER, g)[2] * 0.966
+        val pipScale = embedImage(padding, padding, rect.width - padding,
+            rect.height - padding, armorDiagramFileName, ImageAnchor.CENTER, parent = g)[2] * 0.966
         val pipG = document.createElementNS(svgNS, SVGConstants.SVG_G_TAG)
         pipG.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "canonArmorPips")
         // The canon pip images are centered on 502.33,496.33 and need to be scaled 0.966 to fit the full-sized diagrams
@@ -236,7 +236,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
                 + (padding + rect.width * 0.5 - 497.165 * pipScale).truncate()
                 + " " + (padding + rect.height * 0.5 - 214.068 * pipScale).truncate() + ")")
         g.appendChild(pipG)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
         document.getElementById("shieldRA")?.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
         document.getElementById("shieldLA")?.setAttributeNS(null, SVGConstants.CSS_VISIBILITY_PROPERTY, SVGConstants.CSS_HIDDEN_VALUE)
     }
@@ -277,7 +277,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         ypos += addSystemPips(internal.x + colWidth + padding * 2.0, ypos, colWidth, g)
         addDamageTransferDiagram(internal.x + colWidth + padding * 2.0, ypos,
             colWidth, if (isTripod()) internal.height * 0.835 - ypos - padding else internal.height - ypos, g)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     fun addDoubleCritLocation(x: Double, y: Double, width: Double, height: Double, id: String,
@@ -338,7 +338,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
     open fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
         embedImage(x + width * 0.5, y, width * 0.5, height - lineHeight,
-            damageTransferFileName, ImageAnchor.CENTER, parent)
+            damageTransferFileName, ImageAnchor.CENTER, parent = parent)
         addTextElement(x + width * 0.75, y + height, join(" ", bundle.getString("damageTransfer.1"), bundle.getString("damageTransfer.2")),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE,
@@ -348,7 +348,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
             anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         embedImage(x, y, width * 0.5 - padding, height,
-            if (color) CGL_LOGO else CGL_LOGO_BW, ImageAnchor.RIGHT, parent)
+            CGL_LOGO, CGL_LOGO_BW, ImageAnchor.RIGHT, id = "cglLogo", parent = parent)
     }
 
     /**
@@ -370,7 +370,7 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
                     + "${(rect.width * 0.5 - 478.445 * pipScale).truncate()},"
                     + "${(label.height() + 1 + (rect.height - label.height() - 2) * 0.5 - 489.6 * pipScale).truncate()})")
         g.appendChild(pipG)
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     fun addHeatPanel(rect: Cell) {
@@ -382,14 +382,16 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
         } else {
             addHeatEffects(inner.x, inner.y, inner.width, inner.height, g)
         }
-        document.documentElement.appendChild(g)
+        rootElement.appendChild(g)
     }
 
     fun addHeatScale(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        g.appendChild(createHeatScale(rect.height - padding,
+        g.appendChild(createHeatScale(rect.height - padding, true,
             if (toHeatScale()) 50 else 30))
-        document.documentElement.appendChild(g)
+        g.appendChild(createHeatScale(rect.height - padding, false,
+            if (toHeatScale()) 50 else 30))
+        rootElement.appendChild(g)
     }
 
     override fun heatEffect(heatLevel: Int): String? = when (heatLevel) {
@@ -519,14 +521,14 @@ abstract class MechRecordSheet(size: PaperSize, color: Boolean) :  RecordSheet(s
     }
 }
 
-open class BipedMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class BipedMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_biped_default.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
     override val armorDiagramFileName = "armor_diagram_biped.svg"
     override val isDiagramFileName = "internal_diagram_biped.svg"
 }
 
-open class QuadMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class QuadMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quad_default.svg"
     override val damageTransferFileName = "damage_transfer_quad.svg"
     override fun isQuad() = true
@@ -534,7 +536,7 @@ open class QuadMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordShee
     override val isDiagramFileName = "internal_diagram_quad.svg"
 }
 
-open class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class TripodMechRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_tripod_default.svg"
     override val damageTransferFileName = "damage_transfer_tripod.svg"
     override val armorDiagramFileName = "armor_diagram_tripod.svg"
@@ -549,7 +551,7 @@ open class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSh
     override fun addDamageTransferDiagram(x: Double, y: Double, width: Double, height: Double, parent: Element) {
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
         embedImage(x + width * 0.7 + padding, y, width * 0.3, height + lineHeight,
-            "damage_transfer_tripod.svg", ImageAnchor.LEFT, parent)
+            "damage_transfer_tripod.svg", ImageAnchor.LEFT, parent = parent)
         addTextElement(x + width * 0.55 + padding, y + height * 0.5 - lineHeight * 0.5, bundle.getString("damageTransfer.1"),
             FONT_SIZE_MEDIUM, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE,
@@ -563,11 +565,11 @@ open class TripodMechRecordSheet(size: PaperSize, color: Boolean) : MechRecordSh
             anchor = SVGConstants.SVG_MIDDLE_VALUE,
             parent = parent)
         embedImage(x, y, width * 0.4 + padding, height,
-            CGL_LOGO, ImageAnchor.RIGHT, parent)
+            CGL_LOGO, CGL_LOGO_BW, ImageAnchor.RIGHT, id = "cglLogo", parent = parent)
     }
 }
 
-open class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_lam_default.svg"
     override val damageTransferFileName = "damage_transfer_biped.svg"
     override val armorDiagramFileName = "armor_diagram_biped.svg"
@@ -745,7 +747,7 @@ open class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(siz
         val lineHeight = calcFontHeight(FONT_SIZE_MEDIUM)
         embedImage(
             x + width * 0.5, y, width * 0.5, height + lineHeight,
-            "damage_transfer_biped.svg", ImageAnchor.TOP, parent
+            "damage_transfer_biped.svg", ImageAnchor.TOP, parent = parent
         )
         addTextElement(
             x + width * 0.25,
@@ -762,7 +764,7 @@ open class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(siz
             parent = parent
         )
         embedImage(x, y, width * 0.5 - padding, height - lineHeight,
-            CGL_LOGO, ImageAnchor.CENTER, parent)
+            CGL_LOGO, CGL_LOGO_BW, ImageAnchor.CENTER, id = "cglLogo", parent = parent)
     }
 
     override fun heatEffect(heatLevel: Int): String? = when (heatLevel) {
@@ -775,7 +777,7 @@ open class LAMRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(siz
     }
 }
 
-open class QuadVeeRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet(size, color) {
+open class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
     override val fileName = "mech_quadvee_default.svg"
     override val damageTransferFileName = "damage_transfer_quadvee.svg"
     override val armorDiagramFileName = "armor_diagram_quadvee.svg"
@@ -816,27 +818,27 @@ open class QuadVeeRecordSheet(size: PaperSize, color: Boolean) : MechRecordSheet
     override fun hideCrewIndex(i: Int) = false
 }
 
-class BipedMechTOHeatRecordSheet(size: PaperSize, color: Boolean) : BipedMechRecordSheet(size, color) {
+class BipedMechTOHeatRecordSheet(size: PaperSize) : BipedMechRecordSheet(size) {
     override val fileName = "mech_biped_toheat.svg"
     override fun toHeatScale() = true
 }
 
-class QuadMechTOHeatRecordSheet(size: PaperSize, color: Boolean) : QuadMechRecordSheet(size, color) {
+class QuadMechTOHeatRecordSheet(size: PaperSize) : QuadMechRecordSheet(size) {
     override val fileName = "mech_quad_toheat.svg"
     override fun toHeatScale() = true
 }
 
-class TripodMechTOHeatRecordSheet(size: PaperSize, color: Boolean) : TripodMechRecordSheet(size, color) {
+class TripodMechTOHeatRecordSheet(size: PaperSize) : TripodMechRecordSheet(size) {
     override val fileName = "mech_tripod_toheat.svg"
     override fun toHeatScale() = true
 }
 
-class LAMTOHeatRecordSheet(size: PaperSize, color: Boolean) : LAMRecordSheet(size, color) {
+class LAMTOHeatRecordSheet(size: PaperSize) : LAMRecordSheet(size) {
     override val fileName = "mech_lam_toheat.svg"
     override fun toHeatScale() = true
 }
 
-class QuadVeeTOHeatRecordSheet(size: PaperSize, color: Boolean) : QuadVeeRecordSheet(size, color) {
+class QuadVeeTOHeatRecordSheet(size: PaperSize) : QuadVeeRecordSheet(size) {
     override val fileName = "mech_quadvee_toheat.svg"
     override fun toHeatScale() = true
 }
