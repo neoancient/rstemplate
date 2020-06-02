@@ -42,7 +42,7 @@ abstract class VeeHitLocationTable(private val sheet: RecordSheet) {
         for (i in 1..hitLocNotesCount) {
             notesY += sheet.addParagraph(inner.x + padding, notesY,
                 inner.width - padding, bundle.getString("hitLocNotes.$unitType.$i"),
-                if (unitType == "naval") 4.8f else FONT_SIZE_VSMALL, notesG)
+                if (unitType == "naval") 4.8f else FONT_SIZE_VSMALL, parent = notesG)
         }
         notesG.setAttributeNS(null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE,
             "${SVGConstants.SVG_TRANSLATE_VALUE}(0,${(inner.bottomY() - notesY - padding * 2 - lineHeight).truncate()})")

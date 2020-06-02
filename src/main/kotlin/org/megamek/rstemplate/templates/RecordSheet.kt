@@ -532,9 +532,8 @@ abstract class RecordSheet(val size: PaperSize) {
         return g
     }
 
-    fun addAeroMovementCompass(rect: Cell, parent: Element = rootElement) {
+    fun addAeroMovementCompass(rect: Cell, fontSize: Float = 9.35f, parent: Element = rootElement) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        val fontSize = 9.35f
         val lineHeight = calcFontHeight(fontSize)
         val path = document.createElementNS(svgNS, SVGConstants.SVG_PATH_TAG)
         path.setAttributeNS(null, SVGConstants.SVG_FILL_ATTRIBUTE, SVGConstants.SVG_NONE_VALUE)
@@ -555,20 +554,20 @@ abstract class RecordSheet(val size: PaperSize) {
         addTextElement(rect.width * 0.75, rect.height * 0.5 - hexDY - 3.0, "A",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 + hexRadius + 0.5, rect.height * 0.5 - hexDY * 0.5 - 0.5, "B",
-            fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addTextElement(rect.width * 0.75 + hexRadius + 0.5, rect.height * 0.5 - hexDY * 0.5 - 0.5,
+            "B", fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 + hexRadius + 0.5, rect.height * 0.5 + hexDY * 0.5 + 5.5, "C",
-            fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addTextElement(rect.width * 0.75 + hexRadius + 0.5, rect.height * 0.5 + (hexDY + lineHeight) * 0.5 + 0.5,
+            "C", fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addTextElement(rect.width * 0.75, rect.height * 0.5 + hexDY + lineHeight - 1.0, "D",
             fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 - hexRadius - 0.5, rect.height * 0.5 + hexDY * 0.5 + 5.5, "E",
-            fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addTextElement(rect.width * 0.75 - hexRadius - 0.5, rect.height * 0.5 + (hexDY + lineHeight) * 0.5 + 0.5,
+            "E", fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
-        addTextElement(rect.width * 0.75 - hexRadius - 0.5, rect.height * 0.5 - hexDY * 0.5 - 0.5, "F",
-            fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addTextElement(rect.width * 0.75 - hexRadius - 0.5, rect.height * 0.5 - hexDY * 0.5 - 0.5,
+            "F", fontSize, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
 
         val words = bundle.getString("advancedMovementCompass").split(" ")
@@ -793,37 +792,57 @@ abstract class RecordSheet(val size: PaperSize) {
      * @param y The y coordinate of the top right corner of the text block
      * @param text The text of the paragraph. All but the last line will be justified
      * @param fontSize The size of the font to use for the text
+     * @param lineSpacing The height of each line. If null, the font will be used to
+     *                    calculate the height
+     * @param indent The amount to indent the first line of the paragraph
      * @param parent The parent element to add this paragraph to
      * @return The height of the paragraph
      */
     fun addParagraph(x: Double, y: Double, width: Double, text: String, fontSize: Float,
-                     parent: Element): Double {
+                     lineSpacing: Double? = null, indent: Double = 0.0, parent: Element): Double {
         val styles = listOf(SVGConstants.SVG_NORMAL_VALUE, SVGConstants.SVG_ITALIC_VALUE)
-        val lineHeight = calcFontHeight(fontSize)
+        val lineHeight = lineSpacing ?: calcFontHeight(fontSize).toDouble()
         var ypos = y
         val lines = text.split("\n".toRegex())
+        var baseLineLength = 0.0
         for (line in lines.withIndex()) {
             ypos += lineHeight
             val segments = line.value.split("[{}]".toRegex())
             val last = line.index == lines.size - 1
             if (segments.size > 1) {
                 var styleIndex = if (line.value.startsWith("{")) 1 else 0
-                val mult = if (last) 1.0 else (width - padding * 2) / getLineLength(segments, styleIndex == 1)
-                var xpos = x
+                val mult = when {
+                    last -> 1.0
+                    line.index == 0 -> width -padding * 2 - indent
+                    else -> (width - padding * 2) / getLineLength(segments, styleIndex == 1)
+                }
+                var xpos = if (line.index == 0) x + indent else x
                 for (seg in segments) {
                     if (seg.isEmpty()) continue
                     val textWidth = mult * calcTextLength(if (styleIndex == 1) "${seg}_" else seg,
                         fontSize, styles[styleIndex])
                     addTextElement(xpos, ypos, seg, fontSize,
                         rightJustified = !last, fixedWidth = true,
-                        width = if (last) null else textWidth, fontStyle = styles[styleIndex], parent = parent)
+                        width = when {
+                            lines.size == 1 -> null
+                            last -> textWidth * baseLineLength / (lines.size - 1)
+                            else -> textWidth
+                        }, fontStyle = styles[styleIndex], parent = parent)
+                    baseLineLength += textWidth
                     xpos += textWidth
                     styleIndex = 1 - styleIndex
                 }
             } else {
-                addTextElement(x, ypos, line.value, fontSize,
+                val textLength = calcTextLength(line.value, fontSize)
+                addTextElement(if (line.index == 0) x + indent else x, ypos, line.value, fontSize,
                     rightJustified = !last,
-                    width = if (last) null else width - padding * 2, parent = parent)
+                    width = when {
+                        lines.size == 1 -> null
+                        last -> textLength * baseLineLength / (lines.size - 1)
+                        line.index == 0 -> width - padding * 2 - indent
+                        else -> width - padding * 2
+                    }, parent = parent)
+                baseLineLength += textLength
             }
         }
         return ypos - y

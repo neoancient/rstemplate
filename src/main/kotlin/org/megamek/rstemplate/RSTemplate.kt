@@ -64,6 +64,7 @@ fun writeRecordSheets(size: PaperSize, dir: String) {
     outputRS(JumpshipRecordSheet(size), dir)
     outputRS(WarshipRecordSheet(size), dir)
     outputRS(SpaceStationRecordSheet(size), dir)
+    outputRS(LargeCraftPageTwo(size), dir)
     // other
     outputRS(InfantryRecordSheet(size), dir)
     outputRS(InfantryMultiSheet(size), dir)

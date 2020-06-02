@@ -42,7 +42,7 @@ class InfantryWeaponDamageTable(val sheet: RecordSheet) {
         for (i in 1..4) {
             ypos += sheet.addParagraph(inner.x + padding, ypos,
                 (if (i == 4) inner.width * 0.75 else inner.width) - padding, bundle.getString("notes.$i"),
-                FONT_SIZE_VSMALL, g)
+                FONT_SIZE_VSMALL, parent = g)
         }
 
         sheet.embedImage(inner.rightX() - padding * 2 - CGL_LOGO_WIDTH,

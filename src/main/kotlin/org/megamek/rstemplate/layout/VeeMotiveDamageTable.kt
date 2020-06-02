@@ -53,7 +53,7 @@ abstract class VeeMotiveDamageTable(private val sheet: RecordSheet) {
         sheet.addParagraph(inner.x + padding, ypos,
             inner.width - padding,
             bundle.getString("motiveSystemNote.$unitType"),
-            if (narrow) 3.8f else 4.8f, g)
+            if (narrow) 3.8f else 4.8f, parent = g)
         parent.appendChild(g)
     }
 }

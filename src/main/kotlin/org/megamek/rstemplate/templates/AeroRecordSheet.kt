@@ -214,7 +214,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
                 CGL_LOGO, CGL_LOGO_BW, id = "cglLogo", parent = g)
         }
         if (!isAtmospheric() && !stationKeeping()) {
-            addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), g)
+            addAeroMovementCompass(Cell(0.0, rect.height - 50.0, 90.0, 50.0), parent = g)
         }
         rootElement.appendChild(g)
     }
@@ -861,4 +861,165 @@ class SpaceStationRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override fun isCapitalScale() = true
     override fun stationKeeping() = true
     override fun isStation() = true
+}
+
+class LargeCraftPageTwo(size: PaperSize): RecordSheet(size) {
+    override val fileName = "advaero_reverse.svg"
+
+    private val bundle: ResourceBundle = ResourceBundle.getBundle(AeroRecordSheet::class.java.name)
+    private val compassCell = Cell(width() * 2.0 / 3.0 + padding, padding,
+        width() / 3.0 - padding * 2,logoHeight + titleHeight - padding)
+    private val eqTableCell = Cell(0.0, logoHeight + titleHeight + padding,
+        width() * 0.5 - padding,height() - logoHeight - titleHeight - footerHeight - padding)
+    private val advMovementCell = Cell(eqTableCell.rightX() + padding, eqTableCell.y,
+        width() * 0.5,eqTableCell.height * 0.5)
+    private val velocityRecordCell = Cell(advMovementCell.x, advMovementCell.bottomY() + padding,
+        advMovementCell.width, advMovementCell.height - padding * 2)
+
+    override fun build() {
+        addCompassCell(compassCell)
+        addEquipmentTable(eqTableCell)
+        addAdvMovementTable(advMovementCell)
+        addVelocityRecordCell(velocityRecordCell)
+    }
+
+    private fun addCompassCell(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val widthBelow = calcTextLength(bundle.getString("advMovementTable.title"), FONT_SIZE_TAB_LABEL) +
+                4 + tabBevelX * 2 + padding - width() / 6.0
+        val shadow = CellBorder(2.5, 2.5, rect.width - 6.0, rect.height - 6.0,
+            0.0, FILL_LIGHT_GREY, 5.2, topTab = false, bevelTopLeft = true, bevelTopRight = true,
+            bottomTab = true, labelWidthBelow = widthBelow)
+        val border = CellBorder(0.0, 0.0, rect.width - 5.0, rect.height - 5.0,
+            0.0, topTab = false, bevelTopLeft = true, bevelTopRight = true,
+            bottomTab = true, labelWidthBelow = widthBelow)
+        g.appendChild(shadow.draw(document))
+        g.appendChild(border.draw(document))
+        addAeroMovementCompass(Cell(0.0, 0.0 + tabBevelY, rect.width - 5.0,
+            rect.height - 5.0 - padding), FONT_SIZE_VLARGE, g)
+        rootElement.appendChild(g)
+
+    }
+
+    private fun addEquipmentTable(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "unitDataPanel")
+        val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
+            "%s DATA (Cont.)", topTab = true, bottomTab = false, bevelTopRight = true,
+            bevelBottomLeft = true, bevelBottomRight = true, parent = g)
+        var ypos = internal.y
+        val fontSize = 9.67f
+        val lineHeight = calcFontHeight(fontSize)
+        ypos += lineHeight
+        addField(bundle.getString("type"), "type", internal.x + padding,
+            ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            maxWidth = internal.width - internal.x - padding, parent = g)
+        ypos += lineHeight
+        addField(bundle.getString("name"), "fluffName", internal.x, ypos,
+            fontSize, blankId = "blankFluffName",
+            blankWidth = internal.width * 0.45 - calcTextLength(bundle.getString("name") + "_", fontSize),
+            parent = g)
+        ypos += lineHeight
+        addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
+        ypos += lineHeight * 0.5
+        addTextElement(internal.x, ypos, bundle.getString("weaponsAndEquipment"),
+            FONT_SIZE_FREE_LABEL,
+            SVGConstants.SVG_BOLD_VALUE, fixedWidth = true, width = internal.width * 0.6, parent = g)
+
+        addRect(internal.x, ypos, internal.width - padding, internal.bottomY() - ypos,
+            SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
+
+        rootElement.appendChild(g)
+    }
+
+    private fun addAdvMovementTable(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val internal = addBorder(0.0, 0.0, rect.width - padding, rect.height - padding,
+            bundle.getString("advMovementTable.title"), topTab = true, bottomTab = false, bevelTopRight = true,
+            bevelBottomLeft = true, bevelBottomRight = true, parent = g)
+        var ypos = internal.y
+        val fontSize = FONT_SIZE_FREE_LABEL
+        val indent = calcTextLength("_", fontSize) * 3
+        val text = (1..4).map{bundle.getString("advMovementTable.$it")}.toList()
+        val lines = text.map{it.split("\n".toRegex()).size}.sum()
+        val lineHeight = internal.height / 2.0 / (lines + 2)
+        for (i in 0..3) {
+            ypos += addParagraph(internal.x + padding, ypos, internal.width - padding * 2, text[i],
+                fontSize, lineHeight, indent, parent = g)
+        }
+        ypos += lineHeight * 3
+        addTextElement(internal.x + padding, ypos, bundle.getString("advMovementTable.opposingVectors.title"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        ypos += addParagraph(internal.x + padding, ypos, internal.width * 0.45 - padding * 2,
+            bundle.getString("advMovementTable.opposingVectors.text"), fontSize, lineHeight, indent, parent = g)
+        ypos += lineHeight * 3
+        addTextElement(internal.x + padding, ypos, bundle.getString("advMovementTable.obliqueVectors.title"),
+            fontSize, SVGConstants.SVG_BOLD_VALUE, parent = g)
+        ypos += addParagraph(internal.x + padding, ypos, internal.width * 0.45 - padding * 2,
+            bundle.getString("advMovementTable.obliqueVectors.text"), fontSize, lineHeight, indent, parent = g)
+
+        embedImage(internal.x + internal.width * 0.45, internal.y + internal.height * 0.5 - lineHeight * 2,
+            internal.width * 0.5 - padding, internal.height * 0.5, "aero_vector_diagram.svg",
+            ImageAnchor.CENTER, parent = g)
+        embedImage(internal.x + padding, internal.bottomY() - padding * 2 - CGL_LOGO_HEIGHT,
+            CGL_LOGO_WIDTH, CGL_LOGO_HEIGHT, CGL_LOGO, CGL_LOGO_BW, anchor = ImageAnchor.BOTTOM_RIGHT, parent = g)
+
+        rootElement.appendChild(g)
+    }
+
+    private fun addVelocityRecordCell(rect: Cell) {
+        val g = createTranslatedGroup(rect.x, rect.y)
+        val inner = addBorder(0.0, 0.0, rect.width, rect.height,
+            bundle.getString("velocityRecord.title"), topTab = true, bottomTab = false,
+            parent = g)
+        val fontSize = FONT_SIZE_LARGE
+        val lineHeight = inner.height / 23.0
+        var ypos = inner.y + lineHeight
+        val colX = listOf(0.04, 0.1, 0.25, 0.42, 0.5, 0.58, 0.66, 0.74, 0.82, 0.88).map {
+            inner.x + it * inner.width
+        }.toList()
+        addTextElement(colX[0], ypos, bundle.getString("advancedVelTable.turn"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[5], ypos, bundle.getString("advancedVelTable.velocity"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        ypos += lineHeight
+        addTextElement(colX[0], ypos, "#", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[1], ypos, bundle.getString("advancedVelTable.thrust"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = g)
+        addTextElement(colX[2], ypos, bundle.getString("advancedVelTable.facing"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = g)
+        addTextElement(colX[3], ypos, "A", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[4], ypos, "B", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[5], ypos, "C", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[6], ypos, "D", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[7], ypos, "E", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[8], ypos, "F", fontSize,
+            SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+        addTextElement(colX[9], ypos, bundle.getString("advancedVelTable.fuel"), fontSize,
+            SVGConstants.SVG_BOLD_VALUE, parent = g)
+        ypos += lineHeight
+        for (row in 1..20) {
+            addTextElement(colX[0], ypos, row.toString(), fontSize,
+                SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+            addHorizontalLine(colX[1], ypos + 1.0, width = inner.width * 0.1, strokeWidth = 0.72, parent = g)
+            addHorizontalLine(colX[2], ypos + 1.0, width = inner.width * 0.1, strokeWidth = 0.72, parent = g)
+            addHorizontalLine(colX[9], ypos + 1.0, width = inner.width * 0.1, strokeWidth = 0.72, parent = g)
+            for (col in 3..8) {
+                addTextElement(colX[col], ypos, "/", fontSize, SVGConstants.SVG_BOLD_VALUE,
+                    anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = g)
+                addHorizontalLine(colX[col] - inner.width * 0.035, ypos + 1.0, width = inner.width * 0.025,
+                    strokeWidth = 0.72, parent = g)
+                addHorizontalLine(colX[col], ypos + 1.0, width = inner.width * 0.025,
+                    strokeWidth = 0.72, parent = g)
+            }
+            ypos += lineHeight
+        }
+        rootElement.appendChild(g)
+    }
 }

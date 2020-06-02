@@ -33,8 +33,10 @@ abstract class VeeCriticalHitTable(private val sheet: RecordSheet) {
         ypos += sheet.createTable(0.0, ypos, inner.width, FONT_SIZE_LARGE,
             critTable, critTableOffsets, critTableLocations.map{it.toUpperCase()},
             parent = g)
-        ypos += sheet.addParagraph(inner.width * 0.1, ypos, inner.width, bundle.getString("criticalHitNote.$unitType.1"), FONT_SIZE_VSMALL, g)
-        sheet.addParagraph(inner.width * 0.1, ypos, inner.width, bundle.getString("criticalHitNote.$unitType.2"), FONT_SIZE_VSMALL, g)
+        ypos += sheet.addParagraph(inner.width * 0.1, ypos, inner.width,
+            bundle.getString("criticalHitNote.$unitType.1"), FONT_SIZE_VSMALL, parent = g)
+        sheet.addParagraph(inner.width * 0.1, ypos, inner.width,
+            bundle.getString("criticalHitNote.$unitType.2"), FONT_SIZE_VSMALL, parent = g)
         parent.appendChild(g)
     }
 }
