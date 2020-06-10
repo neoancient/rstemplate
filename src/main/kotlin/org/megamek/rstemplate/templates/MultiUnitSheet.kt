@@ -10,10 +10,10 @@ import java.util.*
  */
 abstract class MultiUnitSheet(size: PaperSize): RecordSheet(size) {
 
-    private val titleCell = Cell(width() * 2.0 / 3.0 + padding, 0.0,
+    private val titleCell = Cell(width() * 2.0 / 3.0 + padding, padding,
         width() / 3.0 - padding, logoHeight)
     private val unitCell = Cell(0.0, logoHeight + padding * 2,
-        size.width.toDouble(), height() - logoHeight - footerHeight - padding * 2)
+        width(), height() - logoHeight - footerHeight - padding * 2)
     override fun showTitle() = false
     final override fun height() = super.height()
 
@@ -42,7 +42,7 @@ abstract class MultiUnitSheet(size: PaperSize): RecordSheet(size) {
 
     private fun addTitleCell(rect: Cell) {
         val g = createTranslatedGroup(rect.x, rect.y)
-        val shadow = CellBorder(2.5, 2.5, rect.width - 2.5, rect.height - 2.5,
+        val shadow = CellBorder(2.5, 2.5, rect.width - 6.0, rect.height - 6.0,
             0.0, FILL_LIGHT_GREY, 5.2,
             topTab = false,
             bottomTab = false,
@@ -51,7 +51,7 @@ abstract class MultiUnitSheet(size: PaperSize): RecordSheet(size) {
             bevelBottomRight = true,
             bevelBottomLeft = true
         )
-        val border = CellBorder(0.0, 0.0, rect.width - 2.5, rect.height - 2.5,
+        val border = CellBorder(0.0, 0.0, rect.width - 5.0, rect.height - 5.0,
             0.0, FILL_DARK_GREY, 1.932,
             false,
             bottomTab = false,
@@ -62,16 +62,18 @@ abstract class MultiUnitSheet(size: PaperSize): RecordSheet(size) {
         )
         g.appendChild(shadow.draw(document))
         g.appendChild(border.draw(document))
-        addRect(rect.width * 0.6, 1.0, rect.width * 0.15,
-            rect.height - padding - 2, stroke = SVGConstants.SVG_NONE_VALUE, id = "fluffImage")
+        addRect(rect.width * 0.05, 2.0, rect.width * 0.2,
+            rect.height - padding - 6.0, stroke = SVGConstants.SVG_NONE_VALUE,
+            id = "fluffImage", parent = g)
         val image = document.createElementNS(svgNS, SVGConstants.SVG_IMAGE_TAG)
         image.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE,
-            (rect.width * 0.06).truncate())
+            (rect.width * 0.05).truncate())
         image.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE,
-            "1")
-        image.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, (rect.width * 0.15).truncate())
-        image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, (rect.height - 2 - padding).truncate())
+            "2")
+        image.setAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE, (rect.width * 0.2).truncate())
+        image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, (rect.height - padding - 6.0).truncate())
         image.setAttributeNS(null, "xlink:href", encodedFluffImage)
+        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "defaultFluffImage")
         g.appendChild(image)
         val lineHeight = calcFontHeight(FONT_SIZE_VLARGE)
         val text = createTextElement(0.0, 0.0, "",
