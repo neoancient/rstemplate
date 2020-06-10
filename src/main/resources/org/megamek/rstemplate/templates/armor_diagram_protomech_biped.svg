@@ -209,9 +209,9 @@
     <g id="structurePipsHD" transform="translate(42.335,13.18)">
       <rect x="-4.4" width="8.8" y="5.2" height="2.6" id="structureHDRow00"/>
     </g>
-    <g id="structurePipsT" transform="translate(42.335,41.38)">
-      <rect x="-13.9" width="27.8" y="0" height="2.6" id="structureTRow00"/>
-      <rect x="-10.7" width="21.4" y="2.6" height="2.6" id="structureTRow01"/>
+    <g id="structurePipsT" transform="translate(42.335,42.78)">
+      <rect x="-13" width="26" y="0" height="2.6" id="structureTRow00"/>
+      <rect x="-9.1" width="18.2" y="2.6" height="2.6" id="structureTRow01"/>
     </g>
     <g id="structurePipsRA" transform="rotate(-45,59.07844,-61.47437)">
       <rect x="-1.9" width="8" y="0" height="2.6" id="structureRARow00"/>
