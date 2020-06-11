@@ -106,7 +106,7 @@ class BattleArmorRecordSheet(size: PaperSize): RecordSheet(size) {
         g.appendChild(path)
         addTextElement(9.0, height * 0.7, (index + 1).toString(),
             FONT_SIZE_TAB_LABEL, SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_END_VALUE, parent = g)
-        addSuitImage(index,9.0, 1.0, 16.0, height -  2.0, g)
+        addSuitImage(index,10.0, 1.0, 12.0, height -  2.0, g)
         addRect(20.0 + bevelX * 2, bevelY + 1.0, width - 20.0 - bevelX * 3, height - bevelY * 2 - 1,
             stroke = SVGConstants.SVG_NONE_VALUE, id = "pips_$index", parent = g)
         return g
@@ -120,7 +120,8 @@ class BattleArmorRecordSheet(size: PaperSize): RecordSheet(size) {
         image.setAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, height.truncate())
         image.setAttributeNS(null, "xlink:${SVGConstants.XLINK_HREF_ATTRIBUTE}",
             bundle.getString("ba_image"))
-        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "fluff$index")
+        image.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "defaultFluffImage_$index")
         parent.appendChild(image)
+        addRect(x, y, width, height, id = "fluffImage_$index", parent = parent)
     }
 }
