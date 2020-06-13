@@ -10,11 +10,11 @@ import java.util.*
  */
 abstract class VehicleRecordSheet(size: PaperSize) : RecordSheet(size) {
     val eqTableCell = Cell(0.0, logoHeight + titleHeight, width() * 0.4,
-        (if (fullPage()) height() * 0.5 else height()) - footerHeight - logoHeight - titleHeight - padding)
+        (if (fullPage()) height() * 0.5 else (height() - padding)) - footerHeight - logoHeight - titleHeight - padding * 2)
     val armorCell = Cell(width() * 2.0 / 3.0 + padding, padding,
             width() / 3.0 - padding,height() - footerHeight - padding * 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
-        width() - eqTableCell.width - armorCell.width, eqTableCell.height / 3.0 - padding
+        width() - eqTableCell.width - armorCell.width, (eqTableCell.height - padding * 2) / 3.0
     )
     val criticalDamageCell = Cell(crewCell.x, crewCell.bottomY() + padding, crewCell.width, crewCell.height)
     val notesCell = Cell(crewCell.x, criticalDamageCell.bottomY() + padding, crewCell.width, crewCell.height + padding)

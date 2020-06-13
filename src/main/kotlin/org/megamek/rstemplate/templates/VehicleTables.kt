@@ -16,9 +16,9 @@ abstract class VehicleTables(size: PaperSize): RecordSheet(size) {
     val motiveDamage = Cell(hitLocation.rightX() + padding, hitLocation.y,
         width() - hitLocation.width - padding, hitLocation.height)
     private val criticalHits = Cell(hitLocation.x, hitLocation.bottomY() + padding,
-        width().toDouble(), height() - footerHeight - hitLocation.bottomY() - padding)
+        width(), height() - footerHeight - hitLocation.bottomY() - padding)
 
-    final override fun height() = size.height * 0.5 - padding
+    final override fun height() = super.height() * 0.5 - padding
     override fun fullPage() = false
     override fun showLogo() = false
     override fun colorElements() = ""
