@@ -62,7 +62,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         val fontSize = 9.67f
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
-        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
+        addField(bundle.getString("type"), "type", internal.x, ypos, fontSize,
             maxWidth = internal.width - internal.x - padding, parent = g)
         ypos += lineHeight
         ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
@@ -588,7 +588,7 @@ open class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         val fontSize = 7.7f
         val lineHeight = calcFontHeight(fontSize).toDouble()
         addField(
-            bundle.getString("tonnage"), "tonnage", x, y, fontSize, SVGConstants.SVG_BOLD_VALUE,
+            bundle.getString("tonnage"), "tonnage", x, y, fontSize,
             FILL_DARK_GREY, parent = parent
         )
         addFieldSet(

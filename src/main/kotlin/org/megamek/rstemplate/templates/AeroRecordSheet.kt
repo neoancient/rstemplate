@@ -99,8 +99,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
         addField(bundle.getString("type"), "type", internal.x +padding,
-            ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            maxWidth = internal.width - internal.x - padding, parent = g)
+            ypos, fontSize, maxWidth = internal.width - internal.x - padding, parent = g)
         ypos += lineHeight
         ypos += addUnitDataFields(internal.x + padding, ypos, internal.width, parent = g)
         addHorizontalLine(internal.x, ypos - lineHeight * 0.5, internal.width - padding, parent = g)
@@ -912,8 +911,7 @@ class LargeCraftPageTwo(size: PaperSize): RecordSheet(size) {
         val lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
         addField(bundle.getString("type"), "type", internal.x + padding,
-            ypos, fontSize, SVGConstants.SVG_BOLD_VALUE,
-            maxWidth = internal.width - internal.x - padding, parent = g)
+            ypos, fontSize, maxWidth = internal.width - internal.x - padding, parent = g)
         ypos += lineHeight
         addField(bundle.getString("name"), "fluffName", internal.x, ypos,
             fontSize, blankId = "blankFluffName",

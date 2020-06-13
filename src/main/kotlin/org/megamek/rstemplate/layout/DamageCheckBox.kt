@@ -30,7 +30,7 @@ class DamageCheckBox(private val label: String, private val text: List<String>?,
         val textLength = offset ?: width?.minus((boxSize + padding) * boxCount)
             ?: sheet.calcTextLength("${label}_", fontSize, fontWeight)
         sheet.addTextElement(0.0, boxSize * 0.8, label, fontSize, fontWeight,
-            fill, fixedWidth = true, width = textLength, parent = g)
+            fill = fill, fixedWidth = true, width = textLength, parent = g)
         var xpos = textLength
         for (i in 0 until boxCount) {
             val box = RoundedBorder(xpos, 0.0, boxSize, boxSize, 1.315, 0.726,

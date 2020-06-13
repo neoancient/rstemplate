@@ -320,7 +320,7 @@ internal abstract class ProtomechRecordSheet(size: PaperSize): RecordSheet(size)
             blankWidth = inner.width * 0.50 - PADDING * 2 - bevelX
                     - calcTextLength(
                 "${bundle.getString("name")}_",
-                fontSize, SVGConstants.SVG_BOLD_VALUE
+                fontSize
             ),
             labelFixedWidth = false, parent = g
         )

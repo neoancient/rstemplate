@@ -10,7 +10,7 @@ import java.util.*
  */
 abstract class VehicleRecordSheet(size: PaperSize) : RecordSheet(size) {
     val eqTableCell = Cell(0.0, logoHeight + titleHeight, width() * 0.4,
-        (if (fullPage()) height() * 0.5 else (height() - padding)) - footerHeight - logoHeight - titleHeight - padding * 2)
+        (if (fullPage()) height() * 0.5 else height()) - footerHeight - logoHeight - titleHeight - padding * 3)
     val armorCell = Cell(width() * 2.0 / 3.0 + padding, padding,
             width() / 3.0 - padding,height() - footerHeight - padding * 2.0)
     val crewCell = Cell(eqTableCell.rightX(), eqTableCell.y,
@@ -51,7 +51,7 @@ abstract class VehicleRecordSheet(size: PaperSize) : RecordSheet(size) {
         var lineHeight = calcFontHeight(fontSize)
         ypos += lineHeight
         addField(bundle.getString("type"), "type", internal.x, ypos, fontSize,
-            SVGConstants.SVG_BOLD_VALUE, maxWidth = internal.width, parent = g)
+            maxWidth = internal.width, parent = g)
         ypos += lineHeight
         fontSize = 7.7f
         lineHeight = calcFontHeight(fontSize)
