@@ -158,14 +158,15 @@ class InfantryRecordSheet (size: PaperSize) : RecordSheet(size) {
         var ypos = height + lineHeight
         addTextElement(x, ypos, bundle.getString("damageGrouping"), FONT_SIZE_VSMALL, parent = parent)
         addTextElement(x + width * 0.5, ypos, bundle.getString("rangeInHexes"), FONT_SIZE_SMALL,
-            SVGConstants.SVG_BOLD_VALUE, parent = parent)
+            SVGConstants.SVG_BOLD_VALUE, id = "rangeInHexes", parent = parent)
         ypos += lineHeight
         addTextElement(x, ypos, bundle.getString("range"), FONT_SIZE_SMALL,
             SVGConstants.SVG_BOLD_VALUE, parent = parent)
         val xpos = x + width * 0.14
         for (range in 0..21) {
             addTextElement(xpos + range * width * 0.04, ypos, range.toString(), FONT_SIZE_SMALL,
-                SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+                SVGConstants.SVG_BOLD_VALUE, anchor = SVGConstants.SVG_MIDDLE_VALUE,
+                id = "range_$range", parent = parent)
             addTextElement(xpos + range * width * 0.04, ypos + lineHeight, "\u2013",
                 FONT_SIZE_SMALL, anchor = SVGConstants.SVG_MIDDLE_VALUE, id = "range_mod_$range",
                 parent = parent)

@@ -86,7 +86,7 @@ abstract class VehicleRecordSheet(size: PaperSize) : RecordSheet(size) {
             FONT_SIZE_FREE_LABEL, SVGConstants.SVG_BOLD_VALUE, fixedWidth = true,
             width = internal.width * 0.6, parent = g)
         addTextElement(internal.width * 0.78, ypos, bundle.getString("hexes"),
-            FONT_SIZE_MEDIUM, fixedWidth = true, parent = g)
+            FONT_SIZE_MEDIUM, id = "unitScale", parent = g)
 
         addRect(internal.x, ypos, internal.width - padding, internal.bottomY() - ypos - lineHeight * 2.0,
             SVGConstants.SVG_NONE_VALUE, id = "inventory", parent = g)
