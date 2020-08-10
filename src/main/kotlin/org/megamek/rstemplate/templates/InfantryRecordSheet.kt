@@ -154,7 +154,7 @@ class InfantryRecordSheet (size: PaperSize) : RecordSheet(size) {
     }
 
     private fun addDamagePanelTextFields(x: Double, y: Double, width: Double, height: Double, parent: Element) {
-        val lineHeight = height / 7.0
+        val lineHeight = height / 8.0
         var ypos = height + lineHeight
         addTextElement(x, ypos, bundle.getString("damageGrouping"), FONT_SIZE_VSMALL, parent = parent)
         addTextElement(x + width * 0.5, ypos, bundle.getString("rangeInHexes"), FONT_SIZE_SMALL,
@@ -213,6 +213,8 @@ class InfantryRecordSheet (size: PaperSize) : RecordSheet(size) {
             SVGConstants.SVG_BOLD_VALUE, id = "field_gun_type", parent = fieldGunGroup)
         addTextElement(x + width * 0.19, ypos, "", FONT_SIZE_SMALL,
             SVGConstants.SVG_BOLD_VALUE, id = "field_gun_dmg", parent = fieldGunGroup)
+        addTextElement(x + width * 0.19, ypos + lineHeight, "", FONT_SIZE_SMALL,
+            SVGConstants.SVG_BOLD_VALUE, id = "field_gun_dmg_2", parent = fieldGunGroup)
         addTextElement(x + width * 0.27, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
             anchor = SVGConstants.SVG_MIDDLE_VALUE, id = "field_gun_min_range", parent = fieldGunGroup)
         addTextElement(x + width * 0.30, ypos, "", FONT_SIZE_SMALL, SVGConstants.SVG_BOLD_VALUE,
