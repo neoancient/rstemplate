@@ -61,7 +61,7 @@ abstract class VehicleRecordSheet(size: PaperSize) : RecordSheet(size) {
             LabeledField(bundle.getString("cruising"), "mpWalk", "0"),
             LabeledField(bundle.getString("flanking"), "mpRun", "0")
         ), internal.x + padding, ypos + lineHeight, fontSize,
-            FILL_DARK_GREY, 40.0,
+            FILL_DARK_GREY, 50.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = g)
         addField(bundle.getString("jumping"), "mpJump",
             internal.x + internal.width * 0.25, ypos + lineHeight * 2, fontSize,
