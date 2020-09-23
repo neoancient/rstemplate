@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="151" height="169"
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="151" height="176"
      xml:space="preserve">
 <g id="internal_diagram_tripod" transform="matrix(1,0,0,-1,-390.22409,379.2819)"><g
          id="g3654"
@@ -911,5 +911,9 @@
          id="textIS_CL"
          x="446.22"
          y="535.60">( 0 )</text>
+    <text font-weight="bold" text-anchor="middle"
+        style="mml-field-width=45" id="structureType"
+        x="496.04"
+        y="564.26">Standard</text>
 </g></g></g>
 </svg>

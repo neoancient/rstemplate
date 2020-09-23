@@ -797,5 +797,9 @@
          id="textIS_RLL"
          x="408.81"
          y="526.15">( 0 )</text>
+    <text font-weight="bold" text-anchor="middle"
+        style="mml-field-width=45" id="structureType"
+        x="471.5"
+        y="550">Standard</text>
 </g></g></g>
 </svg>

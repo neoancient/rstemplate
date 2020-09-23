@@ -820,6 +820,11 @@
          text-anchor="middle"
          id="textIS_RLL"
          x="408.81"
-         y="526.15">( 0 )</text>
+         y="526.15">( 0 )</text><text
+   font-weight="bold"
+   style="font-weight:bold;text-anchor:middle"
+   id="structureType"
+   x="471.60025"
+   y="552.09985">Standard</text>
 </g>         </g></g>
 </svg>

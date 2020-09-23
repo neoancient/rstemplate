@@ -191,8 +191,8 @@
          id="tspan58521">Leg</tspan></text></g>
 <g transform="translate(-397.43863,-386.6357)" style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.7954998px;font-family:Eurostile;writing-mode:lr-tb;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none">
              <text font-weight="bold"
-         id="textIS_CT"
-         x="468"
+         id="textIS_CT" text-anchor="middle"
+         x="473.3"
          y="506.86">( 0 )</text>
     <text font-weight="bold"
          id="textIS_RT"
@@ -217,7 +217,11 @@
     <text font-weight="bold"
          id="textIS_LL"
          x="412.84"
-         y="535.60">( 0 )</text><g
+         y="535.60">( 0 )</text>
+    <text font-weight="bold" text-anchor="middle"
+        style="mml-field-width=45" id="structureType"
+        x="473.3"
+        y="549.3">Standard</text></g><g
      id="structurePips"><g
        id="isPipsHD"><g
          transform="translate(476.465,408.5257)"
@@ -263,7 +267,7 @@
            d="m 0,0 c -0.961,0 -1.761,0.8 -1.761,1.758 0,0.96 0.8,1.761 1.761,1.761 0.959,0 1.758,-0.801 1.758,-1.761 C 1.758,0.8 0.959,0 0,0 Z"
            style="fill:none;stroke:#231f20;stroke-width:0.48699999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2.41400003;stroke-dasharray:none;stroke-opacity:1"
            
-           id="path1707" /></g></g><g
+           id="path1707" /></g><g
        id="isPipsCT"
        fill="none"
        transform="translate(461.54,418.4)"><rect
