@@ -912,6 +912,7 @@
          x="446.22"
          y="535.60">( 0 )</text>
     <text font-weight="bold" text-anchor="middle"
+        font-size="6.76"
         style="mml-field-width=45" id="structureType"
         x="496.04"
         y="564.26">Standard</text>
