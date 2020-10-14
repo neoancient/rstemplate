@@ -223,7 +223,7 @@
         style="mml-field-width=45" id="structureType"
         x="473.3"
         y="549.3">Standard</text></g><g
-     id="structurePips"><g
+     id="structurePips" transform="translate(-397.7,-386.6)"><g
        id="isPipsHD"><g
          transform="translate(476.465,408.5257)"
          id="g1680"><path
@@ -268,7 +268,7 @@
            d="m 0,0 c -0.961,0 -1.761,0.8 -1.761,1.758 0,0.96 0.8,1.761 1.761,1.761 0.959,0 1.758,-0.801 1.758,-1.761 C 1.758,0.8 0.959,0 0,0 Z"
            style="fill:none;stroke:#231f20;stroke-width:0.48699999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2.41400003;stroke-dasharray:none;stroke-opacity:1"
            
-           id="path1707" /></g><g
+           id="path1707" /></g></g><g
        id="isPipsCT"
        fill="none"
        transform="translate(461.54,418.4)"><rect
@@ -779,5 +779,5 @@
          y="70.5526"
          width="8.21"
          height="5.4313"
-         id="isLLRow15" /></g></g></g>
+         id="isLLRow15" /></g></g>
 </svg>
