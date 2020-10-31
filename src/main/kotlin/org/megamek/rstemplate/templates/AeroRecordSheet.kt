@@ -194,7 +194,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
                 id = "cglLogo", parent = g)
         } else {
             val label = RSLabel(
-                this, rect.width, 0.0,
+                this, rect.width - PADDING, 0.0,
                 bundle.getString("armorPanel.title"), FONT_SIZE_FREE_LABEL,
                 right = true
             )
@@ -679,7 +679,7 @@ abstract class AeroRecordSheet(size: PaperSize): RecordSheet(size) {
     private fun addBombsPanel() {
         val label = RSLabel(this, 0.0, 0.0,
             bundle.getString("bombsPanel.title"), FONT_SIZE_FREE_LABEL)
-        val g = createTranslatedGroup(width() - label.rectWidth, 0.0)
+        val g = createTranslatedGroup(width() - label.rectWidth - label.taperWidth * 2, 0.0)
         g.setAttributeNS(null, SVGConstants.SVG_ID_ATTRIBUTE, "external_stores")
         g.appendChild(label.draw())
         addRect(label.rectMargin, label.height() + padding, label.rectWidth, label.rectWidth * 0.8,
