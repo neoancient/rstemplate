@@ -515,6 +515,9 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         if (this is LAMRecordSheet) {
             addTextElement(x + padding, y + medFontLineHeight * 3, bundle.getString("airmechHeat"), 5.8f,
                 anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, parent = parent)
+        } else {
+            addTextElement(x + padding, y + medFontLineHeight * 3, bundle.getString("partialWingHeat"), 5.8f,
+                id = "partialWingBonus", anchor = SVGConstants.SVG_START_VALUE, fixedWidth = true, hidden = true, parent = parent)
         }
         addRect(x + width * 0.4, y + padding, width * 0.6 - padding, 25.0, id = "heatSinkPips",
             parent = parent)

@@ -690,8 +690,11 @@ abstract class RecordSheet(val size: PaperSize) {
         addTextElement(x + width - padding * 4, y + 13, "10", 8.44f,
             anchor = SVGConstants.SVG_END_VALUE, id= "hsCount", parent = parent)
         if (this is LAMRecordSheet) {
-            addTextElement(x + width - padding * 4, y + 19, ((this as RecordSheet).bundle).getString("airmechHeat"), 5.8f,
+            addTextElement(x + width - padding * 4, y + 20, ((this as RecordSheet).bundle).getString("airmechHeat"), 5.8f,
                 anchor = SVGConstants.SVG_END_VALUE, fixedWidth = true, parent = parent)
+        } else if (this is MechRecordSheet){
+            addTextElement(x + width - padding * 4, y + 20, ((this as RecordSheet).bundle).getString("partialWingHeat"), 5.8f,
+                id = "partialWingBonus", anchor = SVGConstants.SVG_END_VALUE, fixedWidth = true, hidden = true, parent = parent)
         }
         addRect(x + width - padding * 2 - 30, y + 24, 30.0,height - y - 24, id = "heatSinkPips",
             parent = parent)
