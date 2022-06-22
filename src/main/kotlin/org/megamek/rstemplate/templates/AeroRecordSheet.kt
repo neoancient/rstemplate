@@ -848,6 +848,7 @@ class WarshipRecordSheet(size: PaperSize): AeroRecordSheet(size) {
     override val tracksHeat = false
     override val largeCraft = true
     override fun isCapitalScale() = true
+    override fun isWarship() = true
 }
 
 class SpaceStationRecordSheet(size: PaperSize): AeroRecordSheet(size) {
