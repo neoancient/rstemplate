@@ -97,7 +97,8 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
         addFieldSet(listOf(
             LabeledField(bundle.getString("walking"), "mpWalk", "0"),
             LabeledField(bundle.getString("running"), "mpRun", "0"),
-            LabeledField(bundle.getString("jumping"), "mpJump", "0")
+            LabeledField(bundle.getString("jumping"), "mpJump", "0",
+                labelId = "lblJump")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 50.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addFieldSet(listOf(
@@ -796,7 +797,8 @@ open class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
         addFieldSet(listOf(
             LabeledField(bundle.getString("walking"), "mpWalk", "0"),
             LabeledField(bundle.getString("running"), "mpRun", "0"),
-            LabeledField(bundle.getString("jumping"), "mpJump", "0")
+            LabeledField(bundle.getString("jumping"), "mpJump", "0",
+                labelId = "lblJump")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 38.0,
             SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
         addTextElement(x + width * 0.25, y + lineHeight, bundle.getString("vehicle"),
