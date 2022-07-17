@@ -100,7 +100,7 @@ abstract class MechRecordSheet(size: PaperSize) :  RecordSheet(size) {
             LabeledField(bundle.getString("jumping"), "mpJump", "0",
                 labelId = "lblJump")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 50.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+            SVGConstants.SVG_MIDDLE_VALUE, labelFixedWidth = false, parent = parent)
         addFieldSet(listOf(
             LabeledField(bundle.getString("tonnage"), "tonnage", "0"),
             LabeledField(bundle.getString("techBase"), "techBase","Inner Sphere"),
@@ -618,7 +618,7 @@ open class LAMRecordSheet(size: PaperSize) : MechRecordSheet(size) {
                 LabeledField(bundle.getString("jumping"), "mpJump", "0",
                     labelId = "lblJump")
             ), x, y + lineHeight * 3, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent
+            SVGConstants.SVG_MIDDLE_VALUE, labelFixedWidth = false, parent = parent
         )
 
         addTextElement(
@@ -800,7 +800,7 @@ open class QuadVeeRecordSheet(size: PaperSize) : MechRecordSheet(size) {
             LabeledField(bundle.getString("jumping"), "mpJump", "0",
                 labelId = "lblJump")
         ), x, y + lineHeight, fontSize, FILL_DARK_GREY, 38.0,
-            SVGConstants.SVG_MIDDLE_VALUE, parent = parent)
+            SVGConstants.SVG_MIDDLE_VALUE, labelFixedWidth = false, parent = parent)
         addTextElement(x + width * 0.25, y + lineHeight, bundle.getString("vehicle"),
             fontSize, SVGConstants.SVG_BOLD_VALUE, parent = parent)
         addFieldSet(listOf(

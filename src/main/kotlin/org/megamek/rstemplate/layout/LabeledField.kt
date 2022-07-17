@@ -27,7 +27,6 @@ class LabeledField(val labelText: String, val id: String,
      * @param x           The x coordinate of the start of the label
      * @param y           The y coordinate of the elements
      * @param fontSize    The size of font used for the text
-     * @param fontWeight  The weight of the font to use
      * @param fill        The color of the text and blank line
      * @param fieldX      The x coordinate of the start of the field element. If null, it will be placed
      *                    after the label with an underscore-width space between them.
@@ -45,7 +44,7 @@ class LabeledField(val labelText: String, val id: String,
         sheet.addTextElement(x, y, labelText, fontSize, SVGConstants.SVG_BOLD_VALUE,
             SVGConstants.SVG_NORMAL_VALUE, fill, SVGConstants.SVG_START_VALUE,
             id = labelId, fixedWidth = labelFixedWidth, hidden = hidden, parent = parent)
-        val xpos = fieldX ?: x + sheet.calcTextLength("${labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE)
+        val xpos = fieldX ?: (x + sheet.calcTextLength("${labelText}_", fontSize, SVGConstants.SVG_BOLD_VALUE))
         sheet.addTextElement(xpos, y, defaultText, fontSize, SVGConstants.SVG_NORMAL_VALUE,
             SVGConstants.SVG_NORMAL_VALUE, fill, fieldAnchor, id,
             width = maxWidth?.minus(xpos - x), hidden = hidden, parent = parent)
